@@ -16,7 +16,5 @@ namespace CashTrack.Models.Users
 
         [Required]
         public string PasswordHash { get; set; }
-        [Required]
-        public string Role { get; set; }
     }
 }

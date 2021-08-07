@@ -11,7 +11,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CashTrack.Helpers;
 using CashTrack.Data.Services.Users;
-using CashTrack.Helpers;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;

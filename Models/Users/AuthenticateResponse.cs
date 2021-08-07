@@ -8,7 +8,6 @@ namespace CashTrack.Models.Users
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Role { get; set; }
         public string Token { get; set; }
 
 
@@ -18,7 +17,6 @@ namespace CashTrack.Models.Users
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
-            Role = user.Role;
             Token = token;
         }
     }

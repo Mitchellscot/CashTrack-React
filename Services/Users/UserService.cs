@@ -43,7 +43,7 @@ namespace CashTrack.Data.Services.Users
             var MAPPER = config.CreateMapper();
             //hopefully one day I will be able to get rid of the above code.
 
-            var user = await _context.Users.Where(u => u.Email.ToUpper() == model.Email.ToUpper()).FirstOrDefaultAsync<User>();
+            var user = await _context.Users.Where(u => u.FirstName.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
             if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
             {
                 return null;

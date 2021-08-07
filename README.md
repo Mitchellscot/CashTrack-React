@@ -1,3 +1,4 @@
 # CashTrack
 
-The Zipline Information Management System!
+A budgeting app
+
