@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "towo46lr9fSaV5rftX/eyF5yu44zGfWTap6pQ8zQy760qFqGdo3kxShLNIBsRwTXOO5iROb9ht4yR9mMpQNoGg==",
+  "dgSpecHash": "Qs1foUJHpgHErinGEXzcm3hDkRkcIPRRhm9x7P7zwrag/yCyPTBQg6V/Tc2ZRKUJ+F53iCROl05yZ9WWHBzEEQ==",
   "success": true,
-  "projectFilePath": "/mnt/e/Code/CashTrack/CashTrack.csproj",
+  "projectFilePath": "/home/mitch/Code/CashTrack/CashTrack.csproj",
   "expectedPackageFiles": [
     "/home/mitch/.nuget/packages/automapper/10.1.1/automapper.10.1.1.nupkg.sha512",
     "/home/mitch/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/8.1.1/automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

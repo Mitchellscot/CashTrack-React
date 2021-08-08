@@ -8,9 +8,9 @@ function DashboardHeader(){
     const dispatch = useDispatch();
 
     return(
-        <Navbar sticky="top" bg="dark" expand="lg" className="d-flex justify-content-between flex-md-nowrap p-0 shadow">
-            <a className="d-flex justify-content-center navbar-brand col-md-2 col-lg-2 md-0 px-2 py-2">
-                <img src="../../public/images/cash-track-text.png" height="45px" width="200px" alt="logo" /></a>
+        <Navbar sticky="top" bg="primary" expand="lg" className="d-flex justify-content-between flex-md-nowrap p-0 shadow">
+            <a className="d-flex justify-content-center navbar-brand col-md-2 col-lg-2 md-0 px-0 py-1">
+                <img src="/images/ct-white-text.png" height="75px" width="150px" alt="logo" /></a>
             <ul className="navbar-nav px-3">
                 <li className="nav-item text-nowrap">
                     <BoxArrowRight 

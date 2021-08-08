@@ -32,7 +32,7 @@ namespace CashTrack.Controllers
             {
                 var response = await _userService.AuthenticateAsync(model);
                 if (response == null){
-                    return Unauthorized(new {message = "Email or Password incorrect"});
+                    return Unauthorized(new {message = "Name or Password incorrect"});
                 }
                 return Ok(response);
             }

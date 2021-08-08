@@ -51,8 +51,11 @@
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
+.bungee{
+  font-family: 'Bungee', cursive;
+}
 .sidebar .nav-link {
-    font-family: 'Audiowide', cursive;
+    font-family: 'Bungee', cursive;
     font-weight: 500;
     color: #333;
 }

@@ -6,6 +6,7 @@ import React from 'react';
 //import { Layout } from '../Layout/Layout';
 import Login from '../Login/Login';
 import { createBrowserHistory } from 'history';
+import { useSelector } from 'react-redux';
 import {
     Router,
     Redirect,
@@ -16,8 +17,10 @@ import Dashboard from '../Dashboard/Dashboard';
 
 
 function App() {
+    const user = useSelector(store => store.login.loggedIn);
     const history = createBrowserHistory();
     return (
+        <div id={!user ? "login-page" : ""}>
         <Router history={history}>
             <Switch>
             <Redirect exact from="/" to="/login" />
@@ -34,6 +37,7 @@ function App() {
                 </ProtectedRoute>
             </Switch>
         </Router>
+        </div>
     );
 }
 

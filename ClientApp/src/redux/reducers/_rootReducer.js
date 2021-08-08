@@ -1,10 +1,10 @@
 ﻿import { combineReducers } from 'redux';
 import login from './loginReducer';
-import loginAlert from './loginAlertReducer';
+import errors from './errorsReducer';
 
 const rootReducer = combineReducers({
     login,
-    loginAlert
+    errors
 });
 
 export default rootReducer;

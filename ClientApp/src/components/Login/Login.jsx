@@ -1,42 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import LoginForm from '../LoginForm/LoginForm';
-import LoginForgotPassword from '../LoginForgotPassword/LoginForgotPassword';
-import { useSelector, useDispatch } from 'react-redux';
 import './Login.css';
-
+import React, { useEffect } from 'react';
+import LoginForm from './LoginForm';
+import { useDispatch } from 'react-redux';
+import { loginConst, errorConst } from '../../_constants';
+import Container from 'react-bootstrap/Container';
 
 export default function Login() {
-    const alert = useSelector(store => store.loginAlert);
     const dispatch = useDispatch();
-    const [forgotPassword, setForgotPassword] = useState(false);
-    useEffect(() => {
-        dispatch({ type: 'ALERT_CLEAR' });
-        dispatch({ type: 'LOGOUT' });
+
+     useEffect(() => {
+        dispatch({ type: errorConst.CLEAR });
+        dispatch({ type: loginConst.LOGOUT });
     }, []);
 
     return (
-        <div className="container">
-
-            <div className="col-md-8 offset-md-2 mt-5">
-                <div className="col-lg-8 offset-lg-2 border rounded">
-                    <div className="d-flex justify-content-center navbar-brand mt-3">
-                        <img src="\images\cash-track.png" height="250px" width="250px" alt="Cash Track Logo" />
+        <Container>
+            <div className="col-md-6 offset-md-4 mt-5">
+            <div className="col-lg-8 offset-lg-0 border rounded bg-light">
+            <div className="d-flex justify-content-center mt-3 ">
+                        <img src="\images\cash-track.png" height="200px" width="200px" alt="Cash Track Logo" />
                     </div>
-                    {alert.message &&
-                            <div className={`alert ${alert.type} text-center py-0 mx-3`}>{alert.message}</div>
-                        }
-                        {forgotPassword ? 
-                        <LoginForgotPassword /> : 
-                        <LoginForm setForgotPassword={setForgotPassword}/>
-                    }
-                    
-
+                    <Container className="pt-3">
+                    <LoginForm />
+                    </Container>
                 </div>
-
             </div>
             <div className="col-lg-6 offset-lg-3 rounded mt-0">
-
-                    </div>
-        </div>
+            </div>
+        </Container>
     );
 }

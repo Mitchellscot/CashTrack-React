@@ -5776,11 +5776,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/mnt/e/Code/CashTrack/CashTrack.csproj",
+      "projectUniqueName": "/home/mitch/Code/CashTrack/CashTrack.csproj",
       "projectName": "CashTrack",
-      "projectPath": "/mnt/e/Code/CashTrack/CashTrack.csproj",
+      "projectPath": "/home/mitch/Code/CashTrack/CashTrack.csproj",
       "packagesPath": "/home/mitch/.nuget/packages/",
-      "outputPath": "/mnt/e/Code/CashTrack/obj/",
+      "outputPath": "/home/mitch/Code/CashTrack/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/mitch/.nuget/NuGet/NuGet.Config"
@@ -5868,7 +5868,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.302/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/5.0.301/RuntimeIdentifierGraph.json"
       }
     }
   }

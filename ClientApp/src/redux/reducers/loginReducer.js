@@ -1,22 +1,16 @@
+import { loginConst } from '../../_constants';
 let user = JSON.parse(localStorage.getItem('user'));
-const initialState = user ? { loggedIn: false, user } : {};
+const initialState = user ? { loggedIn: false, user: "" } : {};
 
 const login = (state = initialState, action) => {
     switch (action.type) {
-        case 'LOGIN_REQUEST':
-            return {
-                loggingIn: true,
-                user: action.user
-            };
-        case 'LOGIN_SUCCESS':
+        case loginConst.SET_USER:
             return {
                 loggedIn: true,
                 user: action.user
             };
-        case 'LOGIN_FAILURE':
-            return {};
-        case 'LOGOUT_USER':
-            return {};
+        case loginConst.REMOVE_USER:
+            return initialState;
         default:
             return state
     }

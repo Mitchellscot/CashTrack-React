@@ -2,7 +2,7 @@ import './Dashboard.css';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import DashboardHeader from './DashboardHeader';
-import DashboardSideBar from './DashboardSideBar';
+import DashboardSidebar from './DashboardSidebar';
 import Row from 'react-bootstrap/Row';
 import { Switch, Route } from "react-router-dom";
 
@@ -12,7 +12,7 @@ function Dashboard() {
             <DashboardHeader />
             <Container fluid>
                 <Row>
-                    <DashboardSideBar />
+                    <DashboardSidebar />
                     <Col md={10} lg={10} className="ml-sm-auto px-md-5 py-3">
                         <main className="d-flex flex-wrap flex-md-nowrap pt-4 border border-bottom-0 rounded-top">
 {/*                         <Switch>

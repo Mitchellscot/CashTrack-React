@@ -1,30 +1,31 @@
 import { put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
+import { loginConst, errorConst } from '../../_constants';
 
 function* loginUser(action){
 
     try {
-        yield put({type: 'ALERT_CLEAR' });
+        yield put({type: errorConst.CLEAR });
         const config = {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true,
           };
           let user = {};
-        yield axios.post('/user/authenticate', action.payload, config).then(response => {
+        yield axios.post('/user/authenticate', action.payload, config)
+        .then(response => {
                   localStorage.setItem('user', JSON.stringify(response.data));
                   user = response.data;
               });
-        yield put({type: 'LOGIN_SUCCESS', user: user});
-        yield put({type: 'ALERT_SUCCESS', message: "Success!"})
+        yield put({type: loginConst.SET_USER, user: user});
     } catch (error) {
         console.log('HEY MITCH - ERROR LOGGING IN', error);
         if (error.response.status === 401){
-            yield put({ type: 'LOGIN_FAILURE' });
-            yield put({ type: 'ALERT_ERROR', message: error.response.data.message})
+            console.log(error.response.data.message);
+            yield put({ type: errorConst.FAILED, message: error.response.data.message });
         }
-        else if (error.response.status === 400){
-            yield put({ type: 'ALERT_ERROR', message: error.response})
-            yield put({ type: 'LOGIN_FAILURE' });
+        else {
+            console.log(error.response.data.message);
+            yield put({ type: errorConst.FAILED, message: error.response.data.message });
         }
     }
 }
@@ -32,15 +33,15 @@ function* loginUser(action){
 function* logoutUser(){
     try {
         localStorage.removeItem('user');
-        yield put({type: 'LOGOUT_USER'});
+        yield put({type: loginConst.REMOVE_USER});
     } catch (error) {
         console.log('HEY MITCH - COULD NOT LOG OUT USER', error);
     }
 }
 
 function* loginSaga(){
-    yield takeLatest('LOGIN', loginUser);
-    yield takeLatest('LOGOUT', logoutUser);
+    yield takeLatest(loginConst.LOGIN, loginUser);
+    yield takeLatest(loginConst.LOGOUT, logoutUser);
 }
 
 export default loginSaga;
