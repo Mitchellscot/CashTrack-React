@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.Authentication;
+using CashTrack.Models.Users;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace CashTrack.Data.Services.Users
@@ -87,19 +87,10 @@ namespace CashTrack.Data.Services.Users
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        //to be used in forgot password methods
-        private string randomTokenString()
-        {
-            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
-            var randomBytes = new byte[40];
-            rngCryptoServiceProvider.GetBytes(randomBytes);
-            return BitConverter.ToString(randomBytes).Replace("-", "");
-        }
         private string generateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -107,7 +98,6 @@ namespace CashTrack.Data.Services.Users
                 {
                     new Claim("id", user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Email.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -116,16 +106,5 @@ namespace CashTrack.Data.Services.Users
 
             return tokenHandler.WriteToken(token);
         }
-
-        //non async code:
-        /*         public AuthenticateResponse Authenticate(AuthenticateRequest model)
-                {
-                    var user = _context.Users.SingleOrDefault(x => x.Email == model.Email);
-                    if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash)) return null;
-                    var response = _mapper.Map<AuthenticateResponse>(user);
-                    response.Token = generateJwtToken(user);
-                    return response;
-                } */
-
     }
 }

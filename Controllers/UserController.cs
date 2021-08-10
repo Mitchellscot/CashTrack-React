@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CashTrack.Data.Services.Users;
-using CashTrack.Models.Authentication;
+using CashTrack.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
-using CashTrack.Models.PasswordReset;
 using AutoMapper;
 using System.Threading.Tasks;
 
