@@ -11,13 +11,13 @@ namespace CashTrack.Models.Users
         public string Token { get; set; }
 
 
-        public AuthenticateResponse(User user, string token)
-        {
-            Id = user.Id;
-            FirstName = user.FirstName;
-            LastName = user.LastName;
-            Email = user.Email;
-            Token = token;
-        }
+        //public AuthenticateResponse(User user, string token)
+        //{
+        //    Id = user.Id;
+        //    FirstName = user.FirstName;
+        //    LastName = user.LastName;
+        //    Email = user.Email;
+        //    Token = token;
+        //}
     }
 }

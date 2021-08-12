@@ -58,7 +58,7 @@ namespace CashTrack.Data
 
         private static ExpenseCatagory[] createCatagories()
         {
-            var catagoryList = new ExpenseCatagory[70]
+            var catagoryList = new ExpenseCatagory[71]
                 {
                     new ExpenseCatagory()
                     { 
@@ -469,27 +469,33 @@ namespace CashTrack.Data
                         Name = "Toys",
                         Catagory = ExpenseMainCatagory.Kids
                     },
-                     new ExpenseCatagory()
+                    new ExpenseCatagory()
                     {
                         Id = 67,
-                        Name = "Travel Misc",
+                        Name = "Trash",
                         Catagory = ExpenseMainCatagory.Vacation
                     },
                      new ExpenseCatagory()
                     {
                         Id = 68,
+                        Name = "Travel Misc",
+                        Catagory = ExpenseMainCatagory.Vacation
+                    },
+                     new ExpenseCatagory()
+                    {
+                        Id = 69,
                         Name = "Water",
                         Catagory = ExpenseMainCatagory.Utilities
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 69,
+                        Id = 70,
                         Name = "Weight Training",
                         Catagory = ExpenseMainCatagory.Hobbies
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 70,
+                        Id = 71,
                         Name = "Yard",
                         Catagory = ExpenseMainCatagory.Household
                     },

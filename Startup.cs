@@ -17,6 +17,7 @@ using CashTrack.Data;
 using AutoMapper;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
+using CashTrack.Services.Expenses;
 
 namespace CashTrack
 {
@@ -39,9 +40,11 @@ namespace CashTrack
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
+            //needed for webpack proxy
             services.AddCors();
             services.AddControllersWithViews();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IUserService, UserService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             // In production, the React files will be served from this directory
