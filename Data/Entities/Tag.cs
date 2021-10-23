@@ -10,7 +10,7 @@ namespace CashTrack.Data.Entities
 {
     public class Tag
     {
-        public int MyProperty { get; set; }
+        public int Id { get; set; }
         public string TagName { get; set; }
     }
 }

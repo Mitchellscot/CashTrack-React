@@ -10,7 +10,7 @@ namespace CashTrack.Data.Entities
 {
     public class Merchant
     {
-        public int MyProperty { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public bool SuggestOnLookup { get; set; }
         public string City { get; set; }
