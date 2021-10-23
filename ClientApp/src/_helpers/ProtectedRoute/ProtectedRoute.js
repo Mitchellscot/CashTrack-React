@@ -14,18 +14,14 @@ function ProtectedRoute(props) {
   let ComponentToShow;
 
   if (loggedIn) {
-    console.log('number 1A');
     ComponentToShow = ComponentToProtect;
   } else {
-    console.log('number 1B');
     ComponentToShow = Login;
   }
 
   if (loggedIn && authRedirect != null) {
-    console.log('number 2A');
     return <Redirect exact from={otherProps.path} to={authRedirect} />;
   } else if (!loggedIn && authRedirect != null) {
-    console.log('number 2B');
     ComponentToShow = ComponentToProtect;
   }
 
@@ -58,4 +54,3 @@ function ProtectedRoute({ component: Component, roles, ...rest }) {
 }
 
 export default ProtectedRoute; */
-

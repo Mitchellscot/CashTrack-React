@@ -11,7 +11,7 @@ export default function Login() {
      useEffect(() => {
         dispatch({ type: errorConst.CLEAR });
         dispatch({ type: loginConst.LOGOUT });
-    }, []);
+    }, [dispatch]);
 
     return (
         <Container>

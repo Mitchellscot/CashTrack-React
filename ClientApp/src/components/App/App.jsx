@@ -8,9 +8,10 @@ import Login from '../Login/Login';
 import { createBrowserHistory } from 'history';
 import { useSelector } from 'react-redux';
 import {
-    Router,
-    Redirect,
+    BrowserRouter,
     Switch,
+    Redirect,
+    withRouter
 } from 'react-router-dom'; //can also import <Route /> if needed
 import ProtectedRoute from '../../_helpers/ProtectedRoute/ProtectedRoute';
 import Dashboard from '../Dashboard/Dashboard';
@@ -21,24 +22,24 @@ function App() {
     const history = createBrowserHistory();
     return (
         <div id={!user ? "login-page" : ""}>
-        <Router history={history}>
-            <Switch>
-            <Redirect exact from="/" to="/login" />
-                <ProtectedRoute
-                    path="/login"
-                    authRedirect="/dashboard"
+            <BrowserRouter history={history}>
+                <Switch>
+                    <Redirect exact from="/" to="/login" />
+                    <ProtectedRoute
+                        path="/login"
+                        authRedirect="/dashboard"
                     >
                         <Login />
                     </ProtectedRoute>
-                <ProtectedRoute
-                exact
-                path="/dashboard">
-                    <Dashboard />
-                </ProtectedRoute>
-            </Switch>
-        </Router>
+                    <ProtectedRoute
+                        exact
+                        path="/dashboard">
+                        <Dashboard />
+                    </ProtectedRoute>
+                </Switch>
+            </BrowserRouter>
         </div>
     );
 }
 
-export default App;
+export default withRouter(App);

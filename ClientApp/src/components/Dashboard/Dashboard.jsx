@@ -4,7 +4,7 @@ import Col from 'react-bootstrap/Col';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import Row from 'react-bootstrap/Row';
-import { Switch, Route } from "react-router-dom";
+//import { Switch, Route } from "react-router-dom";
 
 function Dashboard() {
     return (
