@@ -21,6 +21,6 @@ namespace CashTrack.Data.Entities
         public string Notes { get; set; }
         //sub catagory, main catagory is an enum
         public ExpenseCatagory Catagory { get; set; }
-        public List<Tag> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

@@ -12,5 +12,7 @@ namespace CashTrack.Data.Entities
     {
         public int Id { get; set; }
         public string TagName { get; set; }
+        //navigation property
+        public ICollection<Expense> Expenses { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace CashTrack.Models.Expenses
 {
-    public class AllExpenses
+    public class ExpenseModel
     {
         public int Id { get; set; }
         public DateTime PurchaseDate { get; set; }

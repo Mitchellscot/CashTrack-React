@@ -15,5 +15,6 @@ namespace CashTrack.Data.Entities
         public bool SuggestOnLookup { get; set; }
         public string City { get; set; }
         public string State { get; set; }
+        public ICollection<Expense> Expenses { get; set; }
     }
 }
