@@ -40,7 +40,7 @@ namespace CashTrack.Services.Expenses
         {
             IQueryable<Expense> query = _context.Expenses;
             //query = query.Where(e => e.Catagory.Id == 14);
-            query = query.Where(e => e.Merchant.Contains("Costco"));
+            query = query.Where(e => e.Merchant.Name.Contains("Costco"));
             return await query.ToArrayAsync();
         }
     }

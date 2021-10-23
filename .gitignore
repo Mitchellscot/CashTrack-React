@@ -2,3 +2,6 @@
 .env
 ClientApp/node_modules
 package-lock.json
+.vscode
+obj
+bin

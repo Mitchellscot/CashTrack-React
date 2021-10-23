@@ -13,10 +13,12 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users {get; set;}
+        public DbSet<User> Users { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Income> Income { get; set; }
         public DbSet<ExpenseCatagory> ExpenseCatagories { get; set; }
+        public DbSet<Merchant> Merchants { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         private IConfiguration _config;
 
@@ -28,16 +30,18 @@ namespace CashTrack.Data
         //seeds the database with two users and a number of catagories
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            User firstUser = new User(){
-                Id=1,
+            User firstUser = new User()
+            {
+                Id = 1,
                 FirstName = "Mitchell",
                 LastName = "Scott",
                 Email = "Mitchellscott@me.com",
                 PasswordHash = BCryptNet.HashPassword("password"),
             };
 
-            User secondUser = new User(){
-                Id=2,
+            User secondUser = new User()
+            {
+                Id = 2,
                 FirstName = "Sarah",
                 LastName = "Scott",
                 Email = "Sarahscott@me.com",
@@ -58,10 +62,10 @@ namespace CashTrack.Data
 
         private static ExpenseCatagory[] createCatagories()
         {
-            var catagoryList = new ExpenseCatagory[71]
+            var catagoryList = new ExpenseCatagory[72]
                 {
                     new ExpenseCatagory()
-                    { 
+                    {
                         Id = 1,
                         Name = "AAA",
                         Catagory = ExpenseMainCatagory.Insurance,
@@ -409,7 +413,7 @@ namespace CashTrack.Data
                     {
                         Id = 57,
                         Name = "School",
-                        Catagory = ExpenseMainCatagory.Other,
+                        Catagory = ExpenseMainCatagory.Career,
                         InUse = false
                     },
                      new ExpenseCatagory()
@@ -444,64 +448,70 @@ namespace CashTrack.Data
                         Name = "Software",
                         Catagory = ExpenseMainCatagory.Household
                     },
-                     new ExpenseCatagory()
+                    new ExpenseCatagory()
                     {
                         Id = 63,
+                        Name = "Software Development",
+                        Catagory = ExpenseMainCatagory.Career
+                    },
+                     new ExpenseCatagory()
+                    {
+                        Id = 64,
                         Name = "Swimming",
                         Catagory = ExpenseMainCatagory.Hobbies
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 64,
+                        Id = 65,
                         Name = "Taxes",
                         Catagory = ExpenseMainCatagory.Other,
                         InUse = false
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 65,
+                        Id = 66,
                         Name = "Toiletries",
                         Catagory = ExpenseMainCatagory.Household
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 66,
+                        Id = 67,
                         Name = "Toys",
                         Catagory = ExpenseMainCatagory.Kids
                     },
                     new ExpenseCatagory()
                     {
-                        Id = 67,
+                        Id = 68,
                         Name = "Trash",
                         Catagory = ExpenseMainCatagory.Vacation
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 68,
+                        Id = 69,
                         Name = "Travel Misc",
                         Catagory = ExpenseMainCatagory.Vacation
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 69,
+                        Id = 70,
                         Name = "Water",
                         Catagory = ExpenseMainCatagory.Utilities
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 70,
+                        Id = 71,
                         Name = "Weight Training",
                         Catagory = ExpenseMainCatagory.Hobbies
                     },
                      new ExpenseCatagory()
                     {
-                        Id = 71,
+                        Id = 72,
                         Name = "Yard",
                         Catagory = ExpenseMainCatagory.Household
                     },
                 };
             return catagoryList;
         }
-        
+
     }
 }

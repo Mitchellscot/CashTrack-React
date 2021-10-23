@@ -7,6 +7,7 @@ namespace CashTrack.Data.Entities
 {
     public enum ExpenseMainCatagory
     {
+        Career,
         Clothing,
         Entertainment,
         Food,

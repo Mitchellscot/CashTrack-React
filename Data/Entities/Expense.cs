@@ -16,11 +16,11 @@ namespace CashTrack.Data.Entities
         [Required]
         public decimal Amount { get; set; }
         [StringLength(50)]
-        public string Merchant { get; set; }
+        public Merchant Merchant { get; set; }
         [StringLength(255)]
         public string Notes { get; set; }
         //sub catagory, main catagory is an enum
         public ExpenseCatagory Catagory { get; set; }
-        public List<string> Tags { get; set; }
+        public List<Tag> Tags { get; set; }
     }
 }
