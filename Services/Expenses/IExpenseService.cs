@@ -11,6 +11,7 @@ namespace CashTrack.Services.Expenses
     {
         Task<bool> Commit(); //save changes
         Task<Expense[]> GetAllExpenses();
+        Task<Expense> GetExpenseById(int id);
 
     }
 }

@@ -50,6 +50,7 @@ namespace CashTrack.Data.Services.Users
             }
             AuthenticateResponse response = MAPPER.Map<AuthenticateResponse>(user);
             response.Token = generateJwtToken(user);
+            _logger.LogInformation("User logged in");
             return response;
         }
         //Get a single user async

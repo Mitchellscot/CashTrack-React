@@ -15,6 +15,7 @@ namespace CashTrack.Models.Expenses
         public Merchant Merchant { get; set; }
         public string Notes { get; set; }
         public ExpenseCatagory Catagory { get; set; }
+        public ExpenseMainCatagory MainCatagory { get; set;  }
         public List<Tag> Tags { get; set; }
     }
 }

@@ -16,15 +16,13 @@ namespace CashTrack.Services.Expenses
 {
     public class ExpenseService : IExpenseService
     {
-        private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
         private readonly ILogger<ExpenseService> _logger;
 
         public ExpenseService(
-            IOptions<AppSettings> appSettings, IMapper mapper, AppDbContext context, ILogger<ExpenseService> logger)
+            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<ExpenseService> logger)
         {
-            this._mapper = mapper;
             this._appSettings = appSettings.Value;
             this._context = context;
             this._logger = logger;
@@ -39,9 +37,17 @@ namespace CashTrack.Services.Expenses
         public async Task<Expense[]> GetAllExpenses()
         {
             IQueryable<Expense> query = _context.Expenses;
-            //query = query.Where(e => e.Catagory.Id == 14);
-            query = query.Where(e => e.Merchant.Name.Contains("Costco"));
+            query = query.Take(100).OrderBy(x => x.PurchaseDate)
+                .Include(x => x.Catagory)
+                .Include(x => x.Merchant);
+            //query = query.Where(e => e.Merchant.Name.Contains("Costco"));
             return await query.ToArrayAsync();
+        }
+
+        public async Task<Expense> GetExpenseById(int id)
+        {
+            IQueryable<Expense> query = _context.Expenses;
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

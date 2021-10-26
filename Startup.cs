@@ -43,7 +43,7 @@ namespace CashTrack
             //needed for webpack proxy
             services.AddCors();
             services.AddControllersWithViews();
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IUserService, UserService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
