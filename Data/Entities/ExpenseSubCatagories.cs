@@ -7,13 +7,13 @@ using System.ComponentModel;
 
 namespace CashTrack.Data.Entities
 {
-    //sub catagory
-    public class ExpenseCatagory
+    public class ExpenseSubCatagories
     {
         public int Id { get; set; }
         [StringLength(50)]
         public string Name { get; set; }
-        public ExpenseMainCatagory Catagory { get; set; }
+        public ExpenseMainCatagories Catagory { get; set; }
         public bool InUse { get; set; } = true;
+        public ICollection<Expenses> Expenses { get; set; }
     }
 }

@@ -11,8 +11,8 @@ namespace CashTrack.Helpers
         public AutoMapperProfile()
         {
             CreateMap<User, AuthenticateResponse>();
-            CreateMap<Expense, ExpenseModel>()
-                .ForMember(model => model.MainCatagory, o => o.MapFrom(src => src.Catagory.Catagory));
+            //CreateMap<Expense, ExpenseModel>()
+            //    .ForMember(model => model.MainCatagory, o => o.MapFrom(src => src.Catagory.Catagory));
         }
     }
 }

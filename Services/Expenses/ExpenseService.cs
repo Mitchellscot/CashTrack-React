@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CashTrack.Services.Expenses
 {
-    public class ExpenseService : IExpenseService
+    public class ExpenseService //: IExpenseService
     {
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
@@ -34,20 +34,20 @@ namespace CashTrack.Services.Expenses
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Expense[]> GetAllExpenses()
-        {
-            IQueryable<Expense> query = _context.Expenses;
-            query = query.Take(100).OrderBy(x => x.PurchaseDate)
-                .Include(x => x.Catagory)
-                .Include(x => x.Merchant);
-            //query = query.Where(e => e.Merchant.Name.Contains("Costco"));
-            return await query.ToArrayAsync();
-        }
+        //public async Task<Expense[]> GetAllExpenses()
+        //{
+        //    IQueryable<Expense> query = _context.Expenses;
+        //    query = query.Take(100).OrderBy(x => x.PurchaseDate)
+        //        .Include(x => x.Catagory)
+        //        .Include(x => x.Merchant);
+        //    //query = query.Where(e => e.Merchant.Name.Contains("Costco"));
+        //    return await query.ToArrayAsync();
+        //}
 
-        public async Task<Expense> GetExpenseById(int id)
-        {
-            IQueryable<Expense> query = _context.Expenses;
-            return await query.FirstOrDefaultAsync(x => x.Id == id);
-        }
+        //public async Task<Expense> GetExpenseById(int id)
+        //{
+        //    IQueryable<Expense> query = _context.Expenses;
+        //    return await query.FirstOrDefaultAsync(x => x.Id == id);
+        //}
     }
 }

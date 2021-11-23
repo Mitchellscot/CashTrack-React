@@ -12,10 +12,11 @@ namespace CashTrack.Models.Expenses
         public int Id { get; set; }
         public DateTime PurchaseDate { get; set; }
         public decimal Amount { get; set; }
-        public Merchant Merchant { get; set; }
+        public Merchants Merchant { get; set; }
         public string Notes { get; set; }
-        public ExpenseCatagory Catagory { get; set; }
-        public ExpenseMainCatagory MainCatagory { get; set;  }
+        public ExpenseSubCatagories Catagory { get; set; }
+        //figure this out when you start to map DTOS
+        //public ExpenseMainCatagory MainCatagory { get; set;  }
         public List<Tag> Tags { get; set; }
     }
 }
