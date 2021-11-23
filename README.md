@@ -1,5 +1,5 @@
 # CashTrack
-![CashTrack](ClientApp/public/images/cash-track.png)
+![CashTrack](src/ClientApp/public/images/cash-track.png)
 
 
 
