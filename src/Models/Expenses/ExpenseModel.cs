@@ -14,9 +14,9 @@ namespace CashTrack.Models.Expenses
         public decimal Amount { get; set; }
         public Merchants Merchant { get; set; }
         public string Notes { get; set; }
-        public ExpenseSubCatagories Catagory { get; set; }
+        public ExpenseSubCategories category { get; set; }
         //figure this out when you start to map DTOS
-        //public ExpenseMainCatagory MainCatagory { get; set;  }
+        //public ExpenseMaincategory Maincategory { get; set;  }
         public List<Tag> Tags { get; set; }
     }
 }

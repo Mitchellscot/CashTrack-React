@@ -13,12 +13,15 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
-        public DbSet<Expenses> Expenses { get; set; }
-        public DbSet<Incomes> Incomes { get; set; }
-        public DbSet<ExpenseSubCatagories> ExpenseCatagories { get; set; }
-        public DbSet<Merchants> Merchants { get; set; }
-        public DbSet<Tag> Tags { get; set; }
+        public DbSet<User> users { get; set; }
+        public DbSet<Expenses> expenses { get; set; }
+        public DbSet<Incomes> incomes { get; set; }
+        public DbSet<ExpenseMainCategories> expense_main_categories { get;}
+        public DbSet<ExpenseSubCategories> expense_sub_categories { get; set; }
+        public DbSet<Merchants> merchants { get; set; }
+        public DbSet<Tag> tags { get; set; }
+        public DbSet<IncomeSources> income_sources { get; set; }
+        public DbSet<IncomeCategories> income_categories { get; set; }
 
         private IConfiguration _config;
 
@@ -44,7 +47,7 @@ namespace CashTrack.Data
                 Id = 2,
                 FirstName = "Sarah",
                 LastName = "Scott",
-                Email = "Sarahscott@me.com",
+                Email = "Sarahlscott@me.com",
                 PasswordHash = BCryptNet.HashPassword("password"),
             };
 
@@ -53,6 +56,10 @@ namespace CashTrack.Data
             };
 
             mb.Entity<User>().HasData(userArray);
+    //        modelBuilder.Entity<User>()
+    //.HasMany(x => x.Roles)
+    //.WithMany(x => x.Users)
+    //.Map(x => x.ToTable("UserRole", "SIGNUM"));
 
         }
 

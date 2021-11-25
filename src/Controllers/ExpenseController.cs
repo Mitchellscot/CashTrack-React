@@ -375,10 +375,10 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/catagory
+        //    //api/expense/category
         //    //returns transactions that contain a specific word in the notes section
-        //    [HttpGet("/catagory/{catagoryId}")]
-        //    public async Task<ActionResult<ExpenseModel[]>> GetCatagoryExpenses(int catagoryId)
+        //    [HttpGet("/category/{categoryId}")]
+        //    public async Task<ActionResult<ExpenseModel[]>> GetcategoryExpenses(int categoryId)
         //    {
         //        try
         //        {
@@ -391,12 +391,12 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/catagory/date-range
-        //    //Accepts an object that contains a catagory id and a beginDate and endDate
+        //    //api/expense/category/date-range
+        //    //Accepts an object that contains a category id and a beginDate and endDate
         //    //returns all transactions that match that criteria
-        //    [HttpGet("/catagory/{catagoryId}/date-range")]
-        //    //create a Catagory Request model that has a catagory Id and a date range object
-        //    public async Task<ActionResult<ExpenseModel[]>> GetCatagoryExpensesByDateRange([FromBody] CatagoryRequest catagoryRequest)
+        //    [HttpGet("/category/{categoryId}/date-range")]
+        //    //create a category Request model that has a category Id and a date range object
+        //    public async Task<ActionResult<ExpenseModel[]>> GetcategoryExpensesByDateRange([FromBody] categoryRequest categoryRequest)
         //    {
         //        //just make one controller and have the client send the date, month, year, daterange, etc...
         //        try
@@ -410,12 +410,12 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/catagory/stats
-        //    //Accepts an object that contains a catagory id
+        //    //api/expense/category/stats
+        //    //Accepts an object that contains a category id
         //    //returns all transactions that match that criteria
-        //    [HttpGet("/catagory/{catagoryId}/stats")]
-        //    //create a Catagory Request model that has a catagory Id and a date range object
-        //    public async Task<ActionResult<CatagoryStats>> GetCatagoryStats([FromBody] int catagoryId)
+        //    [HttpGet("/category/{categoryId}/stats")]
+        //    //create a category Request model that has a category Id and a date range object
+        //    public async Task<ActionResult<categoryStats>> GetcategoryStats([FromBody] int categoryId)
         //    {
         //        try
         //        {
@@ -428,12 +428,12 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/main-catagory/{mainCatagoryId}
-        //    //Accepts an object that contains a catagory id and a beginDate and endDate
+        //    //api/expense/main-category/{maincategoryId}
+        //    //Accepts an object that contains a category id and a beginDate and endDate
         //    //returns all transactions that match that criteria
-        //    [HttpGet("/main-catagory/{mainCatagoryId}")]
-        //    //Use the CatagoryRequest object for this controller as well, as they are both ints and accept the same parameters
-        //    public async Task<ActionResult<ExpenseModel[]>> GetExpensesByCatagory([FromBody] CatagoryRequest catagoryRequest)
+        //    [HttpGet("/main-category/{maincategoryId}")]
+        //    //Use the categoryRequest object for this controller as well, as they are both ints and accept the same parameters
+        //    public async Task<ActionResult<ExpenseModel[]>> GetExpensesBycategory([FromBody] categoryRequest categoryRequest)
         //    {
         //        try
         //        {
@@ -446,12 +446,12 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/main-catagory/stats
-        //    //Accepts an object that contains a catagory id
+        //    //api/expense/main-category/stats
+        //    //Accepts an object that contains a category id
         //    //returns all transactions that match that criteria
-        //    [HttpGet("/main-catagory/{mainCatagoryId}/stats")]
-        //    //create a Catagory Request model that has a catagory Id and a date range object
-        //    public async Task<ActionResult<CatagoryStats>> GetMainCatagoryStats(int catagoryId)
+        //    [HttpGet("/main-category/{maincategoryId}/stats")]
+        //    //create a category Request model that has a category Id and a date range object
+        //    public async Task<ActionResult<categoryStats>> GetMaincategoryStats(int categoryId)
         //    {
         //        try
         //        {
@@ -485,7 +485,7 @@ namespace CashTrack.Controllers
         //    //api/merchant/stats
         //    //returns a bunch of cool stats about my shopping habbits
         //    [HttpGet("/merchant/stats")]
-        //    //Most shopped at stores... by catagory
+        //    //Most shopped at stores... by category
         //    //amount spent at the stores
         //    //Average amount spent at the stores (table broken up by year?)
         //    //Think this one through, LOW PRIORITY

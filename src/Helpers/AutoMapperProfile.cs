@@ -12,7 +12,7 @@ namespace CashTrack.Helpers
         {
             CreateMap<User, AuthenticateResponse>();
             //CreateMap<Expense, ExpenseModel>()
-            //    .ForMember(model => model.MainCatagory, o => o.MapFrom(src => src.Catagory.Catagory));
+            //    .ForMember(model => model.Maincategory, o => o.MapFrom(src => src.category.category));
         }
     }
 }

@@ -38,7 +38,7 @@ namespace CashTrack.Services.Expenses
         //{
         //    IQueryable<Expense> query = _context.Expenses;
         //    query = query.Take(100).OrderBy(x => x.PurchaseDate)
-        //        .Include(x => x.Catagory)
+        //        .Include(x => x.category)
         //        .Include(x => x.Merchant);
         //    //query = query.Where(e => e.Merchant.Name.Contains("Costco"));
         //    return await query.ToArrayAsync();

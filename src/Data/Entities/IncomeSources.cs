@@ -2,10 +2,9 @@
 
 namespace CashTrack.Data.Entities
 {
-    public class IncomeSource
+    public class IncomeSources
     {
         public int Id { get; set; }
-        public IncomeCatagories Catagory { get; set; }
         [StringLength(100)]
         public string Source { get; set; }
     }

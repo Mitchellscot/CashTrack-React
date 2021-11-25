@@ -19,7 +19,8 @@ namespace CashTrack.Data.Entities
         public Merchants Merchant { get; set; }
         [StringLength(255)]
         public string Notes { get; set; }
-        public ExpenseSubCatagories Catagory { get; set; }
+        public ExpenseSubCategories Category { get; set; }
         public List<Tag> Tags { get; set; }
+        public bool ExcludeFromStatistics { get; set; }
     }
 }

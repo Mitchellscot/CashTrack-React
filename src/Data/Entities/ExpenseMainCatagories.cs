@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CashTrack.Data.Entities
 {
-    public class ExpenseMainCatagories
+    public class ExpenseMainCategories
     {
         public int Id { get; set; }
         [StringLength(50)]
-        public string Catagory { get; set; }
-        public ICollection<ExpenseSubCatagories> SubCatagories { get; set;}
+        public string Category { get; set; }
+        public ICollection<ExpenseSubCategories> SubCategories { get; set;}
     }
 }
