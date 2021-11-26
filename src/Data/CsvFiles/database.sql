@@ -1,11 +1,11 @@
 --copy data from expense main category file
-COPY expense_main_categories(id, category)
+COPY expense_main_categories(id, main_category_name)
 FROM 'C:\Users\Public\db-files\expense-main-categories.csv'
 DELIMITER ','
 CSV HEADER;
 
 --copy data from expense sub category file
-COPY expense_sub_categories(id, name, categoryid, in_use)
+COPY expense_sub_categories(id, sub_category_name, main_categoryid, in_use)
 FROM 'C:\Users\Public\db-files\expense-sub-categories.csv'
 DELIMITER ','
 CSV HEADER;
@@ -84,26 +84,26 @@ drop table merchants;
 drop table tags;
 drop table users;
 
---tag example. Set a tag named "Mitch" to every expense in the dentist category with the name "Mitch" in the notes
-select * from expenses WHERE notes ILIKE '%mitch%' AND categoryid=14;
+----tag example. Set a tag named "Mitch" to every expense in the dentist category with the name "Mitch" in the notes
+--select * from expenses WHERE notes ILIKE '%mitch%' AND categoryid=14;
 
-insert into tags(tag_name) VALUES ('Mitch') RETURNING id;
+--insert into tags(tag_name) VALUES ('Mitch') RETURNING id;
 
---these ExpenseIds might be different. Enter in the ids that you get from the above returning statement
-insert into expense_tags(expense_id, tag_id) VALUES 
-	(659, 1),
-	(1532, 1),
-	(3028, 1),
-	(3048, 1),
-	(3094, 1),
-	(3098, 1),
-	(3108, 1);
+----these ExpenseIds might be different. Enter in the ids that you get from the above returning statement
+--insert into expense_tags(expense_id, tag_id) VALUES 
+--	(659, 1),
+--	(1532, 1),
+--	(3028, 1),
+--	(3048, 1),
+--	(3094, 1),
+--	(3098, 1),
+--	(3108, 1);
 
---confirm tag works be returning all tags with the tag name Mitch
-select expenses.id, expenses.purchase_date, expenses.amount, expenses.merchantid, expenses.notes, expenses.categoryid
-from expenses
-join expense_tags ON expense_tags.expense_id=expenses.id
-join tags ON expense_tags.tag_id=tags.id
-where tags.tag_name= 'Mitch'
-group by expenses.id, expenses.purchase_date, expenses.amount, expenses.merchantid, expenses.notes, expenses.categoryid
-order by purchase_date ASC;
+----confirm tag works be returning all tags with the tag name Mitch
+--select expenses.id, expenses.purchase_date, expenses.amount, expenses.merchantid, expenses.notes, expenses.categoryid
+--from expenses
+--join expense_tags ON expense_tags.expense_id=expenses.id
+--join tags ON expense_tags.tag_id=tags.id
+--where tags.tag_name= 'Mitch'
+--group by expenses.id, expenses.purchase_date, expenses.amount, expenses.merchantid, expenses.notes, expenses.categoryid
+--order by purchase_date ASC;

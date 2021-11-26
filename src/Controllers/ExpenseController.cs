@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CashTrack.Data.Services.Users;
+using CashTrack.Data.Services.UserRepository;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Models.Expenses;
-using CashTrack.Services.Expenses;
+using CashTrack.Services.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
+using CashTrack.Models.ExpenseModels;
+using System;
+using CashTrack.Helpers.Exceptions;
+using Npgsql;
 
 namespace CashTrack.Controllers
 {
@@ -16,6 +19,11 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
+        //Install this tool to test:
+        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
+
+        //also, think about how you can reduce the number of controllers here this is rediculous
+
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
         private readonly IExpenseService _expenseService;
@@ -26,38 +34,58 @@ namespace CashTrack.Controllers
             this._logger = logger;
             this._expenseService = expenseService;
         }
-        
+
         [HttpGet]
-        public async Task<ActionResult<ExpenseModel[]>> Expenses()
+        public async Task<ActionResult<Expense[]>> GetAllExpenses(int pageNumber = 1, int pageSize = 25)
         {
             try
             {
-                _logger.LogInformation("Getting all expenses");
-                var response = await _expenseService.GetAllExpenses();
+                var response = await _expenseService.GetExpenses(pageNumber, pageSize);
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (PostgresException)
+            {
+                return BadRequest(new { message = "invalid query string parameters" });
+            }
+            catch (Exception ex)
             {
                 _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
 
-        //Install this tool to test:
-        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
-
-        //also, think about how you can reduce the number of controllers here this is rediculous
-
         //api/expense/{id}
-        //accepts an int named expenseId
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseModel>> GetExpense(int expenseid)
+        public async Task<ActionResult<Expense>> GetAnExpenseById(int id)
         {
             try
             {
-                var result = await _expenseService.GetExpenseById(expenseid);
-                return Ok(_mapper.Map<ExpenseModel>(result));
+                var result = await _expenseService.GetExpenseById(id);
+                return Ok(_mapper.Map<Expense>(result));
+            }
+            catch (ExpenseNotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        //api/expense/date/{date}
+        //accepts a date in string format
+        //Expenses queried by dates, all return collections
+        [HttpGet("/date")]
+        //create a DateRequest object with just a date
+        public async Task<ActionResult<Expense[]>> GetAllExpensesByDate(string date)
+        {
+            try
+            {
+                //DateTime.TryParse(date)...
+                //logic goes here
+                return Content("This is the data you were looking for.");
 
             }
             catch (System.Exception ex)
@@ -65,26 +93,6 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        //    //api/expense/date/{date}
-        //    //accepts a date in string format
-        //    //Expenses queried by dates, all return collections
-        //    [HttpGet("/date")]
-        //    //create a DateRequest object with just a date
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByDate([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
 
         //    //api/expense/date/total
         //    //accepts a date in string format

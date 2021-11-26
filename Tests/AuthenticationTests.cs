@@ -2,7 +2,7 @@ using Xunit;
 
 namespace Tests;
 
-public class UnitTest1
+public class AuthenticationTests
 {
     [Fact]
     public void Test1()

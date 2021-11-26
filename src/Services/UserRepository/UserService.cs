@@ -4,19 +4,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.Users;
+using CashTrack.Models.UserModels;
 using BCryptNet = BCrypt.Net.BCrypt;
 
-namespace CashTrack.Data.Services.Users
+namespace CashTrack.Data.Services.UserRepository
 {
     public class UserService : IUserService
     {
@@ -34,27 +32,19 @@ namespace CashTrack.Data.Services.Users
             this._logger = logger;
         }
 
-        public async Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model)
+        public async Task<Authentication.Response> AuthenticateAsync(Authentication.Request model)
         {
-            //strange that I have to add this but whatever...
-             var config = new MapperConfiguration(cfg => {
-                cfg.CreateMap<User, AuthenticateResponse>();
-            });
-            var MAPPER = config.CreateMapper();
-            //hopefully one day I will be able to get rid of the above code.
-
             var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
             if (user == null || !BCryptNet.Verify(model.Password, user.password_hash))
             {
                 return null;
             }
-            AuthenticateResponse response = MAPPER.Map<AuthenticateResponse>(user);
-            response.Token = generateJwtToken(user);
-            _logger.LogInformation("User logged in");
+            var response = _mapper.Map<Authentication.Response>(user) with { Token = GenerateJwtToken(user) };
+            _logger.LogInformation($"{response.FirstName} logged in at {DateTime.Now}");
             return response;
         }
-        //Get a single user async
-        public async Task<User> GetUserById(int id)
+
+        public async Task<User> GetUserByIdAsync(int id)
         {
             var query = _context.Users.Where(u => u.id == id);
             if (query.Any())
@@ -63,32 +53,8 @@ namespace CashTrack.Data.Services.Users
             }
             return null;
         }
-        //for use by internal methods... kind of redundant but it's not async.
-        public User GetById(int id)
-        {
-            var user = _context.Users.Find(id);
-            if (user == null) return null;
-            return user;
-        }
-        //gets all users async
-        public async Task<User[]> GetAllUsers()
-        {
-            //set up a data structure that can be queried
-            IQueryable<User> query = _context.Users;
-            //for any given user, order it by their last name
-            query = query.OrderBy(u => u.last_name);
-            //turn it back into an array
-            return await query.ToArrayAsync();
-        }
 
-
-        public async Task<bool> Commit()
-        {
-            //only return if more than one row was affected
-            return (await _context.SaveChangesAsync()) > 0;
-        }
-
-        private string generateJwtToken(User user)
+        private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

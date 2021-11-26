@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CashTrack.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211126015937_init")]
+    [Migration("20211126174126_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace CashTrack.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<string>("category")
+                    b.Property<string>("main_category_name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -86,20 +86,20 @@ namespace CashTrack.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
-                    b.Property<int?>("categoryid")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("in_use")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("name")
+                    b.Property<int?>("main_categoryid")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("sub_category_name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("id");
 
-                    b.HasIndex("categoryid");
+                    b.HasIndex("main_categoryid");
 
                     b.ToTable("expense_sub_categories");
                 });
@@ -266,7 +266,7 @@ namespace CashTrack.Data.Migrations
                             email = "Mitchellscott@me.com",
                             first_name = "Mitchell",
                             last_name = "Scott",
-                            password_hash = "$2a$11$RJe0G6qTNMiZ/UthK5buPeqGjgKeTlfU8suZRXx1Vn/3AZ9QLU.Yi"
+                            password_hash = "$2a$11$FEkIeLfunFg69jX36cK90eQ4YsJgp2O/N1fXUFrhWewk4looXtdkG"
                         },
                         new
                         {
@@ -274,7 +274,7 @@ namespace CashTrack.Data.Migrations
                             email = "Sarahlscott@me.com",
                             first_name = "Sarah",
                             last_name = "Scott",
-                            password_hash = "$2a$11$iXJjS97cNfXqcJlFldFGpeSVlAHBfa1fK6ec0mLFfpe4ilwjAQAyi"
+                            password_hash = "$2a$11$c.5mAP83IB30EFPYuxrfMuWSEEXFKTlBKaufiMpRW0YdrSslltV2u"
                         });
                 });
 
@@ -295,11 +295,11 @@ namespace CashTrack.Data.Migrations
 
             modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
                 {
-                    b.HasOne("CashTrack.Data.Entities.ExpenseMainCategories", "category")
+                    b.HasOne("CashTrack.Data.Entities.ExpenseMainCategories", "main_category")
                         .WithMany("sub_categories")
-                        .HasForeignKey("categoryid");
+                        .HasForeignKey("main_categoryid");
 
-                    b.Navigation("category");
+                    b.Navigation("main_category");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.ExpenseTags", b =>

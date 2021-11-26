@@ -10,7 +10,7 @@ namespace CashTrack.Data.Entities
         public int id { get; set; }
         [StringLength(50)]
         [Required]
-        public string category { get; set; }
+        public string main_category_name { get; set; }
         public ICollection<ExpenseSubCategories> sub_categories { get; set;}
     }
 }

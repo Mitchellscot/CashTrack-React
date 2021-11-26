@@ -16,7 +16,7 @@ namespace CashTrack.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    main_category_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,16 +100,16 @@ namespace CashTrack.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    categoryid = table.Column<int>(type: "integer", nullable: true),
+                    sub_category_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    main_categoryid = table.Column<int>(type: "integer", nullable: true),
                     in_use = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_expense_sub_categories", x => x.id);
                     table.ForeignKey(
-                        name: "FK_expense_sub_categories_expense_main_categories_categoryid",
-                        column: x => x.categoryid,
+                        name: "FK_expense_sub_categories_expense_main_categories_main_categor~",
+                        column: x => x.main_categoryid,
                         principalTable: "expense_main_categories",
                         principalColumn: "id");
                 });
@@ -198,14 +198,14 @@ namespace CashTrack.Data.Migrations
                 columns: new[] { "id", "email", "first_name", "last_name", "password_hash" },
                 values: new object[,]
                 {
-                    { 1, "Mitchellscott@me.com", "Mitchell", "Scott", "$2a$11$RJe0G6qTNMiZ/UthK5buPeqGjgKeTlfU8suZRXx1Vn/3AZ9QLU.Yi" },
-                    { 2, "Sarahlscott@me.com", "Sarah", "Scott", "$2a$11$iXJjS97cNfXqcJlFldFGpeSVlAHBfa1fK6ec0mLFfpe4ilwjAQAyi" }
+                    { 1, "Mitchellscott@me.com", "Mitchell", "Scott", "$2a$11$FEkIeLfunFg69jX36cK90eQ4YsJgp2O/N1fXUFrhWewk4looXtdkG" },
+                    { 2, "Sarahlscott@me.com", "Sarah", "Scott", "$2a$11$c.5mAP83IB30EFPYuxrfMuWSEEXFKTlBKaufiMpRW0YdrSslltV2u" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_expense_sub_categories_categoryid",
+                name: "IX_expense_sub_categories_main_categoryid",
                 table: "expense_sub_categories",
-                column: "categoryid");
+                column: "main_categoryid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_expense_tags_tag_id",

@@ -16,7 +16,7 @@ namespace CashTrack.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
         public DbSet<Incomes> Incomes { get; set; }
-        public DbSet<ExpenseMainCategories> ExpenseMainCategories { get;}
+        public DbSet<ExpenseMainCategories> ExpenseMainCategories { get; set; }
         public DbSet<ExpenseSubCategories> ExpenseSubCategories { get; set; }
         public DbSet<Merchants> Merchants { get; set; }
         public DbSet<Tags> Tags { get; set; }

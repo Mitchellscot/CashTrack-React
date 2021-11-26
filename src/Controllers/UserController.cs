@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CashTrack.Data.Services.Users;
-using CashTrack.Models.Users;
+using CashTrack.Data.Services.UserRepository;
+using CashTrack.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
+using System;
 
 namespace CashTrack.Controllers
 {
@@ -25,19 +26,24 @@ namespace CashTrack.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<ActionResult<AuthenticateResponse>> Authenticate(AuthenticateRequest model)
+        public async Task<ActionResult<Authentication.Response>> Authenticate(Authentication.Request model)
         {
             try
             {
                 var response = await _userService.AuthenticateAsync(model);
-                if (response == null){
-                    return Unauthorized(new {message = "Name or Password incorrect"});
+                if (response == null)
+                {
+                    return Unauthorized(new { message = "YOU DIDN'T SAY THE MAGIC WORD!" });
                 }
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (ArgumentNullException)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR AUTHENTICATING {ex.Message}");
+                return BadRequest(new { message = "Ah ah ah... you didn't say the magic words!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"HEY MITCH - ERROR AUTHENTICATING {ex.Message} {ex.GetType().ToString()} {ex.InnerException} {ex.StackTrace}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
