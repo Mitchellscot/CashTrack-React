@@ -14,7 +14,6 @@ using CashTrack.Data.Services.Users;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
-using AutoMapper;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
 using CashTrack.Services.expenses;

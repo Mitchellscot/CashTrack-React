@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using CashTrack.Data.Entities;
 
-namespace CashTrack.Models.expenses
+namespace CashTrack.Models.Expenses
 {
     public class ExpenseProfile : Profile
     {
         public ExpenseProfile()
         {
-            this.CreateMap<Expenses, Expense>()
+            this.CreateMap<Data.Entities.Expenses, Expense>()
                 .ForMember(e => e.Id, o => o.MapFrom(m => m.id))
                 .ForMember(e => e.PurchaseDate, o => o.MapFrom(m => m.purchase_date))
                 .ForMember(e => e.Amount, o => o.MapFrom(m => m.amount))

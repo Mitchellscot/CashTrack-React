@@ -7,7 +7,9 @@ using AutoMapper;
 using System.Threading.Tasks;
 using CashTrack.Services.expenses;
 using Microsoft.AspNetCore.Http;
-using CashTrack.Models.expenses;
+using CashTrack.Models.Expenses;
+using System;
+using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Controllers
 {
@@ -26,22 +28,22 @@ namespace CashTrack.Controllers
             this._logger = logger;
             this._expenseService = expenseService;
         }
-        
-        //[HttpGet]
-        //public async Task<ActionResult<Expense[]>> Expenses()
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation("Getting all expenses");
-        //        var response = await _expenseService.GetAllExpenses();
-        //        return Ok(response);
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
-        //        return BadRequest(new { message = ex.Message.ToString() });
-        //    }
-        //}
+
+        [HttpGet]
+        public async Task<ActionResult<Expense[]>> Expenses(int pageNumber = 1, int pageSize = 5)
+        {
+            try
+            {
+                _logger.LogInformation("Getting all expenses");
+                var response = await _expenseService.GetExpenses(pageNumber, pageSize);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
 
         //Install this tool to test:
         //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
@@ -49,26 +51,23 @@ namespace CashTrack.Controllers
         //also, think about how you can reduce the number of controllers here this is rediculous
 
         //api/expense/{id}
-        //accepts an int named expenseId
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int expenseid)
+        public async Task<ActionResult<Expense>> GetExpense(int id)
         {
             try
             {
-                var result = await _expenseService.GetExpenseById(expenseid);
+                var result = await _expenseService.GetExpenseById(id);
                 return Ok(_mapper.Map<Expense>(result));
-
             }
-            catch (System.Exception ex)
+            catch (ExpenseNotFoundException ex)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }
-        [HttpGet("hi")]
-        public IActionResult GetTestController()
-        {
-            return Ok("hello Mitchell");
         }
 
         //    //api/expense/date/{date}

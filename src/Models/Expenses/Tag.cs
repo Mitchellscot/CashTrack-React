@@ -1,4 +1,4 @@
-﻿namespace CashTrack.Models.expenses
+﻿namespace CashTrack.Models.Expenses
 {
     public class Tag
     {

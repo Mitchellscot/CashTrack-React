@@ -1,8 +1,7 @@
-﻿using AutoMapper;
-using CashTrack.Data;
+﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.expenses;
+using CashTrack.Models.Expenses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Data;
+using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Services.expenses
 {
@@ -34,39 +35,35 @@ namespace CashTrack.Services.expenses
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public Task<Expense[]> GetAllExpenses()
+        public async Task<Expenses[]> GetExpenses(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var expenses = await _context.Expenses
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToArrayAsync();
+                
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
-
-        //public async Task<Expense[]> GetAllExpenses(int pageSize = 25, int pageNumber = 1)
-        //{
-
-
-        //    IQueryable<Expense> query = _context.;
-        //    query = query.Take(100).OrderBy(x => x.PurchaseDate)
-        //        .Include(x => x.category)
-        //        .Include(x => x.Merchant);
-        //    //query = query.Where(e => e.Merchant.Name.Contains("Costco"));
-        //    return await query.ToArrayAsync();
-        //}
 
         public async Task<Expenses> GetExpenseById(int id)
         {
 
-            IQueryable<Expenses> query = _context.Expenses;
-            var singleExpense = await query.FirstOrDefaultAsync(x => x.id == id);
+            var singleExpense = await _context.Expenses.SingleOrDefaultAsync(x => x.id == id);
+            if (singleExpense == null)
+            {
+                throw new ExpenseNotFoundException(id.ToString());
+            }
             return singleExpense;
-        }
 
-        Task<Expenses[]> IExpenseService.GetAllExpenses()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Expenses> IExpenseService.GetExpenseById(int id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -4,11 +4,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
@@ -36,13 +34,12 @@ namespace CashTrack.Data.Services.Users
 
         public async Task<Authentication.Response> AuthenticateAsync(Authentication.Request model)
         {
-
             var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
             if (user == null || !BCryptNet.Verify(model.Password, user.password_hash))
             {
                 return null;
             }
-            var response = _mapper.Map<Authentication.Response>(user) with { Token = generateJwtToken(user) };
+            var response = _mapper.Map<Authentication.Response>(user) with { Token = GenerateJwtToken(user) };
             _logger.LogInformation($"{response.FirstName} logged in at {DateTime.Now}");
             return response;
         }
@@ -57,7 +54,7 @@ namespace CashTrack.Data.Services.Users
             return null;
         }
 
-        private string generateJwtToken(User user)
+        private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

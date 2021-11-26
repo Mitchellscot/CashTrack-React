@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CashTrack.Models.expenses
+namespace CashTrack.Models.Expenses
 {
     public class Expense : Transaction
     {

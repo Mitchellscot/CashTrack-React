@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CashTrack.Models.expenses
+namespace CashTrack.Models.Expenses
 {
     public abstract class Transaction
     {
