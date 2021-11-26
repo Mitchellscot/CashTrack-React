@@ -17,7 +17,7 @@ using CashTrack.Data;
 using AutoMapper;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
-using CashTrack.Services.Expenses;
+using CashTrack.Services.expenses;
 
 namespace CashTrack
 {
@@ -34,17 +34,21 @@ namespace CashTrack
         {
             //this code is added in case I want to deploy to Heroku later:
             string DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL_STR");
+
             string connectionString = (DATABASE_URL == null ? Configuration.GetConnectionString("DefaultConnection") : DATABASE_URL);
             Console.WriteLine($"Using connection string: {connectionString}");
+
             //using AppDbContext with Postgres database
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
+
             //needed for webpack proxy
             services.AddCors();
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            //services.AddScoped<IExpenseService, ExpenseService>();
+
+            services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IUserService, UserService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             // In production, the React files will be served from this directory

@@ -1,7 +1,6 @@
 using AutoMapper;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
-using CashTrack.Models.Expenses;
 
 //this class doesn't do shit as automapper can't find it
 namespace CashTrack.Helpers

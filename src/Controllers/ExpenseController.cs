@@ -5,9 +5,9 @@ using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Models.Expenses;
-using CashTrack.Services.Expenses;
+using CashTrack.Services.expenses;
 using Microsoft.AspNetCore.Http;
+using CashTrack.Models.expenses;
 
 namespace CashTrack.Controllers
 {
@@ -27,21 +27,21 @@ namespace CashTrack.Controllers
             this._expenseService = expenseService;
         }
         
-        [HttpGet]
-        public async Task<ActionResult<ExpenseModel[]>> Expenses()
-        {
-            try
-            {
-                _logger.LogInformation("Getting all expenses");
-                var response = await _expenseService.GetAllExpenses();
-                return Ok(response);
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
-                return BadRequest(new { message = ex.Message.ToString() });
-            }
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<Expense[]>> Expenses()
+        //{
+        //    try
+        //    {
+        //        _logger.LogInformation("Getting all expenses");
+        //        var response = await _expenseService.GetAllExpenses();
+        //        return Ok(response);
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
+        //        return BadRequest(new { message = ex.Message.ToString() });
+        //    }
+        //}
 
         //Install this tool to test:
         //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
@@ -52,18 +52,23 @@ namespace CashTrack.Controllers
         //accepts an int named expenseId
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseModel>> GetExpense(int expenseid)
+        public async Task<ActionResult<Expense>> GetExpense(int expenseid)
         {
             try
             {
                 var result = await _expenseService.GetExpenseById(expenseid);
-                return Ok(_mapper.Map<ExpenseModel>(result));
+                return Ok(_mapper.Map<Expense>(result));
 
             }
             catch (System.Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+        }
+        [HttpGet("hi")]
+        public IActionResult GetTestController()
+        {
+            return Ok("hello Mitchell");
         }
 
         //    //api/expense/date/{date}

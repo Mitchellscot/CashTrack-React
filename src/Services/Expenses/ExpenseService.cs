@@ -2,7 +2,7 @@
 using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.expenses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,9 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CashTrack.Services.Expenses
+namespace CashTrack.Services.expenses
 {
-    public class ExpenseService //: IExpenseService
+    public class ExpenseService : IExpenseService
     {
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
@@ -34,9 +34,16 @@ namespace CashTrack.Services.Expenses
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        //public async Task<Expense[]> GetAllExpenses()
+        public Task<Expense[]> GetAllExpenses()
+        {
+            throw new NotImplementedException();
+        }
+
+        //public async Task<Expense[]> GetAllExpenses(int pageSize = 25, int pageNumber = 1)
         //{
-        //    IQueryable<Expense> query = _context.Expenses;
+
+
+        //    IQueryable<Expense> query = _context.;
         //    query = query.Take(100).OrderBy(x => x.PurchaseDate)
         //        .Include(x => x.category)
         //        .Include(x => x.Merchant);
@@ -44,10 +51,22 @@ namespace CashTrack.Services.Expenses
         //    return await query.ToArrayAsync();
         //}
 
-        //public async Task<Expense> GetExpenseById(int id)
-        //{
-        //    IQueryable<Expense> query = _context.Expenses;
-        //    return await query.FirstOrDefaultAsync(x => x.Id == id);
-        //}
+        public async Task<Expenses> GetExpenseById(int id)
+        {
+
+            IQueryable<Expenses> query = _context.Expenses;
+            var singleExpense = await query.FirstOrDefaultAsync(x => x.id == id);
+            return singleExpense;
+        }
+
+        Task<Expenses[]> IExpenseService.GetAllExpenses()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<Expenses> IExpenseService.GetExpenseById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

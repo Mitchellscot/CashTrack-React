@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CashTrack.Data.Entities;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.expenses;
 
-namespace CashTrack.Services.Expenses
+namespace CashTrack.Services.expenses
 {
     public interface IExpenseService
     {
         Task<bool> Commit(); //save changes
-        Task<Expense[]> GetAllExpenses();
-        Task<Expense> GetExpenseById(int id);
+        Task<Expenses[]> GetAllExpenses();
+        Task<Expenses> GetExpenseById(int id);
 
     }
 }

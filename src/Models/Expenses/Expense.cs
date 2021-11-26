@@ -1,7 +1,8 @@
 ﻿using CashTrack.Data.Entities;
 using System;
+using System.Collections.Generic;
 
-namespace CashTrack.Models.Expenses
+namespace CashTrack.Models.expenses
 {
     public class Expense : Transaction
     {
@@ -10,6 +11,8 @@ namespace CashTrack.Models.Expenses
         public override decimal Amount { get; set; }
         public override string Notes { get; set; }
         public Merchants Merchant { get; set; }
-
+        public List<Tag> Tags { get; set; }
+        public ExpenseSubCategory SubCategory { get; set; }
+        public ExpenseMainCategory MainCategory { get; set; }
     }
 }
