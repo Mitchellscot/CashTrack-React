@@ -1,13 +1,14 @@
 ﻿using System.Threading.Tasks;
 using CashTrack.Data.Entities;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.ExpenseModels;
 
 namespace CashTrack.Services.ExpenseRepository
 {
     public interface IExpenseService
     {
         Task<bool> Commit(); //save changes
-        Task<Data.Entities.Expenses[]> GetExpenses(int pageNumber, int pageSize);
-        Task<Data.Entities.Expenses> GetExpenseById(int id);
+        Task<Expenses[]> GetExpenses(int pageNumber, int pageSize);
+        Task<Expenses> GetExpenseById(int id);
+        Task<Expenses[]> GetExpensesByDate();
     }
 }

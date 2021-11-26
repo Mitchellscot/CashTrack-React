@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.Users;
+using CashTrack.Models.UserModels;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace CashTrack.Data.Services.UserRepository

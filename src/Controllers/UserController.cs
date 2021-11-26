@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CashTrack.Data.Services.UserRepository;
-using CashTrack.Models.Users;
+using CashTrack.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;

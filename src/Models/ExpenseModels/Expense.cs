@@ -1,15 +1,16 @@
 ﻿using CashTrack.Data.Entities;
+using CashTrack.Models.TagModels;
 using System;
 using System.Collections.Generic;
 
-namespace CashTrack.Models.Expenses
+namespace CashTrack.Models.ExpenseModels
 {
-    public class Expense : Transaction
+    public class Expense
     {
-        public override int Id { get; set; }
-        public override DateTime PurchaseDate { get; set; }
-        public override decimal Amount { get; set; }
-        public override string Notes { get; set; }
+        public int Id { get; set; }
+        public DateTime PurchaseDate { get; set; }
+        public decimal Amount { get; set; }
+        public string Notes { get; set; }
         public string Merchant { get; set; }
         public ICollection<Tag> Tags { get; set; }
         public string SubCategory { get; set; }

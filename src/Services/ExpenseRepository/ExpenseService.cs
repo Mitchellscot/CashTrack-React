@@ -1,7 +1,7 @@
 ﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.ExpenseModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

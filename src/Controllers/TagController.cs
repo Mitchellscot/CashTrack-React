@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.ExpenseModels;
+using CashTrack.Models.TagModels;
 using CashTrack.Services.TagRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

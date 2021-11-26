@@ -7,7 +7,7 @@ using AutoMapper;
 using System.Threading.Tasks;
 using CashTrack.Services.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.ExpenseModels;
 using System;
 using CashTrack.Helpers.Exceptions;
 using Npgsql;
@@ -19,6 +19,11 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
+        //Install this tool to test:
+        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
+
+        //also, think about how you can reduce the number of controllers here this is rediculous
+
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
         private readonly IExpenseService _expenseService;
@@ -31,42 +36,28 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Expense[]>> Expenses(int pageNumber = 1, int pageSize = 25)
+        public async Task<ActionResult<Expense[]>> GetAllExpenses(int pageNumber = 1, int pageSize = 25)
         {
             try
             {
                 var response = await _expenseService.GetExpenses(pageNumber, pageSize);
                 return Ok(response);
             }
-            catch (PostgresException ex) when (ex.Message.Contains("2201X:"))
+            catch (PostgresException)
             {
-                _logger.LogInformation("A");
-                _logger.LogInformation(ex.Message);
-                return BadRequest(new { message = "invalid query string parameters" });
-            }
-            catch (PostgresException ex) when (ex.Message.Contains("2201W:"))
-            {
-                _logger.LogInformation("B");
-                _logger.LogInformation(ex.Message);
                 return BadRequest(new { message = "invalid query string parameters" });
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("C");
                 _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
 
-        //Install this tool to test:
-        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
-
-        //also, think about how you can reduce the number of controllers here this is rediculous
-
         //api/expense/{id}
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int id)
+        public async Task<ActionResult<Expense>> GetAnExpenseById(int id)
         {
             try
             {
@@ -83,25 +74,25 @@ namespace CashTrack.Controllers
             }
         }
 
-        //    //api/expense/date/{date}
-        //    //accepts a date in string format
-        //    //Expenses queried by dates, all return collections
-        //    [HttpGet("/date")]
-        //    //create a DateRequest object with just a date
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByDate([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
+        //api/expense/date/{date}
+        //accepts a date in string format
+        //Expenses queried by dates, all return collections
+        [HttpGet("/date")]
+        //create a DateRequest object with just a date
+        public async Task<ActionResult<Expense[]>> GetAllExpensesByDate(string date)
+        {
+            try
+            {
+                //DateTime.TryParse(date)...
+                //logic goes here
+                return Content("This is the data you were looking for.");
 
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
         //    //api/expense/date/total
         //    //accepts a date in string format

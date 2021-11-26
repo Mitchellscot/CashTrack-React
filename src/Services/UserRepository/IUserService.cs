@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
-using CashTrack.Models.Users;
+using CashTrack.Models.UserModels;
 
 namespace CashTrack.Data.Services.UserRepository
 {

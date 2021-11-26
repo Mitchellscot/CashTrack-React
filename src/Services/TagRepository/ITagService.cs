@@ -1,5 +1,5 @@
 ﻿using CashTrack.Data.Entities;
-using CashTrack.Models.Expenses;
+using CashTrack.Models.ExpenseModels;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.TagRepository

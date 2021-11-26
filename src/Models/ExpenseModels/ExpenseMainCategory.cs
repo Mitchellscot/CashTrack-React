@@ -1,4 +1,4 @@
-﻿namespace CashTrack.Models.Expenses
+﻿namespace CashTrack.Models.ExpenseModels
 {
     public class ExpenseMainCategory
     {
