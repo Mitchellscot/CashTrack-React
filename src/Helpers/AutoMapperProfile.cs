@@ -8,9 +8,12 @@ namespace CashTrack.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, AuthenticateResponse>()
-                .ForMember(u => u.FirstName, o => o.MapFrom(r => r.first_name))
-                .ForMember(u => u.LastName, o => o.MapFrom(r => r.last_name));
+            CreateMap<User, Authentication.Response>()
+                .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
+                .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
+                .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
+                .ForMember(u => u.Email, o => o.MapFrom(src => src.email))
+                ;
             //CreateMap<Expense, ExpenseModel>()
             //    .ForMember(model => model.Maincategory, o => o.MapFrom(src => src.category.category));
         }

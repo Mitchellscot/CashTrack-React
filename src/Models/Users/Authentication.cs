@@ -1,8 +1,17 @@
-﻿namespace CashTrack.Models.Users
+﻿
+namespace CashTrack.Models.Users
 {
     public class Authentication
     {
         public record Request(string Name, string Password);
-        public record Response(int Id, string FirstName, string LastName, string Email, string Token);
+        //automapper requires a parameterless constructor. This does the trick.
+        public record Response()
+        {
+            public int Id { get; init; }
+            public string FirstName { get; init; }
+            public string LastName { get; init; }
+            public string Email { get; init; }
+            public string Token { get; init; }
+        };
     }
 }

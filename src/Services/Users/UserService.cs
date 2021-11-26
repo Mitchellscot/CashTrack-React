@@ -34,7 +34,7 @@ namespace CashTrack.Data.Services.Users
             this._logger = logger;
         }
 
-        public async Task<AuthenticateResponse> AuthenticateAsync(Authentication.Request model)
+        public async Task<Authentication.Response> AuthenticateAsync(Authentication.Request model)
         {
 
             var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
@@ -42,8 +42,7 @@ namespace CashTrack.Data.Services.Users
             {
                 return null;
             }
-            AuthenticateResponse response = _mapper.Map<AuthenticateResponse>(user);
-            response.Token = generateJwtToken(user);
+            var response = _mapper.Map<Authentication.Response>(user) with { Token = generateJwtToken(user) };
             _logger.LogInformation($"{response.FirstName} logged in at {DateTime.Now}");
             return response;
         }
