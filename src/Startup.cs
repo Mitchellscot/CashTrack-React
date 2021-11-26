@@ -11,6 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
 using CashTrack.Services.ExpenseRepository;
 using CashTrack.Services.TagRepository;
+using FluentValidation.AspNetCore;
+using CashTrack.Helpers.Validators;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CashTrack
 {
@@ -39,7 +42,17 @@ namespace CashTrack
             //needed for webpack proxy
             services.AddCors();
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllersWithViews();
+
+            services.AddMvc(opt =>
+            {
+                opt.Filters.Add(typeof(CustomValidationFilter));
+            })
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<ITagService, TagService>();

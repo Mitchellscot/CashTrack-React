@@ -43,10 +43,6 @@ namespace CashTrack.Controllers
                 var response = await _expenseService.GetExpenses(pageNumber, pageSize);
                 return Ok(response);
             }
-            catch (PostgresException)
-            {
-                return BadRequest(new { message = "invalid query string parameters" });
-            }
             catch (Exception ex)
             {
                 _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
@@ -63,10 +59,6 @@ namespace CashTrack.Controllers
             {
                 var result = await _expenseService.GetExpenseById(id);
                 return Ok(_mapper.Map<Expense>(result));
-            }
-            catch (ExpenseNotFoundException ex)
-            {
-                return StatusCode(StatusCodes.Status404NotFound, ex.Message);
             }
             catch (Exception ex)
             {

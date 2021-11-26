@@ -75,5 +75,10 @@ namespace CashTrack.Services.ExpenseRepository
             }
             return singleExpense;
         }
+
+        public Task<Expenses[]> GetExpensesByDate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
