@@ -9,7 +9,5 @@ namespace CashTrack.Services.ExpenseRepository
         Task<bool> Commit(); //save changes
         Task<Data.Entities.Expenses[]> GetExpenses(int pageNumber, int pageSize);
         Task<Data.Entities.Expenses> GetExpenseById(int id);
-
-
     }
 }

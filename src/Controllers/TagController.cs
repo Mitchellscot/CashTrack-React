@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CashTrack.Models.Expenses;
-using CashTrack.Services.ExpenseRepository;
+using CashTrack.Services.TagRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,18 +15,18 @@ namespace CashTrack.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-        private readonly IExpenseService _expenseService;
+        private readonly ITagService _tagService;
 
-        public TagController(ILogger<UserController> logger, IExpenseService expenseService, IMapper mapper)
+        public TagController(ILogger<UserController> logger, ITagService tagService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;
-            this._expenseService = expenseService;
+            this._tagService = tagService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAllTags()
         { 
-            var tags = await _expenseService.GetAllTags();
+            var tags = await _tagService.GetAllTags();
             return Ok(_mapper.Map<Tag[]>(tags));
         }
     }

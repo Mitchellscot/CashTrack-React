@@ -75,11 +75,5 @@ namespace CashTrack.Services.ExpenseRepository
             }
             return singleExpense;
         }
-
-        public async Task<Tags[]> GetAllTags()
-        {
-            var tags = await _context.Tags.ToArrayAsync();
-            return tags;
-        }
     }
 }

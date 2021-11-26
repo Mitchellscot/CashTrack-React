@@ -17,6 +17,7 @@ using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
 using CashTrack.Services.ExpenseRepository;
+using CashTrack.Services.TagRepository;
 
 namespace CashTrack
 {
@@ -48,6 +49,7 @@ namespace CashTrack
             services.AddControllersWithViews();
 
             services.AddScoped<IExpenseService, ExpenseService>();
+            services.AddScoped<ITagService, TagService>();
             services.AddScoped<IUserService, UserService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             // In production, the React files will be served from this directory
