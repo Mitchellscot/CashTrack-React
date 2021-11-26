@@ -43,8 +43,8 @@ namespace CashTrack.Data.Services.Users
             var MAPPER = config.CreateMapper();
             //hopefully one day I will be able to get rid of the above code.
 
-            var user = await _context.Users.Where(u => u.FirstName.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
-            if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
+            var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
+            if (user == null || !BCryptNet.Verify(model.Password, user.password_hash))
             {
                 return null;
             }
@@ -56,7 +56,7 @@ namespace CashTrack.Data.Services.Users
         //Get a single user async
         public async Task<User> GetUserById(int id)
         {
-            var query = _context.Users.Where(u => u.Id == id);
+            var query = _context.Users.Where(u => u.id == id);
             if (query.Any())
             {
                 return await query.FirstOrDefaultAsync();
@@ -76,7 +76,7 @@ namespace CashTrack.Data.Services.Users
             //set up a data structure that can be queried
             IQueryable<User> query = _context.Users;
             //for any given user, order it by their last name
-            query = query.OrderBy(u => u.LastName);
+            query = query.OrderBy(u => u.last_name);
             //turn it back into an array
             return await query.ToArrayAsync();
         }
@@ -97,8 +97,8 @@ namespace CashTrack.Data.Services.Users
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("id", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Email.ToString()),
+                    new Claim("id", user.id.ToString()),
+                    new Claim(ClaimTypes.Name, user.email.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

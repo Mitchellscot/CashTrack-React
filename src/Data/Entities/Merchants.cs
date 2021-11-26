@@ -11,13 +11,13 @@ namespace CashTrack.Data.Entities
     [Table("merchants")]
     public class Merchants
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [StringLength(250)]
         [Required]
-        public string Name { get; set; }
-        public bool SuggestOnLookup { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public ICollection<Expenses> Expenses { get; set; }
+        public string name { get; set; }
+        public bool suggest_on_lookup { get; set; }
+        public string city { get; set; }
+        public string state { get; set; }
+        public ICollection<Expenses> expenses { get; set; }
     }
 }

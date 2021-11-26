@@ -34,20 +34,20 @@ namespace CashTrack.Data
         {
             User firstUser = new User()
             {
-                Id = 1,
-                FirstName = "Mitchell",
-                LastName = "Scott",
-                Email = "Mitchellscott@me.com",
-                PasswordHash = BCryptNet.HashPassword("password"),
+                id = 1,
+                first_name = "Mitchell",
+                last_name = "Scott",
+                email = "Mitchellscott@me.com",
+                password_hash = BCryptNet.HashPassword("password"),
             };
 
             User secondUser = new User()
             {
-                Id = 2,
-                FirstName = "Sarah",
-                LastName = "Scott",
-                Email = "Sarahlscott@me.com",
-                PasswordHash = BCryptNet.HashPassword("password"),
+                id = 2,
+                first_name = "Sarah",
+                last_name = "Scott",
+                email = "Sarahlscott@me.com",
+                password_hash = BCryptNet.HashPassword("password"),
             };
 
             var userArray = new User[2]{
@@ -56,16 +56,16 @@ namespace CashTrack.Data
 
             mb.Entity<User>().HasData(userArray);
 
-            mb.Entity<ExpenseTags>().HasKey(et => new { et.ExpenseId, et.TagId });
+            mb.Entity<ExpenseTags>().HasKey(et => new { et.expense_id, et.tag_id });
 
             mb.Entity<ExpenseTags>()
-                .HasOne<Expenses>(et => et.Expense)
-                .WithMany(e => e.ExpenseTags)
-                .HasForeignKey(et => et.ExpenseId);
+                .HasOne<Expenses>(et => et.expense)
+                .WithMany(e => e.expense_tags)
+                .HasForeignKey(et => et.expense_id);
             mb.Entity<ExpenseTags>()
-                .HasOne<Tags>(et => et.Tag)
-                .WithMany(e => e.ExpenseTags)
-                .HasForeignKey(et => et.TagId);
+                .HasOne<Tags>(et => et.tag)
+                .WithMany(e => e.expense_tags)
+                .HasForeignKey(et => et.tag_id);
         }
     }
 }

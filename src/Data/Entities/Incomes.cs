@@ -10,15 +10,15 @@ namespace CashTrack.Data.Entities
     [Table("incomes")]
     public class Incomes
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [Required]
-        public DateTime IncomeDate { get; set; }
+        public DateTime income_date { get; set; }
         [Required]
-        public decimal Amount { get; set; }
+        public decimal amount { get; set; }
 
         [StringLength(255)]
-        public string Notes { get; set; }
-        public IncomeCategories Category { get; set; }
-        public IncomeSources Source { get; set; }
+        public string notes { get; set; }
+        public IncomeCategories category { get; set; }
+        public IncomeSources source { get; set; }
     }
 }

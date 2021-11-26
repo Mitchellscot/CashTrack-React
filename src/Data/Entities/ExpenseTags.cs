@@ -2,12 +2,12 @@
 
 namespace CashTrack.Data.Entities
 {
-    [Table("expense-tags")]
+    [Table("expense_tags")]
     public class ExpenseTags
     {
-        public int ExpenseId { get; set; }
-        public Expenses Expense { get; set; }
-        public int TagId { get; set; }
-        public Tags Tag { get; set; }
+        public int expense_id { get; set; }
+        public Expenses expense { get; set; }
+        public int tag_id { get; set; }
+        public Tags tag { get; set; }
     }
 }

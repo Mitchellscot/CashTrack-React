@@ -7,10 +7,10 @@ namespace CashTrack.Data.Entities
     [Table("tags")]
     public class Tags
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [Required]
         [StringLength(50)]
-        public string TagName { get; set; }
-        public ICollection<ExpenseTags> ExpenseTags { get; set; }
+        public string tag_name { get; set; }
+        public ICollection<ExpenseTags> expense_tags { get; set; }
     }
 }

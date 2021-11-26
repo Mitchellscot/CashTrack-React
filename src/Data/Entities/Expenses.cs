@@ -8,18 +8,18 @@ namespace CashTrack.Data.Entities
     [Table("expenses")]
     public class Expenses
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [Required]
-        public DateTime PurchaseDate { get; set; }
+        public DateTime purchase_date { get; set; }
         [Required]
-        public decimal Amount { get; set; }
+        public decimal amount { get; set; }
         [StringLength(50)]
-        public Merchants Merchant { get; set; }
+        public Merchants merchant { get; set; }
         [StringLength(255)]
-        public string Notes { get; set; }
-        public ExpenseSubCategories Category { get; set; }
-        public bool ExcludeFromStatistics { get; set; }
-        public ICollection<ExpenseTags> ExpenseTags { get; set; }
+        public string notes { get; set; }
+        public ExpenseSubCategories category { get; set; }
+        public bool exclude_from_statistics { get; set; }
+        public ICollection<ExpenseTags> expense_tags { get; set; }
 
     }
 }

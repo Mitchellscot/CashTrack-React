@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashTrack.Data.Entities
 {
-    [Table("income-sources")]
+    [Table("income_sources")]
     public class IncomeSources
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [StringLength(100)]
         [Required]
-        public string Source { get; set; }
+        public string source { get; set; }
     }
 }
