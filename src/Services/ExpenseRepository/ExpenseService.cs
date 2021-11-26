@@ -12,8 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
 using CashTrack.Helpers.Exceptions;
+using Npgsql;
 
-namespace CashTrack.Services.expenses
+namespace CashTrack.Services.ExpenseRepository
 {
     public class ExpenseService : IExpenseService
     {
@@ -35,7 +36,7 @@ namespace CashTrack.Services.expenses
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Expenses[]> GetExpenses(int pageNumber, int pageSize)
+        public async Task<Data.Entities.Expenses[]> GetExpenses(int pageNumber, int pageSize)
         {
             try
             {
@@ -44,9 +45,14 @@ namespace CashTrack.Services.expenses
                     .ThenByDescending(x => x.id)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
+                    .Include(x => x.merchant)
                     .ToArrayAsync();
                 
                 return expenses;
+            }
+            catch (PostgresException ex)
+            {
+                throw ex;
             }
             catch (Exception)
             {
@@ -54,16 +60,26 @@ namespace CashTrack.Services.expenses
             }
         }
 
-        public async Task<Expenses> GetExpenseById(int id)
+        public async Task<Data.Entities.Expenses> GetExpenseById(int id)
         {
-
-            var singleExpense = await _context.Expenses.SingleOrDefaultAsync(x => x.id == id);
+            var singleExpense = await _context.Expenses
+                .Include(x => x.expense_tags)
+                .ThenInclude(x => x.tag)
+                .Include(x => x.merchant)
+                .Include(x => x.category)
+                .ThenInclude(x => x.main_category)
+                .SingleOrDefaultAsync(x => x.id == id);
             if (singleExpense == null)
             {
                 throw new ExpenseNotFoundException(id.ToString());
             }
             return singleExpense;
+        }
 
+        public async Task<Tags[]> GetAllTags()
+        {
+            var tags = await _context.Tags.ToArrayAsync();
+            return tags;
         }
     }
 }

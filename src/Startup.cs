@@ -10,13 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using CashTrack.Helpers;
-using CashTrack.Data.Services.Users;
+using CashTrack.Data.Services.UserRepository;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Models.Users;
-using CashTrack.Services.expenses;
+using CashTrack.Services.ExpenseRepository;
 
 namespace CashTrack
 {

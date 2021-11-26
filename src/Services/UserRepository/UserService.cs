@@ -14,7 +14,7 @@ using CashTrack.Helpers;
 using CashTrack.Models.Users;
 using BCryptNet = BCrypt.Net.BCrypt;
 
-namespace CashTrack.Data.Services.Users
+namespace CashTrack.Data.Services.UserRepository
 {
     public class UserService : IUserService
     {

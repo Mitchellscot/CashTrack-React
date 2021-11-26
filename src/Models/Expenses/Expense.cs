@@ -10,9 +10,9 @@ namespace CashTrack.Models.Expenses
         public override DateTime PurchaseDate { get; set; }
         public override decimal Amount { get; set; }
         public override string Notes { get; set; }
-        public Merchants Merchant { get; set; }
-        public List<Tag> Tags { get; set; }
-        public ExpenseSubCategory SubCategory { get; set; }
-        public ExpenseMainCategory MainCategory { get; set; }
+        public string Merchant { get; set; }
+        public ICollection<Tag> Tags { get; set; }
+        public string SubCategory { get; set; }
+        public string MainCategory { get; set; }
     }
 }

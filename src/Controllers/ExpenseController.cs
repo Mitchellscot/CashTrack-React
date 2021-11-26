@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CashTrack.Data.Services.Users;
+using CashTrack.Data.Services.UserRepository;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Services.expenses;
+using CashTrack.Services.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.Expenses;
 using System;
 using CashTrack.Helpers.Exceptions;
+using Npgsql;
 
 namespace CashTrack.Controllers
 {
@@ -30,16 +31,28 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Expense[]>> Expenses(int pageNumber = 1, int pageSize = 5)
+        public async Task<ActionResult<Expense[]>> Expenses(int pageNumber = 1, int pageSize = 25)
         {
             try
             {
-                _logger.LogInformation("Getting all expenses");
                 var response = await _expenseService.GetExpenses(pageNumber, pageSize);
                 return Ok(response);
             }
+            catch (PostgresException ex) when (ex.Message.Contains("2201X:"))
+            {
+                _logger.LogInformation("A");
+                _logger.LogInformation(ex.Message);
+                return BadRequest(new { message = "invalid query string parameters" });
+            }
+            catch (PostgresException ex) when (ex.Message.Contains("2201W:"))
+            {
+                _logger.LogInformation("B");
+                _logger.LogInformation(ex.Message);
+                return BadRequest(new { message = "invalid query string parameters" });
+            }
             catch (Exception ex)
             {
+                _logger.LogInformation("C");
                 _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
