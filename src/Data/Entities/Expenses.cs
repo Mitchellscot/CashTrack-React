@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashTrack.Data.Entities
 {
+    [Table("expenses")]
     public class Expenses
     {
         public int Id { get; set; }
@@ -20,7 +18,8 @@ namespace CashTrack.Data.Entities
         [StringLength(255)]
         public string Notes { get; set; }
         public ExpenseSubCategories Category { get; set; }
-        public List<Tag> Tags { get; set; }
         public bool ExcludeFromStatistics { get; set; }
+        public ICollection<ExpenseTags> ExpenseTags { get; set; }
+
     }
 }

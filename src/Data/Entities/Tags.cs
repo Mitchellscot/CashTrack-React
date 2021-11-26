@@ -1,18 +1,16 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashTrack.Data.Entities
 {
-    public class Tag
+    [Table("tags")]
+    public class Tags
     {
         public int Id { get; set; }
+        [Required]
         [StringLength(50)]
         public string TagName { get; set; }
-        public ICollection<Expenses> Expenses { get; set; }
+        public ICollection<ExpenseTags> ExpenseTags { get; set; }
     }
 }

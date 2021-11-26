@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using CashTrack.Data.Entities;
+using AutoMapper;
 using BCryptNet = BCrypt.Net.BCrypt;
-
 
 namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> users { get; set; }
-        public DbSet<Expenses> expenses { get; set; }
-        public DbSet<Incomes> incomes { get; set; }
-        public DbSet<ExpenseMainCategories> expense_main_categories { get;}
-        public DbSet<ExpenseSubCategories> expense_sub_categories { get; set; }
-        public DbSet<Merchants> merchants { get; set; }
-        public DbSet<Tag> tags { get; set; }
-        public DbSet<IncomeSources> income_sources { get; set; }
-        public DbSet<IncomeCategories> income_categories { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Expenses> Expenses { get; set; }
+        public DbSet<Incomes> Incomes { get; set; }
+        public DbSet<ExpenseMainCategories> ExpenseMainCategories { get;}
+        public DbSet<ExpenseSubCategories> ExpenseSubCategories { get; set; }
+        public DbSet<Merchants> Merchants { get; set; }
+        public DbSet<Tags> Tags { get; set; }
+        public DbSet<IncomeSources> IncomeSources { get; set; }
+        public DbSet<IncomeCategories> IncomeCategories { get; set; }
 
         private IConfiguration _config;
 
@@ -30,7 +30,6 @@ namespace CashTrack.Data
             this._config = config;
         }
 
-        //seeds the database with two users
         protected override void OnModelCreating(ModelBuilder mb)
         {
             User firstUser = new User()
@@ -56,12 +55,17 @@ namespace CashTrack.Data
             };
 
             mb.Entity<User>().HasData(userArray);
-    //        modelBuilder.Entity<User>()
-    //.HasMany(x => x.Roles)
-    //.WithMany(x => x.Users)
-    //.Map(x => x.ToTable("UserRole", "SIGNUM"));
 
+            mb.Entity<ExpenseTags>().HasKey(et => new { et.ExpenseId, et.TagId });
+
+            mb.Entity<ExpenseTags>()
+                .HasOne<Expenses>(et => et.Expense)
+                .WithMany(e => e.ExpenseTags)
+                .HasForeignKey(et => et.ExpenseId);
+            mb.Entity<ExpenseTags>()
+                .HasOne<Tags>(et => et.Tag)
+                .WithMany(e => e.ExpenseTags)
+                .HasForeignKey(et => et.TagId);
         }
-
     }
 }

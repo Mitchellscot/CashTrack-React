@@ -17,6 +17,6 @@ namespace CashTrack.Models.Expenses
         public ExpenseSubCategories category { get; set; }
         //figure this out when you start to map DTOS
         //public ExpenseMaincategory Maincategory { get; set;  }
-        public List<Tag> Tags { get; set; }
+        public List<Tags> Tags { get; set; }
     }
 }

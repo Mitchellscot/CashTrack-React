@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
+#nullable disable
+
 namespace CashTrack.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
@@ -15,56 +17,36 @@ namespace CashTrack.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.9")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CashTrack.Data.Entities.ExpenseMainCategories", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Category")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExpenseMainCategories");
-                });
-
-            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("InUse")
-                        .HasColumnType("boolean");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Category")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("expense_sub_categories");
+                    b.ToTable("expense-main-categories");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.Expenses", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -83,7 +65,7 @@ namespace CashTrack.Data.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -94,49 +76,72 @@ namespace CashTrack.Data.Migrations
                     b.ToTable("expenses");
                 });
 
-            modelBuilder.Entity("CashTrack.Data.Entities.IncomeCategories", b =>
+            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Category")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("InUse")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("income_categories");
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("expense-sub-categories");
                 });
 
-            modelBuilder.Entity("CashTrack.Data.Entities.IncomeSources", b =>
+            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseTags", b =>
+                {
+                    b.Property<int>("ExpenseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ExpenseId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("expense-tags");
+                });
+
+            modelBuilder.Entity("CashTrack.Data.Entities.IncomeCategories", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("IncomeCategoriesId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Source")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IncomeCategoriesId");
-
-                    b.ToTable("income_sources");
+                    b.ToTable("income-categories");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.Incomes", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -145,7 +150,7 @@ namespace CashTrack.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("IncomeDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(255)
@@ -163,17 +168,37 @@ namespace CashTrack.Data.Migrations
                     b.ToTable("incomes");
                 });
 
+            modelBuilder.Entity("CashTrack.Data.Entities.IncomeSources", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("income-sources");
+                });
+
             modelBuilder.Entity("CashTrack.Data.Entities.Merchants", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("City")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
@@ -188,14 +213,16 @@ namespace CashTrack.Data.Migrations
                     b.ToTable("merchants");
                 });
 
-            modelBuilder.Entity("CashTrack.Data.Entities.Tag", b =>
+            modelBuilder.Entity("CashTrack.Data.Entities.Tags", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("TagName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -208,11 +235,14 @@ namespace CashTrack.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -234,7 +264,7 @@ namespace CashTrack.Data.Migrations
                             Email = "Mitchellscott@me.com",
                             FirstName = "Mitchell",
                             LastName = "Scott",
-                            PasswordHash = "$2a$11$28fuCkUfNz/MmdAGL7B14OymXydAY6HsrYCtVIB6WF1VRtaNi3v2q"
+                            PasswordHash = "$2a$11$36C19UjjGPuk5R25MR6DouUx2WcQ7LMoQhdQQYBIgUoEv8tL/pbkW"
                         },
                         new
                         {
@@ -242,32 +272,8 @@ namespace CashTrack.Data.Migrations
                             Email = "Sarahlscott@me.com",
                             FirstName = "Sarah",
                             LastName = "Scott",
-                            PasswordHash = "$2a$11$LMw20ZMcJzZUHqJNRxl6S.vmSCrD9ums8c17STCH6TU3L2Y.C0x0S"
+                            PasswordHash = "$2a$11$iOtc3zz6D1lIZ6Vl7AfgB.4ZhRi4SOogozOQHe3xx9iAYFkCMGUre"
                         });
-                });
-
-            modelBuilder.Entity("ExpensesTag", b =>
-                {
-                    b.Property<int>("ExpensesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ExpensesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ExpensesTag");
-                });
-
-            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
-                {
-                    b.HasOne("CashTrack.Data.Entities.ExpenseMainCategories", "Category")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.Expenses", b =>
@@ -285,17 +291,38 @@ namespace CashTrack.Data.Migrations
                     b.Navigation("Merchant");
                 });
 
-            modelBuilder.Entity("CashTrack.Data.Entities.IncomeSources", b =>
+            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
                 {
-                    b.HasOne("CashTrack.Data.Entities.IncomeCategories", null)
-                        .WithMany("IncomeSource")
-                        .HasForeignKey("IncomeCategoriesId");
+                    b.HasOne("CashTrack.Data.Entities.ExpenseMainCategories", "Category")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("CashTrack.Data.Entities.ExpenseTags", b =>
+                {
+                    b.HasOne("CashTrack.Data.Entities.Expenses", "Expense")
+                        .WithMany("ExpenseTags")
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CashTrack.Data.Entities.Tags", "Tag")
+                        .WithMany("ExpenseTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Expense");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.Incomes", b =>
                 {
                     b.HasOne("CashTrack.Data.Entities.IncomeCategories", "Category")
-                        .WithMany("Income")
+                        .WithMany()
                         .HasForeignKey("CategoryId");
 
                     b.HasOne("CashTrack.Data.Entities.IncomeSources", "Source")
@@ -307,24 +334,14 @@ namespace CashTrack.Data.Migrations
                     b.Navigation("Source");
                 });
 
-            modelBuilder.Entity("ExpensesTag", b =>
-                {
-                    b.HasOne("CashTrack.Data.Entities.Expenses", null)
-                        .WithMany()
-                        .HasForeignKey("ExpensesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CashTrack.Data.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CashTrack.Data.Entities.ExpenseMainCategories", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("CashTrack.Data.Entities.Expenses", b =>
+                {
+                    b.Navigation("ExpenseTags");
                 });
 
             modelBuilder.Entity("CashTrack.Data.Entities.ExpenseSubCategories", b =>
@@ -332,16 +349,14 @@ namespace CashTrack.Data.Migrations
                     b.Navigation("Expenses");
                 });
 
-            modelBuilder.Entity("CashTrack.Data.Entities.IncomeCategories", b =>
-                {
-                    b.Navigation("Income");
-
-                    b.Navigation("IncomeSource");
-                });
-
             modelBuilder.Entity("CashTrack.Data.Entities.Merchants", b =>
                 {
                     b.Navigation("Expenses");
+                });
+
+            modelBuilder.Entity("CashTrack.Data.Entities.Tags", b =>
+                {
+                    b.Navigation("ExpenseTags");
                 });
 #pragma warning restore 612, 618
         }

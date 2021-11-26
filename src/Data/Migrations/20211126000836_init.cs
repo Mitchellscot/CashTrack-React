@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
+#nullable disable
+
 namespace CashTrack.Data.Migrations
 {
     public partial class init : Migration
@@ -9,29 +11,42 @@ namespace CashTrack.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ExpenseMainCategories",
+                name: "expense-main-categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    Category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExpenseMainCategories", x => x.Id);
+                    table.PrimaryKey("PK_expense-main-categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "income_categories",
+                name: "income-categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    Category = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_income_categories", x => x.Id);
+                    table.PrimaryKey("PK_income-categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "income-sources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Source = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_income-sources", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,7 +55,7 @@ namespace CashTrack.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    Name = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     SuggestOnLookup = table.Column<bool>(type: "boolean", nullable: false),
                     City = table.Column<string>(type: "text", nullable: true),
                     State = table.Column<string>(type: "text", nullable: true)
@@ -56,7 +71,7 @@ namespace CashTrack.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TagName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                    TagName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +86,7 @@ namespace CashTrack.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FirstName = table.Column<string>(type: "text", nullable: true),
                     LastName = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -80,44 +95,50 @@ namespace CashTrack.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "expense_sub_categories",
+                name: "expense-sub-categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: true),
                     InUse = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_expense_sub_categories", x => x.Id);
+                    table.PrimaryKey("PK_expense-sub-categories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_expense_sub_categories_ExpenseMainCategories_CategoryId",
+                        name: "FK_expense-sub-categories_expense-main-categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "ExpenseMainCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalTable: "expense-main-categories",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "income_sources",
+                name: "incomes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Source = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    IncomeCategoriesId = table.Column<int>(type: "integer", nullable: true)
+                    IncomeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CategoryId = table.Column<int>(type: "integer", nullable: true),
+                    SourceId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_income_sources", x => x.Id);
+                    table.PrimaryKey("PK_incomes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_income_sources_income_categories_IncomeCategoriesId",
-                        column: x => x.IncomeCategoriesId,
-                        principalTable: "income_categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_incomes_income-categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "income-categories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_incomes_income-sources_SourceId",
+                        column: x => x.SourceId,
+                        principalTable: "income-sources",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -126,7 +147,7 @@ namespace CashTrack.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PurchaseDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    PurchaseDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     MerchantId = table.Column<int>(type: "integer", nullable: true),
                     Notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -137,67 +158,36 @@ namespace CashTrack.Data.Migrations
                 {
                     table.PrimaryKey("PK_expenses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_expenses_expense_sub_categories_CategoryId",
+                        name: "FK_expenses_expense-sub-categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "expense_sub_categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalTable: "expense-sub-categories",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_expenses_merchants_MerchantId",
                         column: x => x.MerchantId,
                         principalTable: "merchants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "incomes",
+                name: "expense-tags",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IncomeDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    CategoryId = table.Column<int>(type: "integer", nullable: true),
-                    SourceId = table.Column<int>(type: "integer", nullable: true)
+                    ExpenseId = table.Column<int>(type: "integer", nullable: false),
+                    TagId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_incomes", x => x.Id);
+                    table.PrimaryKey("PK_expense-tags", x => new { x.ExpenseId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_incomes_income_categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "income_categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_incomes_income_sources_SourceId",
-                        column: x => x.SourceId,
-                        principalTable: "income_sources",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExpensesTag",
-                columns: table => new
-                {
-                    ExpensesId = table.Column<int>(type: "integer", nullable: false),
-                    TagsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExpensesTag", x => new { x.ExpensesId, x.TagsId });
-                    table.ForeignKey(
-                        name: "FK_ExpensesTag_expenses_ExpensesId",
-                        column: x => x.ExpensesId,
+                        name: "FK_expense-tags_expenses_ExpenseId",
+                        column: x => x.ExpenseId,
                         principalTable: "expenses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ExpensesTag_tags_TagsId",
-                        column: x => x.TagsId,
+                        name: "FK_expense-tags_tags_TagId",
+                        column: x => x.TagId,
                         principalTable: "tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -208,14 +198,19 @@ namespace CashTrack.Data.Migrations
                 columns: new[] { "Id", "Email", "FirstName", "LastName", "PasswordHash" },
                 values: new object[,]
                 {
-                    { 1, "Mitchellscott@me.com", "Mitchell", "Scott", "$2a$11$28fuCkUfNz/MmdAGL7B14OymXydAY6HsrYCtVIB6WF1VRtaNi3v2q" },
-                    { 2, "Sarahlscott@me.com", "Sarah", "Scott", "$2a$11$LMw20ZMcJzZUHqJNRxl6S.vmSCrD9ums8c17STCH6TU3L2Y.C0x0S" }
+                    { 1, "Mitchellscott@me.com", "Mitchell", "Scott", "$2a$11$36C19UjjGPuk5R25MR6DouUx2WcQ7LMoQhdQQYBIgUoEv8tL/pbkW" },
+                    { 2, "Sarahlscott@me.com", "Sarah", "Scott", "$2a$11$iOtc3zz6D1lIZ6Vl7AfgB.4ZhRi4SOogozOQHe3xx9iAYFkCMGUre" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_expense_sub_categories_CategoryId",
-                table: "expense_sub_categories",
+                name: "IX_expense-sub-categories_CategoryId",
+                table: "expense-sub-categories",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_expense-tags_TagId",
+                table: "expense-tags",
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_expenses_CategoryId",
@@ -226,16 +221,6 @@ namespace CashTrack.Data.Migrations
                 name: "IX_expenses_MerchantId",
                 table: "expenses",
                 column: "MerchantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExpensesTag_TagsId",
-                table: "ExpensesTag",
-                column: "TagsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_income_sources_IncomeCategoriesId",
-                table: "income_sources",
-                column: "IncomeCategoriesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_incomes_CategoryId",
@@ -251,7 +236,7 @@ namespace CashTrack.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ExpensesTag");
+                name: "expense-tags");
 
             migrationBuilder.DropTable(
                 name: "incomes");
@@ -266,19 +251,19 @@ namespace CashTrack.Data.Migrations
                 name: "tags");
 
             migrationBuilder.DropTable(
-                name: "income_sources");
+                name: "income-categories");
 
             migrationBuilder.DropTable(
-                name: "expense_sub_categories");
+                name: "income-sources");
+
+            migrationBuilder.DropTable(
+                name: "expense-sub-categories");
 
             migrationBuilder.DropTable(
                 name: "merchants");
 
             migrationBuilder.DropTable(
-                name: "income_categories");
-
-            migrationBuilder.DropTable(
-                name: "ExpenseMainCategories");
+                name: "expense-main-categories");
         }
     }
 }

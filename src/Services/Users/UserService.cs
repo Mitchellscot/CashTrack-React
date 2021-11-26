@@ -43,7 +43,7 @@ namespace CashTrack.Data.Services.Users
             var MAPPER = config.CreateMapper();
             //hopefully one day I will be able to get rid of the above code.
 
-            var user = await _context.users.Where(u => u.FirstName.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
+            var user = await _context.Users.Where(u => u.FirstName.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
             if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
             {
                 return null;
@@ -56,7 +56,7 @@ namespace CashTrack.Data.Services.Users
         //Get a single user async
         public async Task<User> GetUserById(int id)
         {
-            var query = _context.users.Where(u => u.Id == id);
+            var query = _context.Users.Where(u => u.Id == id);
             if (query.Any())
             {
                 return await query.FirstOrDefaultAsync();
@@ -66,7 +66,7 @@ namespace CashTrack.Data.Services.Users
         //for use by internal methods... kind of redundant but it's not async.
         public User GetById(int id)
         {
-            var user = _context.users.Find(id);
+            var user = _context.Users.Find(id);
             if (user == null) return null;
             return user;
         }
@@ -74,7 +74,7 @@ namespace CashTrack.Data.Services.Users
         public async Task<User[]> GetAllUsers()
         {
             //set up a data structure that can be queried
-            IQueryable<User> query = _context.users;
+            IQueryable<User> query = _context.Users;
             //for any given user, order it by their last name
             query = query.OrderBy(u => u.LastName);
             //turn it back into an array
