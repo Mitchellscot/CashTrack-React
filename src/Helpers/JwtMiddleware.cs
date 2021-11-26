@@ -32,7 +32,7 @@ namespace CashTrack.Helpers
             await _next(context);
         }
 
-        private void attachUserToContext(HttpContext context, IUserService userRepository, string token)
+        private async void attachUserToContext(HttpContext context, IUserService userRepository, string token)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace CashTrack.Helpers
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
                 // attach user to context on successful jwt validation
-                context.Items["User"] = userRepository.GetById(userId);
+                context.Items["User"] = await userRepository.GetUserByIdAsync(userId);
             }
             catch
             {

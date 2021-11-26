@@ -9,12 +9,7 @@ namespace CashTrack.Data.Services.Users
 {
     public interface IUserService
     {
-        //General
-        Task<bool> Commit(); //save changes
-        Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model);
-        User GetById(int id);
-        Task<User> GetUserById(int id);
-        Task<User[]> GetAllUsers();
-
+        Task<AuthenticateResponse> AuthenticateAsync(Authentication.Request model);
+        Task<User> GetUserByIdAsync(int id);
     }
 }
