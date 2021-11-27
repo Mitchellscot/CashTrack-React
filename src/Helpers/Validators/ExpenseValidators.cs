@@ -5,6 +5,10 @@ namespace CashTrack.Helpers
 {
     public class ExpenseValidators : AbstractValidator<Expense>
     {
-        //RuleFor()
+        public ExpenseValidators()
+        {
+            RuleFor(x => x.PurchaseDate).NotEmpty();
+            RuleFor(x => x.Amount).NotEmpty();
+        }
     }
 }

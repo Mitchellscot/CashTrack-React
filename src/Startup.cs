@@ -41,9 +41,10 @@ namespace CashTrack
 
             //needed for webpack proxy
             services.AddCors();
+
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddMvc(opt =>
+            services.AddControllersWithViews(opt =>
             {
                 opt.Filters.Add(typeof(CustomValidationFilter));
             })

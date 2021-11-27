@@ -376,7 +376,7 @@ namespace CashTrack.Controllers
         //    }
 
         //    //api/expense/category
-        //    //returns transactions that contain a specific word in the notes section
+        //    //returns transactions from a given category
         //    [HttpGet("/category/{categoryId}")]
         //    public async Task<ActionResult<ExpenseModel[]>> GetcategoryExpenses(int categoryId)
         //    {

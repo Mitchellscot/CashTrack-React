@@ -47,7 +47,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .Take(pageSize)
                     .Include(x => x.merchant)
                     .ToArrayAsync();
-                
+
                 return expenses;
             }
             catch (PostgresException ex)
@@ -76,9 +76,24 @@ namespace CashTrack.Services.ExpenseRepository
             return singleExpense;
         }
 
-        public Task<Expenses[]> GetExpensesByDate()
+        public Task<Expenses[]> GetExpensesByDate(DateTime)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var expenses = _context.Expenses
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .Where(x => x.)
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
     }
 }
