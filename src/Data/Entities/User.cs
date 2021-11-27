@@ -7,7 +7,9 @@ namespace CashTrack.Data.Entities
     public class User
     {
         public int id { get; set; }
+        [StringLength(25)]
         public string first_name { get; set; }
+        [StringLength(25)]
         public string last_name { get; set; }
         [Required]
         [StringLength(50)]
