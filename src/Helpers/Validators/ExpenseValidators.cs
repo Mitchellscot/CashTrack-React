@@ -10,9 +10,6 @@ namespace CashTrack.Helpers
     {
         public ExpenseValidators()
         {
-            //CultureInfo enUS = new CultureInfo("en-US");
-            //DateTime date;
-            //Transform(from: x => x.BeginDate, to: value => DateTime.TryParse(value, out date) ? date : null).
             RuleFor(x => x.DateOptions).IsInEnum().NotEmpty();
             RuleFor(x => x.PageNumber).NotEmpty().GreaterThan(0);
             RuleFor(x => x.PageSize).InclusiveBetween(5, 100);

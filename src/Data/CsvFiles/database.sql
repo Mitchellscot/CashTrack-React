@@ -40,6 +40,11 @@ FROM 'C:\Users\Public\db-files\incomes.csv'
 DELIMITER ','
 CSV HEADER;
 
+--create some default tags
+insert into tags(tag_name)values
+('Mitch'),('Sarah'),('Henry'),('Lydia'),('Edward'),('Arthur'),
+('Drums'),('Cymbals'),('Drum Hardware'),('Drum Sticks');
+
 --find all rows in 2021
 select * from expenses WHERE purchase_date between '2021-01-01'::date and '2021-12-31'::date ORDER BY purchase_date;
 

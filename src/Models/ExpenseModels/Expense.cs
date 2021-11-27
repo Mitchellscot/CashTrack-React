@@ -14,8 +14,8 @@ namespace CashTrack.Models.ExpenseModels
             public int PageNumber { get; set; } = 1;
             public int PageSize { get; set; } = 25;
             public int QuarterOptions { get; set; } = 0;
-            public DateTime? BeginDate { get; set; } = DateTime.Today;
-            public DateTime? EndDate { get; set; } = DateTime.Today;
+            public DateTime BeginDate { get; set; } = DateTime.Today;
+            public DateTime EndDate { get; set; } = DateTime.Today;
         }
         public class Response
         {
@@ -27,6 +27,7 @@ namespace CashTrack.Models.ExpenseModels
             public ICollection<Tag> Tags { get; set; }
             public string SubCategory { get; set; }
             public string MainCategory { get; set; }
+            //need to include current page number out of total page numbers
         }
     }
 

@@ -36,12 +36,13 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Expense.Response[]>> GetAllExpenses(int pageNumber = 1, int pageSize = 25)
+        public async Task<ActionResult<Expense.Response[]>> GetAllExpenses(Expense.Request request)
         {
             try
             {
-                var response = await _expenseService.GetExpenses(pageNumber, pageSize);
-                return Ok(response);
+                var response = await _expenseService.GetExpenses(request);
+                var result = _mapper.Map<Expense.Response[]>(response);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -70,9 +71,9 @@ namespace CashTrack.Controllers
         //Expenses queried by dates, all return collections
         [HttpGet("date")]
         //create a DateRequest object with just a date
-        public void GetAllExpensesByDate([FromBody]Expense.Request request)
+        public IActionResult GetAllExpensesByDate([FromBody]Expense.Request request)
         {
-            _logger.LogInformation($"{request.PageNumber} - {request.PageSize} - {request.QuarterOptions} - {request.DateOptions} - {request.BeginDate} - {request.EndDate}");
+            return Content($"{request.PageNumber} - {request.PageSize} - {request.QuarterOptions} - {request.DateOptions} - {request.BeginDate} - {request.EndDate}");
             //try
             //{
                 

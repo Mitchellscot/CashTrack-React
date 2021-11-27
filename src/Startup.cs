@@ -14,6 +14,7 @@ using CashTrack.Services.TagRepository;
 using FluentValidation.AspNetCore;
 using CashTrack.Helpers.Validators;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace CashTrack
 {
@@ -44,9 +45,9 @@ namespace CashTrack
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddControllersWithViews(opt =>
+            services.AddControllersWithViews(options =>
             {
-                opt.Filters.Add(typeof(CustomValidationFilter));
+                options.Filters.Add(typeof(CustomValidationFilter));
             })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
