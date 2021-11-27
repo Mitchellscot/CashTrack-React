@@ -36,7 +36,7 @@ namespace CashTrack.Services.ExpenseRepository
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Data.Entities.Expenses[]> GetExpenses(int pageNumber, int pageSize)
+        public async Task<Expenses[]> GetExpenses(int pageNumber, int pageSize)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace CashTrack.Services.ExpenseRepository
             }
         }
 
-        public async Task<Data.Entities.Expenses> GetExpenseById(int id)
+        public async Task<Expenses> GetExpenseById(int id)
         {
             var singleExpense = await _context.Expenses
                 .Include(x => x.expense_tags)
@@ -81,7 +81,7 @@ namespace CashTrack.Services.ExpenseRepository
             throw new NotImplementedException();
         }
 
-        //public Task<Expenses[]> GetExpensesByDate(DateTime)
+        //public Task<Expenses[]> GetExpensesByDate()
         //{
         //    try
         //    {

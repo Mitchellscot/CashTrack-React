@@ -36,7 +36,7 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Expense[]>> GetAllExpenses(int pageNumber = 1, int pageSize = 25)
+        public async Task<ActionResult<Expense.Response[]>> GetAllExpenses(int pageNumber = 1, int pageSize = 25)
         {
             try
             {
@@ -53,12 +53,12 @@ namespace CashTrack.Controllers
         //api/expense/{id}
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetAnExpenseById(int id)
+        public async Task<ActionResult<Expense.Response>> GetAnExpenseById(int id)
         {
             try
             {
                 var result = await _expenseService.GetExpenseById(id);
-                return Ok(_mapper.Map<Expense>(result));
+                return Ok(_mapper.Map<Expense.Response>(result));
             }
             catch (Exception ex)
             {
@@ -66,24 +66,24 @@ namespace CashTrack.Controllers
             }
         }
 
-        //api/expense/date/{date}
-        //accepts a date in string format
+        //api/expense/date
         //Expenses queried by dates, all return collections
-        [HttpGet("/date")]
+        [HttpGet("date")]
         //create a DateRequest object with just a date
-        public async Task<ActionResult<Expense[]>> GetAllExpensesByDate(string date)
+        public void GetAllExpensesByDate([FromBody]Expense.Request request)
         {
-            try
-            {
-                //DateTime.TryParse(date)...
-                //logic goes here
-                return Content("This is the data you were looking for.");
+            _logger.LogInformation($"{request.PageNumber} - {request.PageSize} - {request.QuarterOptions} - {request.DateOptions} - {request.BeginDate} - {request.EndDate}");
+            //try
+            //{
+                
+            //    //logic goes here
+            //    return Content("This is the data you were looking for.");
 
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            //}
         }
 
         //    //api/expense/date/total
@@ -95,26 +95,6 @@ namespace CashTrack.Controllers
         //        try
         //        {
         //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/date-range
-        //    //accepts two dates in json obj format
-        //    //Expenses queried by dates, returns a collection
-        //    [HttpGet("/date-range")]
-        //    //create a DateRange request
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByDateRange([FromBody] DateRangeRequest dateRange)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(dateRange.BeginDate)...
         //            //logic goes here
         //            return Content("This is the data you were looking for.");
 
@@ -144,49 +124,11 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/month
-        //    //accepts a datetime and returns all expenses in a given month
-        //    //Expenses queried by date, returns a collection
-        //    [HttpGet("/month")]
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByMonth([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
         //    //api/expense/month/total
         //    //accepts a datetime
         //    //returns the amount of money spent that month
         //    [HttpGet("/month/total")]
         //    public async Task<ActionResult<int>> GetExpenseTotalByMonth([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/year
-        //    //accepts a datetime and returns all expenses in a given year
-        //    //Expenses queried by date, returns a collection
-        //    [HttpGet("/year")]
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByYear([FromBody] DateRequest date)
         //    {
         //        try
         //        {
@@ -209,26 +151,6 @@ namespace CashTrack.Controllers
         //    {
         //        try
         //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/quarter
-        //    //accepts a datetime and returns all expenses in a given year/quarter
-        //    //Expenses queried by date, returns a collection
-        //    [HttpGet("/quarter")]
-        //    //DateRequest contains a parameter that is an int and indicates the quarter. Default is 0.
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByQuarter([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {   
         //            //DateTime.TryParse(date)...
         //            //logic goes here
         //            return Content("This is the data you were looking for.");
