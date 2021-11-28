@@ -14,13 +14,13 @@ namespace CashTrack.Models.ExpenseModels
             public int PageNumber { get; set; } = 1;
             public int PageSize { get; set; } = 25;
             public int QuarterOptions { get; set; } = 0;
-            public DateTime BeginDate { get; set; } = DateTime.Today;
-            public DateTime EndDate { get; set; } = DateTime.Today;
+            public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
+            public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
         }
         public class Response
         {
             public int Id { get; set; }
-            public DateTime PurchaseDate { get; set; }
+            public DateTimeOffset PurchaseDate { get; set; }
             public decimal Amount { get; set; }
             public string Notes { get; set; }
             public string Merchant { get; set; }

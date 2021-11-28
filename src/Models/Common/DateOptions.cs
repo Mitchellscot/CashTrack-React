@@ -3,17 +3,18 @@
     public enum DateOptions
     { 
         _,
-        None,
-        Single,
+        All,
+        SpecificDate,
+        SpecificMonthAndYear,
+        SpecificQuarter,
+        SpecificYear,
         DateRange,
         Last30Days,
+        LastQuarter,
         LastYear,
         CurrentMonth,
         CurrentYear,
-        SpecificYear,
-        SpecificMonthAndYear,
         CurrentQuarter,
-        SpecificQuarter
 
     }
 }

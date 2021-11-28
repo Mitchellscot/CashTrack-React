@@ -53,15 +53,56 @@ namespace CashTrack.Services.ExpenseRepository
             return singleExpense;
         }
 
-        public async Task<Expenses[]> GetExpenses(Expense.Request request)
+        public async Task<Expenses[]> GetExpenses(Expense.Request request) => request.DateOptions switch
+        {
+            //No requirements
+            DateOptions.All => await GetAllExpenses(request),
+
+            //Required Begin Date
+            DateOptions.SpecificDate => await GetExpensesFromSpecificDate(request),
+
+            // required begin date
+            //DateOptions.SpecificMonthAndYear => i(),
+
+            //requires a begin date
+            //DateOptions.SpecificQuarter => k(), 
+
+            // Requires begin date
+            //DateOptions.SpecificYear => h(), 
+
+            //begindate and enddate required.
+            DateOptions.DateRange => await GetExpensesByDateRange(request),
+
+            //No dates required
+            DateOptions.Last30Days => await GetExpensesFromLast30Days(request),
+
+            //No dates required.
+            //DateOptions.LastQuarter => e(), 
+
+            //No dates required.
+            //DateOptions.LastYear => e(), 
+
+            //No dates required.
+            //DateOptions.CurrentMonth => f(), 
+
+            // based on today's date. No dates required.
+            //DateOptions.CurrentQuarter => j(), 
+
+            //No dates required.
+            //DateOptions.CurrentYear => g(), 
+
+            _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
+
+        };
+
+        private async Task<Expenses[]> GetAllExpenses(Expense.Request request)
         {
             try
             {
                 var expenses = await _context.Expenses
-                    .Where(x => x.purchase_date > DateTime.Today.AddDays(-30) && x.purchase_date < DateTime.Today)
                     .OrderByDescending(x => x.purchase_date)
                     .ThenByDescending(x => x.id)
-                    .Skip((request.PageNumber -1) * request.PageSize)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
                     .Take(request.PageSize)
                     .Include(x => x.expense_tags)
                     .ThenInclude(x => x.tag)
@@ -77,49 +118,75 @@ namespace CashTrack.Services.ExpenseRepository
             }
         }
 
-        public async Task<Expenses[]> ChoseExpensesBasedOnDateOptions(Expense.Request request) => request.DateOptions switch
-        {
-            DateOptions.None => await GetAllExpenses(request),
-            //Get all expenses on a given date. BeginDate Required. Default is current date.
-            //DateOptions.DateRange => c(), // based on given date range, begindate and enddate required. Default is current date.
-            //DateOptions.Last30Days => d(), // based on today's date minus thirty. No dates required 
-            //DateOptions.LastYear => e(), //based on today's date. No dates required.
-            //DateOptions.CurrentMonth => f(), // based on today's date. No dates required.
-            //DateOptions.CurrentYear => g(), // based on today's date. No dates required.
-            //DateOptions.SpecificYear => h(), // Requires begin date but not end date.
-            //DateOptions.SpecificMonthAndYear => i(), // required begin date but not end date.
-            //DateOptions.CurrentQuarter => j(), // based on today's date. No dates required.
-            //DateOptions.SpecificQuarter => k(), //requires a begin date but not an end date.
-            _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
-        };
-
-        public async Task<Expenses[]> GetAllExpenses(Expense.Request request)
+        private async Task<Expenses[]> GetExpensesFromSpecificDate(Expense.Request request)
         {
             try
             {
-
                 var expenses = await _context.Expenses
+                    .Where(x => x.purchase_date == request.BeginDate.ToUniversalTime())
                     .OrderByDescending(x => x.purchase_date)
                     .ThenByDescending(x => x.id)
                     .Skip((request.PageNumber - 1) * request.PageSize)
                     .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
                     .Include(x => x.merchant)
-                    //.Include(x => x.category)
-                    //.ThenInclude(x => x.main_category)
-                    //.Include(x => x.expense_tags)
-                    //.ThenInclude(x => x.tag)
-
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-
                 return expenses;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-
+        private async Task<Expenses[]> GetExpensesByDateRange(Expense.Request request)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(x => x.purchase_date >= request.BeginDate.ToUniversalTime() && x.purchase_date <= request.EndDate.ToUniversalTime())
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<Expenses[]> GetExpensesFromLast30Days(Expense.Request request)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(x => x.purchase_date > DateTimeOffset.Now.AddDays(-30) && x.purchase_date < DateTimeOffset.Now)
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
 }

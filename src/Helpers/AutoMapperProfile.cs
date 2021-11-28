@@ -30,7 +30,8 @@ namespace CashTrack.Helpers
 
             CreateMap<Tags, Tag>()
                 .ForMember(t => t.Id, o => o.MapFrom(src => src.id))
-                .ForMember(t => t.TagName, o => o.MapFrom(src => src.tag_name));
+                .ForMember(t => t.TagName, o => o.MapFrom(src => src.tag_name))
+                .ReverseMap();
         }
     }
 }
