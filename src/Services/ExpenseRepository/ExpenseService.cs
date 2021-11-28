@@ -55,14 +55,17 @@ namespace CashTrack.Services.ExpenseRepository
 
         public async Task<Expenses[]> GetExpenses(Expense.Request request) => request.DateOptions switch
         {
+            //1
             //No requirements
             DateOptions.All => await GetAllExpenses(request),
 
+            //2
             //Required Begin Date
             DateOptions.SpecificDate => await GetExpensesFromSpecificDate(request),
 
+            //3
             // required begin date
-            //DateOptions.SpecificMonthAndYear => i(),
+            DateOptions.SpecificMonthAndYear => await GetExpensesFromMonthAndYear(request),
 
             //requires a begin date
             //DateOptions.SpecificQuarter => k(), 
@@ -141,6 +144,55 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
+        private async Task<Expenses[]> GetExpensesFromMonthAndYear(Expense.Request request)
+        {
+            var monthBeginDate = GetMonthBeginDate(request.BeginDate).ToUniversalTime();
+            var monthEndDate = GetMonthEndDate(request.BeginDate).ToUniversalTime();
+            _logger.LogInformation($"{monthBeginDate} - {monthEndDate}");
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(x => x.purchase_date >= monthBeginDate && x.purchase_date <= monthEndDate)
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private DateTimeOffset GetMonthBeginDate(DateTimeOffset date)
+        {
+            var beginingOfMonth = new DateTimeOffset(
+                date.Year, date.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0)
+                );
+            return beginingOfMonth;
+        }
+        private DateTimeOffset GetMonthEndDate(DateTimeOffset date)
+        {
+            var monthEndDate = GetLastDayOfMonth(date);
+            var endingOfMonth = new DateTimeOffset(
+                date.Year, date.Month, monthEndDate, 0, 0, 0, new TimeSpan(0, 0, 0)
+                );
+            return endingOfMonth;
+        }
+        private int GetLastDayOfMonth(DateTimeOffset date) => date.Month switch
+        {
+            4 or 6 or 9 or 11 => 30,
+            1 or 3 or 5 or 7 or 8 or 10 or 12 => 31,
+            2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
+            _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
+        };
+
         private async Task<Expenses[]> GetExpensesByDateRange(Expense.Request request)
         {
             try
@@ -164,6 +216,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
+
         private async Task<Expenses[]> GetExpensesFromLast30Days(Expense.Request request)
         {
             try
@@ -188,5 +241,4 @@ namespace CashTrack.Services.ExpenseRepository
             }
         }
     }
-
 }
