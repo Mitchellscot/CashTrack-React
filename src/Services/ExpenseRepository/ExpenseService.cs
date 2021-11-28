@@ -31,13 +31,23 @@ namespace CashTrack.Services.ExpenseRepository
             this._logger = logger;
         }
 
+        public int GetTotalPageCount(int pageSize)
+        {
+            var query = from x in _context.Expenses
+                        select x;
+
+            var totalNumberOfRecords = (decimal)query.Count();
+            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
+            return (int)totalPages;
+        }
+
         public async Task<bool> Commit()
         {
             //only return if more than one row was affected
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Expenses> GetExpenseById(int id)
+        public async Task<Expenses> GetExpenseByIdAsync(int id)
         {
             var singleExpense = await _context.Expenses
                 .Include(x => x.expense_tags)
@@ -53,22 +63,23 @@ namespace CashTrack.Services.ExpenseRepository
             return singleExpense;
         }
 
-        public async Task<Expenses[]> GetExpenses(Expense.Request request) => request.DateOptions switch
+        public async Task<Expenses[]> GetExpensesAsync(Expense.Request request) => request.DateOptions switch
         {
             //1
             //No requirements
-            DateOptions.All => await GetAllExpenses(request),
+            DateOptions.All => await GetAllExpensesAsync(request),
 
             //2
             //Required Begin Date
-            DateOptions.SpecificDate => await GetExpensesFromSpecificDate(request),
+            DateOptions.SpecificDate => await GetExpensesFromSpecificDateAsync(request),
 
             //3
             // required begin date
-            DateOptions.SpecificMonthAndYear => await GetExpensesFromMonthAndYear(request),
+            DateOptions.SpecificMonthAndYear => await GetExpensesFromMonthAndYearAsync(request),
 
+            //4
             //requires a begin date
-            //DateOptions.SpecificQuarter => k(), 
+            DateOptions.SpecificQuarter => await GetExpensesForQuarterAsync(request), 
 
             // Requires begin date
             //DateOptions.SpecificYear => h(), 
@@ -98,10 +109,16 @@ namespace CashTrack.Services.ExpenseRepository
 
         };
 
-        private async Task<Expenses[]> GetAllExpenses(Expense.Request request)
+        private async Task<Expenses[]> GetAllExpensesAsync(Expense.Request request)
         {
             try
             {
+                var query = from x in _context.Expenses
+                            select x;
+                var totalNumberOfRecords = (decimal)query.Count();
+                var totalPages = Math.Ceiling(totalNumberOfRecords / request.PageSize);
+                _logger.LogInformation($"Total pages from the service method {totalPages.ToString()}");
+
                 var expenses = await _context.Expenses
                     .OrderByDescending(x => x.purchase_date)
                     .ThenByDescending(x => x.id)
@@ -121,7 +138,7 @@ namespace CashTrack.Services.ExpenseRepository
             }
         }
 
-        private async Task<Expenses[]> GetExpensesFromSpecificDate(Expense.Request request)
+        private async Task<Expenses[]> GetExpensesFromSpecificDateAsync(Expense.Request request)
         {
             try
             {
@@ -144,7 +161,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expenses[]> GetExpensesFromMonthAndYear(Expense.Request request)
+        private async Task<Expenses[]> GetExpensesFromMonthAndYearAsync(Expense.Request request)
         {
             var monthBeginDate = GetMonthBeginDate(request.BeginDate).ToUniversalTime();
             var monthEndDate = GetMonthEndDate(request.BeginDate).ToUniversalTime();
@@ -192,6 +209,30 @@ namespace CashTrack.Services.ExpenseRepository
             2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
             _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
         };
+        private async Task<Expenses[]> GetExpensesForQuarterAsync(Expense.Request request)
+        {
+           //NOT FINISHED!!!!!! WORK ON THIS NEXT
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(x => x.purchase_date == DateTime.UtcNow )
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         private async Task<Expenses[]> GetExpensesByDateRange(Expense.Request request)
         {

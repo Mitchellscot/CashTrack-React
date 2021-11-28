@@ -17,8 +17,9 @@ namespace CashTrack.Models.ExpenseModels
             public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
             public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
         }
-        public class Response
+        public record Response
         {
+            //need to add properties that have pagination information and then an ARRAY of expenses
             public int Id { get; set; }
             public DateTimeOffset PurchaseDate { get; set; }
             public decimal Amount { get; set; }
@@ -27,7 +28,6 @@ namespace CashTrack.Models.ExpenseModels
             public ICollection<Tag> Tags { get; set; }
             public string SubCategory { get; set; }
             public string MainCategory { get; set; }
-            //need to include current page number out of total page numbers
         }
     }
 

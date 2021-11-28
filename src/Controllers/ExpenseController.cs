@@ -40,9 +40,11 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var response = await _expenseService.GetExpenses(request);
+                var response = await _expenseService.GetExpensesAsync(request);
                 var result = _mapper.Map<Expense.Response[]>(response);
-                return Ok(result);
+                //TODO need to modify the expense reponse to include pagination data and then an array of expenses
+                var totalPages = _expenseService.GetTotalPageCount(request.PageSize);
+                return result;
             }
             catch (Exception ex)
             {
@@ -58,33 +60,13 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _expenseService.GetExpenseById(id);
+                var result = await _expenseService.GetExpenseByIdAsync(id);
                 return Ok(_mapper.Map<Expense.Response>(result));
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }
-
-        //api/expense/date
-        //Expenses queried by dates, all return collections
-        [HttpGet("date")]
-        //create a DateRequest object with just a date
-        public IActionResult GetAllExpensesByDate([FromBody]Expense.Request request)
-        {
-            return Content($"{request.PageNumber} - {request.PageSize} - {request.QuarterOptions} - {request.DateOptions} - {request.BeginDate} - {request.EndDate}");
-            //try
-            //{
-                
-            //    //logic goes here
-            //    return Content("This is the data you were looking for.");
-
-            //}
-            //catch (System.Exception ex)
-            //{
-            //    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            //}
         }
 
         //    //api/expense/date/total
