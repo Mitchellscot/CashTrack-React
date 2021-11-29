@@ -62,52 +62,30 @@ namespace CashTrack.Services.ExpenseRepository
         public async Task<Expense.Response> GetExpensesAsync(Expense.Request request) => request.DateOptions switch
         {
             //1
-            //No requirements
             DateOptions.All => await GetAllExpensesAsync(request),
-
             //2
             //Required Begin Date
             DateOptions.SpecificDate => await GetExpensesFromSpecificDateAsync(request),
-
             //3
             // required begin date
             DateOptions.SpecificMonthAndYear => await GetExpensesFromMonthAndYearAsync(request),
-
             //4
             //requires a begin date
             DateOptions.SpecificQuarter => await GetExpensesForQuarterAsync(request),
-
             //5
             // Requires begin date
             DateOptions.SpecificYear => await GetExpensesForAYearAsync(request), 
-
             //6
             //begindate and enddate required.
             DateOptions.DateRange => await GetExpensesByDateRange(request),
-
             //7
-            //No dates required
             DateOptions.Last30Days => await GetExpensesFromLast30Days(request),
-
             //8
-            //No dates required.
-            DateOptions.LastQuarter => await GetExpensesFromLastQuarter(request), 
-
+            DateOptions.CurrentMonth => await GetExpensesFromCurrentMonth(request),
             //9
-            //No dates required.
-            //DateOptions.LastYear => e(), 
-
+            DateOptions.CurrentQuarter => await GetExpensesFromCurrentQuarter(request),
             //10
-            //No dates required.
-            //DateOptions.CurrentMonth => f(), 
-
-            //11
-            // based on today's date. No dates required.
-            //DateOptions.CurrentQuarter => j(), 
-
-            //12
-            //No dates required.
-            //DateOptions.CurrentYear => g(), 
+            DateOptions.CurrentYear => await GetExpensesFromCurrentYear(request),
 
             _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
@@ -131,7 +109,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForAllExpenseSearch(request.PageSize),
+                    TotalPages = await GetTotalPagesForAllExpenses(request.PageSize),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -142,7 +120,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForAllExpenseSearch(int pageSize)
+        private async Task<int> GetTotalPagesForAllExpenses(int pageSize)
         {
             var query = await _context.Expenses.ToArrayAsync();
             var totalNumberOfRecords = (decimal)query.Count();
@@ -168,7 +146,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForSpecificDateSearch(request.PageSize, request.BeginDate),
+                    TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -179,7 +157,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForSpecificDateSearch(int pageSize, DateTimeOffset date)
+        private async Task<int> GetTotalPagesForSpecificDate(int pageSize, DateTimeOffset date)
         {
             try
             {
@@ -213,7 +191,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForMonthAndYearSearch(request.PageSize, monthBeginDate, monthEndDate),
+                    TotalPages = await GetTotalPagesForMonthAndYear(request.PageSize, monthBeginDate, monthEndDate),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -224,7 +202,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForMonthAndYearSearch(int pageSize, DateTimeOffset monthBeginDate, DateTimeOffset monthEndDate)
+        private async Task<int> GetTotalPagesForMonthAndYear(int pageSize, DateTimeOffset monthBeginDate, DateTimeOffset monthEndDate)
         {
             try
             {
@@ -280,7 +258,7 @@ namespace CashTrack.Services.ExpenseRepository
 
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForExpenseQuarterSearch(request.PageSize, quarterDates.startDate, quarterDates.endDate),
+                    TotalPages = await GetTotalPagesForExpenseQuarter(request.PageSize, quarterDates.startDate, quarterDates.endDate),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -291,7 +269,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForExpenseQuarterSearch(int pageSize, DateTimeOffset startDate, DateTimeOffset endDate)
+        private async Task<int> GetTotalPagesForExpenseQuarter(int pageSize, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             try
             {
@@ -333,7 +311,7 @@ namespace CashTrack.Services.ExpenseRepository
 
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForExpenseYearSearch(request.PageSize, yearDates.startDate, yearDates.endDate),
+                    TotalPages = await GetTotalPagesForExpenseYear(request.PageSize, yearDates.startDate, yearDates.endDate),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -344,7 +322,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForExpenseYearSearch(int pageSize, DateTimeOffset startDate, DateTimeOffset endDate)
+        private async Task<int> GetTotalPagesForExpenseYear(int pageSize, DateTimeOffset startDate, DateTimeOffset endDate)
         {
             try
             {
@@ -381,7 +359,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForDateRangeSearch(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
+                    TotalPages = await GetTotalPagesForDateRange(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -392,7 +370,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForDateRangeSearch(int pageSize, DateTimeOffset beginDate, DateTimeOffset endDate)
+        private async Task<int> GetTotalPagesForDateRange(int pageSize, DateTimeOffset beginDate, DateTimeOffset endDate)
         {
             try
             {
@@ -425,7 +403,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForLast30DaysSearch(request.PageSize),
+                    TotalPages = await GetTotalPagesForLast30Days(request.PageSize),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -436,7 +414,7 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForLast30DaysSearch(int pageSize)
+        private async Task<int> GetTotalPagesForLast30Days(int pageSize)
         {
             try
             {
@@ -450,7 +428,51 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expense.Response> GetExpensesFromLastQuarter(Expense.Request request)
+        private async Task<Expense.Response> GetExpensesFromCurrentMonth(Expense.Request request)
+        {
+            var beginMonthDate = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+            try
+            {
+                var expenseTransactions = await _context.Expenses
+                    .Where(x => x.purchase_date > beginMonthDate && x.purchase_date < DateTimeOffset.UtcNow)
+                    .OrderBy(x => x.purchase_date)
+                    .ThenBy(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                var response = new Expense.Response
+                {
+                    TotalPages = await GetTotalPagesForExpenseCurrentMonth(request.PageSize, beginMonthDate),
+                    PageNumber = request.PageNumber,
+                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                };
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<int> GetTotalPagesForExpenseCurrentMonth(int pageSize, DateTimeOffset beginMonthDate)
+        {
+            try
+            {
+                var getTotalPages = await _context.Expenses
+                    .Where(x => x.purchase_date > beginMonthDate && x.purchase_date < DateTimeOffset.UtcNow)
+                    .ToArrayAsync();
+                return (int)Math.Ceiling((decimal)getTotalPages.Count() / (decimal)pageSize);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<Expense.Response> GetExpensesFromCurrentQuarter(Expense.Request request)
         {
             var beginQuarterDate = GetQuarterDatesFromDate(DateTimeOffset.UtcNow);
             try
@@ -469,7 +491,7 @@ namespace CashTrack.Services.ExpenseRepository
                     .ToArrayAsync();
                 var response = new Expense.Response
                 {
-                    TotalPages = await GetTotalPagesForExpenseLastQuarterSearch(request.PageSize, beginQuarterDate.startDate),
+                    TotalPages = await GetTotalPagesForExpenseCurrentQuarter(request.PageSize, beginQuarterDate.startDate),
                     PageNumber = request.PageNumber,
                     Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
                 };
@@ -480,12 +502,56 @@ namespace CashTrack.Services.ExpenseRepository
                 throw;
             }
         }
-        private async Task<int> GetTotalPagesForExpenseLastQuarterSearch(int pageSize, DateTimeOffset startDate)
+        private async Task<int> GetTotalPagesForExpenseCurrentQuarter(int pageSize, DateTimeOffset startDate)
         {
             try
             {
                 var getTotalPages = await _context.Expenses
                     .Where(x => x.purchase_date > startDate && x.purchase_date < DateTimeOffset.UtcNow)
+                    .ToArrayAsync();
+                return (int)Math.Ceiling((decimal)getTotalPages.Count() / (decimal)pageSize);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<Expense.Response> GetExpensesFromCurrentYear(Expense.Request request)
+        {
+            var beginYearDate = new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+            try
+            {
+                var expenseTransactions = await _context.Expenses
+                    .Where(x => x.purchase_date > beginYearDate && x.purchase_date < DateTimeOffset.UtcNow)
+                    .OrderBy(x => x.purchase_date)
+                    .ThenBy(x => x.id)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                var response = new Expense.Response
+                {
+                    TotalPages = await GetTotalPagesForExpenseCurrentYear(request.PageSize, beginYearDate),
+                    PageNumber = request.PageNumber,
+                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                };
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task<int> GetTotalPagesForExpenseCurrentYear(int pageSize, DateTimeOffset beginYearDate)
+        {
+            try
+            {
+                var getTotalPages = await _context.Expenses
+                    .Where(x => x.purchase_date > beginYearDate && x.purchase_date < DateTimeOffset.UtcNow)
                     .ToArrayAsync();
                 return (int)Math.Ceiling((decimal)getTotalPages.Count() / (decimal)pageSize);
             }

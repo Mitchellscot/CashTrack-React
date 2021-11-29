@@ -10,12 +10,9 @@
         SpecificYear,
         DateRange,
         Last30Days,
-        LastQuarter,
-        LastYear,
         CurrentMonth,
-        CurrentYear,
         CurrentQuarter,
-
+        CurrentYear
     }
 }
 
