@@ -10,7 +10,7 @@ namespace CashTrack.Helpers
     {
         public ExpenseValidators()
         {
-            RuleFor(x => x.DateOptions).IsInEnum().NotEmpty();
+            RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
             RuleFor(x => x.PageNumber).NotEmpty().GreaterThan(0);
             RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
             RuleFor(x => x.QuarterOptions).InclusiveBetween(0, 4);

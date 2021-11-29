@@ -19,7 +19,12 @@ namespace CashTrack.Models.ExpenseModels
         }
         public record Response
         {
-            //need to add properties that have pagination information and then an ARRAY of expenses
+            public int PageNumber { get; set; }
+            public int TotalPages { get; set; }
+            public ExpenseTransaction[] Expenses { get; set; }
+        }
+        public record ExpenseTransaction
+        {
             public int Id { get; set; }
             public DateTimeOffset PurchaseDate { get; set; }
             public decimal Amount { get; set; }

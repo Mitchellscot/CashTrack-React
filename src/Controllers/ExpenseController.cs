@@ -36,15 +36,13 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Expense.Response[]>> GetAllExpenses(Expense.Request request)
+        public async Task<ActionResult<Expense.Response>> GetAllExpenses([FromQuery]Expense.Request request)
         {
+
             try
             {
                 var response = await _expenseService.GetExpensesAsync(request);
-                var result = _mapper.Map<Expense.Response[]>(response);
-                //TODO need to modify the expense reponse to include pagination data and then an array of expenses
-                var totalPages = _expenseService.GetTotalPageCount(request.PageSize);
-                return result;
+                return response;
             }
             catch (Exception ex)
             {

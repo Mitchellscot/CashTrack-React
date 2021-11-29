@@ -7,8 +7,7 @@ namespace CashTrack.Services.ExpenseRepository
     public interface IExpenseService
     {
         Task<bool> Commit();
-        Task<Expenses[]> GetExpensesAsync(Expense.Request request);
-        Task<Expenses> GetExpenseByIdAsync(int id);
-        int GetTotalPageCount(int pageSize);
+        Task<Expense.Response> GetExpensesAsync(Expense.Request request);
+        Task<Expense.Response> GetExpenseByIdAsync(int id);
     }
 }

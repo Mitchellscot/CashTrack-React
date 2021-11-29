@@ -17,7 +17,7 @@ namespace CashTrack.Helpers
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
 
-            CreateMap<Expenses, Expense.Response>()
+            CreateMap<Expenses, Expense.ExpenseTransaction>()
                 .ForMember(e => e.Id, o => o.MapFrom(m => m.id))
                 .ForMember(e => e.PurchaseDate, o => o.MapFrom(m => m.purchase_date))
                 .ForMember(e => e.Amount, o => o.MapFrom(m => m.amount))
