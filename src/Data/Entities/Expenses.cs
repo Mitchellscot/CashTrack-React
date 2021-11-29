@@ -10,7 +10,7 @@ namespace CashTrack.Data.Entities
     {
         public int id { get; set; }
         [Required]
-        public DateTime purchase_date { get; set; }
+        public DateTimeOffset purchase_date { get; set; }
         [Required]
         public decimal amount { get; set; }
         [StringLength(50)]

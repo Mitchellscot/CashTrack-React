@@ -6,9 +6,8 @@ namespace CashTrack.Services.ExpenseRepository
 {
     public interface IExpenseService
     {
-        Task<bool> Commit(); //save changes
-        Task<Expenses[]> GetExpenses(int pageNumber, int pageSize);
-        Task<Expenses> GetExpenseById(int id);
-        Task<Expenses[]> GetExpensesByDate();
+        Task<bool> Commit();
+        Task<Expense.Response> GetExpensesAsync(Expense.Request request);
+        Task<Expense.Response> GetExpenseByIdAsync(int id);
     }
 }
