@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CashTrack.Data.Services.UserRepository;
 using CashTrack.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using System;
+using CashTrack.Services.UserRepository;
 
 namespace CashTrack.Controllers
 {
@@ -16,9 +16,9 @@ namespace CashTrack.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
+        private readonly IUserRepository _userService;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, IMapper mapper)
+        public UserController(ILogger<UserController> logger, IUserRepository userService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;

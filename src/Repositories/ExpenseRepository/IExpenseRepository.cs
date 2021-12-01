@@ -4,7 +4,7 @@ using CashTrack.Models.ExpenseModels;
 
 namespace CashTrack.Services.ExpenseRepository
 {
-    public interface IExpenseService
+    public interface IExpenseRepository
     {
         Task<bool> Commit();
         Task<Expense.Response> GetExpensesAsync(Expense.Request request);

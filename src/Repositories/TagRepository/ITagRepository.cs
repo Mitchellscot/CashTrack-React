@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CashTrack.Services.TagRepository
 {
-    public interface ITagService
+    public interface ITagRepository
     {
         Task<Tags[]> GetAllTags();
     }

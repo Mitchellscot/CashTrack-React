@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CashTrack.Controllers;
-using CashTrack.Data.Services.UserRepository;
 using CashTrack.Models.UserModels;
+using CashTrack.Services.UserRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,7 +20,7 @@ namespace CashTrack.Tests.Controllers
         private readonly ITestOutputHelper _output;
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-        private readonly IUserService _repository;
+        private readonly IUserRepository _repository;
         private readonly UserController _controller;
 
         public UserControllerShould(ITestOutputHelper output)
@@ -28,7 +28,7 @@ namespace CashTrack.Tests.Controllers
             _output = output;
             _mapper = Mock.Of<IMapper>();
             _logger = Mock.Of<ILogger<UserController>>();
-            _repository = Mock.Of<IUserService>();
+            _repository = Mock.Of<IUserRepository>();
             _controller = new UserController(_logger, _repository, _mapper);
         }
         [Fact]

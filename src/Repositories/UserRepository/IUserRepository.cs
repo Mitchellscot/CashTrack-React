@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Models.UserModels;
 
-namespace CashTrack.Data.Services.UserRepository
+namespace CashTrack.Services.UserRepository
 {
-    public interface IUserService
+    public interface IUserRepository
     {
         Task<Authentication.Response> AuthenticateAsync(Authentication.Request model);
         Task<User> GetUserByIdAsync(int id);
