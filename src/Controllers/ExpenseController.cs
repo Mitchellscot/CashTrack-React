@@ -60,6 +60,10 @@ namespace CashTrack.Controllers
                 var result = await _expenseService.GetExpenseByIdAsync(id);
                 return Ok(_mapper.Map<Expense.Response>(result));
             }
+            catch (ExpenseNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

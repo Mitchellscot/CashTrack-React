@@ -35,23 +35,14 @@ namespace CashTrack.Data
             User firstUser = new User()
             {
                 id = 1,
-                first_name = "Mitchell",
-                last_name = "Scott",
+                first_name = "Test",
+                last_name = "User",
                 email = "Mitchellscott@me.com",
                 password_hash = BCryptNet.HashPassword("password"),
             };
 
-            User secondUser = new User()
-            {
-                id = 2,
-                first_name = "Sarah",
-                last_name = "Scott",
-                email = "Sarahlscott@me.com",
-                password_hash = BCryptNet.HashPassword("password"),
-            };
-
-            var userArray = new User[2]{
-                firstUser, secondUser
+            var userArray = new User[1]{
+                firstUser
             };
 
             mb.Entity<User>().HasData(userArray);

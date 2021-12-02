@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CashTrack.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -11,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.Net.Http.Headers;
-using Xunit.Abstractions;
+using Bogus;
 
 namespace CashTrack.IntegrationTests
 {
@@ -20,6 +16,7 @@ namespace CashTrack.IntegrationTests
     {
         private readonly TestServer _testServer;
         public HttpClient Client { get; }
+        public Faker _faker;
 
         public TestServerFixture()
         {
@@ -41,6 +38,7 @@ namespace CashTrack.IntegrationTests
                 .UseStartup<CashTrack.Startup>();
             _testServer = new TestServer(builder);
             Client = _testServer.CreateClient();
+            _faker = new Faker();
         }
 
         private string GetContentRootPath()

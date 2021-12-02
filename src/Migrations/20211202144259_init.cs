@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CashTrack.Data.Migrations
+namespace CashTrack.Migrations
 {
     public partial class init : Migration
     {
@@ -84,8 +84,8 @@ namespace CashTrack.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    first_name = table.Column<string>(type: "text", nullable: true),
-                    last_name = table.Column<string>(type: "text", nullable: true),
+                    first_name = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: true),
+                    last_name = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: true),
                     email = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: true)
                 },
@@ -120,7 +120,7 @@ namespace CashTrack.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    income_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    income_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
                     notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     categoryid = table.Column<int>(type: "integer", nullable: true),
@@ -147,7 +147,7 @@ namespace CashTrack.Data.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    purchase_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    purchase_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
                     merchantid = table.Column<int>(type: "integer", nullable: true),
                     notes = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -196,11 +196,7 @@ namespace CashTrack.Data.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "id", "email", "first_name", "last_name", "password_hash" },
-                values: new object[,]
-                {
-                    { 1, "Mitchellscott@me.com", "Mitchell", "Scott", "$2a$11$FEkIeLfunFg69jX36cK90eQ4YsJgp2O/N1fXUFrhWewk4looXtdkG" },
-                    { 2, "Sarahlscott@me.com", "Sarah", "Scott", "$2a$11$c.5mAP83IB30EFPYuxrfMuWSEEXFKTlBKaufiMpRW0YdrSslltV2u" }
-                });
+                values: new object[] { 1, "Mitchellscott@me.com", "Test", "User", "$2a$11$/5Rg/hBN.7zgY5GFndmwPe9xZhahdRRaMQAOhxEh4b/JvI2GCrm1." });
 
             migrationBuilder.CreateIndex(
                 name: "IX_expense_sub_categories_main_categoryid",

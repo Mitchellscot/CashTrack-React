@@ -9,15 +9,17 @@ using System.IO;
 using Shouldly;
 using Xunit.Abstractions;
 using Microsoft.Extensions.PlatformAbstractions;
+using CashTrack.Models.UserModels;
+using System.Net.Http.Headers;
 
 namespace CashTrack.IntegrationTests
 {
-    public class CashTrackApplicationShould : IClassFixture<TestServerFixture>
+    public class UserControllerShould : IClassFixture<TestServerFixture>
     {
         private TestServerFixture _fixture;
         private ITestOutputHelper _output;
 
-        public CashTrackApplicationShould(TestServerFixture fixture, ITestOutputHelper output)
+        public UserControllerShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
@@ -25,20 +27,12 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task RenderApplication()
         {
-            //var response = await client.GetAsync("/api/expense/100");
 
-            //response.EnsureSuccessStatusCode();
-
-            //var responseString = await response.Content.ReadAsStringAsync();
-            //_output.WriteLine(responseString);
-            //Assert.Contains("\"id\":100", responseString);
 
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "/user/authenticate");
 
-
-            postRequest.Content = new StringContent(
-                JsonConvert.SerializeObject(new { name = "mitch", password = "password" }), Encoding.UTF8, "application/json"
-                );
+            postRequest.Content = new StringContent(JsonConvert.SerializeObject(new Authentication.Request("Test", "password")));
+            postRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var requestContent = await postRequest.Content.ReadAsStringAsync();
             _output.WriteLine(requestContent);
             var postResponse = await _fixture.Client.SendAsync(postRequest);
@@ -48,8 +42,6 @@ namespace CashTrack.IntegrationTests
             _output.WriteLine(responseString2);
             var userReponse = JsonConvert.DeserializeAnonymousType(responseString2, responseObject);
             userReponse.token.ShouldNotBeEmpty();
-            Assert.Contains("mitch", responseString2);
-
         }
     }
 }

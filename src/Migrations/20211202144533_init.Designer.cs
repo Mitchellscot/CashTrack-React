@@ -3,17 +3,19 @@ using System;
 using CashTrack.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CashTrack.Data.Migrations
+namespace CashTrack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211202144533_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,17 +266,9 @@ namespace CashTrack.Data.Migrations
                         {
                             id = 1,
                             email = "Mitchellscott@me.com",
-                            first_name = "Mitchell",
-                            last_name = "Scott",
-                            password_hash = "$2a$11$/cGxSeiH8yGFTG/t4BpEDOzcGPB3K9kCyN6n7bz7hJWloN0kxlfci"
-                        },
-                        new
-                        {
-                            id = 2,
-                            email = "Sarahlscott@me.com",
-                            first_name = "Sarah",
-                            last_name = "Scott",
-                            password_hash = "$2a$11$fuOlOr3nrtXE9WpxqU9k5.0pnV474rd9V3DCE23iwaS0GFH9yzmOe"
+                            first_name = "Test",
+                            last_name = "User",
+                            password_hash = "$2a$11$ApK5GjrKedxvqaHnal6bde4/piXFY.ua2PJd/K6YjUwpnew8h.D4e"
                         });
                 });
 
