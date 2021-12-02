@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Models.UserModels;
 
-namespace CashTrack.Services.UserRepository
+namespace CashTrack.Repositories.UserRepository
 {
     public interface IUserRepository
     {

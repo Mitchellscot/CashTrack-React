@@ -4,7 +4,7 @@ using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Services.ExpenseRepository;
+using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;

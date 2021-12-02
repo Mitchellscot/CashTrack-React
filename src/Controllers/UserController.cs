@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using System;
-using CashTrack.Services.UserRepository;
+using CashTrack.Repositories.UserRepository;
 
 namespace CashTrack.Controllers
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CashTrack.Controllers;
 using CashTrack.Models.UserModels;
-using CashTrack.Services.UserRepository;
+using CashTrack.Repositories.UserRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Helpers;
-using CashTrack.Services.UserRepository;
+using CashTrack.Repositories.UserRepository;
 
 namespace CashTrack.Helpers
 {

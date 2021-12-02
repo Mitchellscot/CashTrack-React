@@ -15,7 +15,7 @@ using CashTrack.Models.UserModels;
 using BCryptNet = BCrypt.Net.BCrypt;
 using CashTrack.Data;
 
-namespace CashTrack.Services.UserRepository
+namespace CashTrack.Repositories.UserRepository
 {
     public class UserRepository : IUserRepository
     {

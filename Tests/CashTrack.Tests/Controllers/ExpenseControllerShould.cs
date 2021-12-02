@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Controllers;
 using CashTrack.Models.ExpenseModels;
-using CashTrack.Services.ExpenseRepository;
+using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;

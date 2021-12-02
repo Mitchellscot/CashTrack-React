@@ -2,7 +2,7 @@
 using CashTrack.Models.ExpenseModels;
 using System.Threading.Tasks;
 
-namespace CashTrack.Services.TagRepository
+namespace CashTrack.Repositories.TagRepository
 {
     public interface ITagRepository
     {

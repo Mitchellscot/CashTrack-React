@@ -16,7 +16,7 @@ using Npgsql;
 using CashTrack.Models.Common;
 using AutoMapper;
 
-namespace CashTrack.Services.ExpenseRepository
+namespace CashTrack.Repositories.ExpenseRepository
 {
     public class ExpenseRepository : IExpenseRepository
     {

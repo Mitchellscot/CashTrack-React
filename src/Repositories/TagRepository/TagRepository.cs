@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
-namespace CashTrack.Services.TagRepository
+namespace CashTrack.Repositories.TagRepository
 {
     public class TagRepository : ITagRepository
     {
