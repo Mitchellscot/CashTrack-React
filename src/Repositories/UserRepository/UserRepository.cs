@@ -14,6 +14,7 @@ using CashTrack.Helpers;
 using CashTrack.Models.UserModels;
 using BCryptNet = BCrypt.Net.BCrypt;
 using CashTrack.Data;
+using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Repositories.UserRepository
 {
@@ -45,18 +46,23 @@ namespace CashTrack.Repositories.UserRepository
             return response;
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<Users[]> GetAllUsers()
+        {
+            var users = await _context.Users.OrderBy(x => x.id).ToArrayAsync();
+            return users;
+        }
+
+        public async Task<Users> GetUserByIdAsync(int id)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.id == id);
             if (user == null)
             {
-                _logger.LogInformation($"No user found with id {id}");
-                return null;
+                throw new UserNotFoundException(id.ToString());
             }
             return user;
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

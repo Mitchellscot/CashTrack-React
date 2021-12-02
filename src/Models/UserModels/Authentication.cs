@@ -1,5 +1,4 @@
-﻿
-namespace CashTrack.Models.UserModels
+﻿namespace CashTrack.Models.UserModels
 {
     public class Authentication
     {

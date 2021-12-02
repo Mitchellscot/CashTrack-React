@@ -13,7 +13,7 @@ using Npgsql;
 
 namespace CashTrack.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
@@ -37,7 +37,6 @@ namespace CashTrack.Controllers
         [HttpGet]
         public async Task<ActionResult<Expense.Response>> GetAllExpenses([FromQuery]Expense.Request request)
         {
-
             try
             {
                 var response = await _expenseService.GetExpensesAsync(request);

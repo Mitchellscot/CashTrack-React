@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 using System;
 using CashTrack.Repositories.UserRepository;
 using Microsoft.AspNetCore.Http;
+using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -45,6 +46,38 @@ namespace CashTrack.Controllers
             catch (Exception ex)
             {
                 _logger.LogInformation($"HEY MITCH - ERROR AUTHENTICATING {ex.Message} {ex.GetType().ToString()} {ex.InnerException} {ex.StackTrace}");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<User.Response>> GetUserById(int id)
+        {
+            try
+            {
+                var user = await _userService.GetUserByIdAsync(id);
+                return Ok(_mapper.Map<User.Response>(user));
+            }
+            catch (UserNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("all")]
+        [Authorize]
+        public async Task<ActionResult<User.Response[]>> GetAllUsers()
+        {
+            try
+            {
+                var users = await _userService.GetAllUsers();
+                return Ok(_mapper.Map<User.Response[]>(users));
+            }
+            catch (Exception ex)
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

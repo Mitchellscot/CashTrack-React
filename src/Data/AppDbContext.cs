@@ -13,7 +13,7 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<Users> Users { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
         public DbSet<Incomes> Incomes { get; set; }
         public DbSet<ExpenseMainCategories> ExpenseMainCategories { get; set; }
@@ -32,7 +32,7 @@ namespace CashTrack.Data
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            User firstUser = new User()
+            Users firstUser = new Users()
             {
                 id = 1,
                 first_name = "Test",
@@ -41,11 +41,11 @@ namespace CashTrack.Data
                 password_hash = BCryptNet.HashPassword("password"),
             };
 
-            var userArray = new User[1]{
+            var userArray = new Users[1]{
                 firstUser
             };
 
-            mb.Entity<User>().HasData(userArray);
+            mb.Entity<Users>().HasData(userArray);
 
             mb.Entity<ExpenseTags>().HasKey(et => new { et.expense_id, et.tag_id });
 

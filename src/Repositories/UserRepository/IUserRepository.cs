@@ -10,6 +10,7 @@ namespace CashTrack.Repositories.UserRepository
     public interface IUserRepository
     {
         Task<Authentication.Response> AuthenticateAsync(Authentication.Request model);
-        Task<User> GetUserByIdAsync(int id);
+        Task<Users> GetUserByIdAsync(int id);
+        Task<Users[]> GetAllUsers();
     }
 }

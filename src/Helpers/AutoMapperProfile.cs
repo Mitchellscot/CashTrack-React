@@ -11,7 +11,15 @@ namespace CashTrack.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, Authentication.Response>()
+            CreateMap<Users, User.Response>()
+                .ForMember(u => u.id, o => o.MapFrom(src => src.id))
+                .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
+                .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
+                .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
+
+
+            //Users is the entity... might have to fix this in the future
+            CreateMap<Users, Authentication.Response>()
                 .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
                 .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
