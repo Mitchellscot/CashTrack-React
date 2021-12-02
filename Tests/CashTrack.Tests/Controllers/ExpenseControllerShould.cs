@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Controllers;
 using CashTrack.Models.ExpenseModels;
-using CashTrack.Services.ExpenseRepository;
+using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -19,28 +19,30 @@ namespace CashTrack.Tests.Controllers
     {
         private readonly ExpenseController _sut;
         private readonly ITestOutputHelper _output;
-
         public IMapper _mapper { get; }
-
         private readonly ILogger<ExpenseController> _logger;
-
-        public IExpenseService _repository { get; }
+        public IExpenseRepository _repository { get; }
 
         public ExpenseControllerShould(ITestOutputHelper output)
         {
             _output = output;
             _mapper = Mock.Of<IMapper>();
             _logger = Mock.Of<ILogger<ExpenseController>>();
-            _repository = Mock.Of<IExpenseService>();
+            _repository = Mock.Of<IExpenseRepository>();
             _sut = new ExpenseController(_logger, _repository, _mapper);
         }
         [Fact]
-        public void ReturnASingleExpense()
+        public void ReturnASingleExpenseResponse()
         {
             var result = _sut.GetAnExpenseById(1);
-            var viewResult = Assert.IsType<Task<ActionResult<Expense>>>(result);
-
-
+            var viewResult = Assert.IsType<Task<ActionResult<Expense.Response>>>(result);
+        }
+        [Fact]
+        public void ReturnsMultipleExpenseResponse()
+        {
+            var request = new Expense.Request();
+            var result = _sut.GetAllExpenses(request);
+            var viewResult = Assert.IsType<Task<ActionResult<Expense.Response>>>(result);
         }
     }
 }

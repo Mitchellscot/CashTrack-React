@@ -6,16 +6,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
-namespace CashTrack.Services.TagRepository
+namespace CashTrack.Repositories.TagRepository
 {
-    public class TagService : ITagService
+    public class TagRepository : ITagRepository
     {
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
-        private readonly ILogger<TagService> _logger;
+        private readonly ILogger<TagRepository> _logger;
 
-        public TagService(
-            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<TagService> logger)
+        public TagRepository(
+            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<TagRepository> logger)
         {
             this._appSettings = appSettings.Value;
             this._context = context;

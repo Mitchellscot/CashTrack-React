@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CashTrack.Data.Services.UserRepository;
 using Microsoft.AspNetCore.Authorization;
 using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Services.ExpenseRepository;
+using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;
@@ -25,10 +24,10 @@ namespace CashTrack.Controllers
         //also, think about how you can reduce the number of controllers here this is rediculous
 
         private readonly IMapper _mapper;
-        private readonly ILogger<UserController> _logger;
-        private readonly IExpenseService _expenseService;
+        private readonly ILogger<ExpenseController> _logger;
+        private readonly IExpenseRepository _expenseService;
 
-        public ExpenseController(ILogger<UserController> logger, IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(ILogger<ExpenseController> logger, IExpenseRepository expenseService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;
@@ -60,6 +59,10 @@ namespace CashTrack.Controllers
             {
                 var result = await _expenseService.GetExpenseByIdAsync(id);
                 return Ok(_mapper.Map<Expense.Response>(result));
+            }
+            catch (ExpenseNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

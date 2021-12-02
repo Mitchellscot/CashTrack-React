@@ -1,5 +1,5 @@
 //using CashTrack.Data.Entities;
-//using CashTrack.Data.Services.UserRepository;
+//using CashTrack.Data.Repositories.UserRepository;
 //using Xunit;
 //using Xunit.Abstractions;
 //using Moq;

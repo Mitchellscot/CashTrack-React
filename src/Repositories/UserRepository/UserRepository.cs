@@ -13,28 +13,29 @@ using CashTrack.Data.Entities;
 using CashTrack.Helpers;
 using CashTrack.Models.UserModels;
 using BCryptNet = BCrypt.Net.BCrypt;
+using CashTrack.Data;
 
-namespace CashTrack.Data.Services.UserRepository
+namespace CashTrack.Repositories.UserRepository
 {
-    public class UserService : IUserService
+    public class UserRepository : IUserRepository
     {
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
-        private readonly ILogger<UserService> _logger;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserService(
-            IOptions<AppSettings> appSettings, IMapper mapper, AppDbContext context, ILogger<UserService> logger)
+        public UserRepository(
+            IOptions<AppSettings> appSettings, IMapper mapper, AppDbContext context, ILogger<UserRepository> logger)
         {
-            this._mapper = mapper;
-            this._appSettings = appSettings.Value;
-            this._context = context;
-            this._logger = logger;
+            _mapper = mapper;
+            _appSettings = appSettings.Value;
+            _context = context;
+            _logger = logger;
         }
 
         public async Task<Authentication.Response> AuthenticateAsync(Authentication.Request model)
         {
-            var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync<User>();
+            var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync();
             if (user == null || !BCryptNet.Verify(model.Password, user.password_hash))
             {
                 return null;
@@ -46,12 +47,13 @@ namespace CashTrack.Data.Services.UserRepository
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            var query = _context.Users.Where(u => u.id == id);
-            if (query.Any())
+            var user = _context.Users.Where(u => u.id == id);
+            if (!user.Any())
             {
-                return await query.FirstOrDefaultAsync();
+                _logger.LogInformation($"No user found with id {id}");
+                return null;
             }
-            return null;
+            return await user.FirstOrDefaultAsync();
         }
 
         private string GenerateJwtToken(User user)
@@ -64,6 +66,7 @@ namespace CashTrack.Data.Services.UserRepository
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("id", user.id.ToString()),
+                    //if this is buggy in the future consider changing this from email to first name
                     new Claim(ClaimTypes.Name, user.email.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

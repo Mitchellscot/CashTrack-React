@@ -6,15 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CashTrack.Helpers;
-using CashTrack.Data.Services.UserRepository;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
-using CashTrack.Services.ExpenseRepository;
-using CashTrack.Services.TagRepository;
 using FluentValidation.AspNetCore;
-using CashTrack.Helpers.Validators;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Serialization;
+using CashTrack.Repositories.ExpenseRepository;
+using CashTrack.Repositories.UserRepository;
+using CashTrack.Repositories.TagRepository;
 
 namespace CashTrack
 {
@@ -56,14 +54,14 @@ namespace CashTrack
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddScoped<IExpenseService, ExpenseService>();
-            services.AddScoped<ITagService, TagService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
            {
-               configuration.RootPath = "ClientApp/build";
+               configuration.RootPath = "./ClientApp/build";
            });
         }
 
@@ -89,6 +87,7 @@ namespace CashTrack
                 .WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
             //app.UseAuthorization();

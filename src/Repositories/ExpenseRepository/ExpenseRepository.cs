@@ -16,17 +16,17 @@ using Npgsql;
 using CashTrack.Models.Common;
 using AutoMapper;
 
-namespace CashTrack.Services.ExpenseRepository
+namespace CashTrack.Repositories.ExpenseRepository
 {
-    public class ExpenseService : IExpenseService
+    public class ExpenseRepository : IExpenseRepository
     {
         private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
-        private readonly ILogger<ExpenseService> _logger;
+        private readonly ILogger<ExpenseRepository> _logger;
         private readonly IMapper _mapper;
 
-        public ExpenseService(
-            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<ExpenseService> logger, IMapper mapper)
+        public ExpenseRepository(
+            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<ExpenseRepository> logger, IMapper mapper)
         {
             _appSettings = appSettings.Value;
             _context = context;

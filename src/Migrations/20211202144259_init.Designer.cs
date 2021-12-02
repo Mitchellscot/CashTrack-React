@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CashTrack.Data.Migrations
+namespace CashTrack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211126174126_init")]
+    [Migration("20211202144259_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,7 +66,7 @@ namespace CashTrack.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTime>("purchase_date")
+                    b.Property<DateTimeOffset>("purchase_date")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("id");
@@ -151,7 +151,7 @@ namespace CashTrack.Data.Migrations
                     b.Property<int?>("categoryid")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("income_date")
+                    b.Property<DateTimeOffset>("income_date")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("notes")
@@ -247,10 +247,12 @@ namespace CashTrack.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("first_name")
-                        .HasColumnType("text");
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
 
                     b.Property<string>("last_name")
-                        .HasColumnType("text");
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
 
                     b.Property<string>("password_hash")
                         .HasColumnType("text");
@@ -264,17 +266,9 @@ namespace CashTrack.Data.Migrations
                         {
                             id = 1,
                             email = "Mitchellscott@me.com",
-                            first_name = "Mitchell",
-                            last_name = "Scott",
-                            password_hash = "$2a$11$FEkIeLfunFg69jX36cK90eQ4YsJgp2O/N1fXUFrhWewk4looXtdkG"
-                        },
-                        new
-                        {
-                            id = 2,
-                            email = "Sarahlscott@me.com",
-                            first_name = "Sarah",
-                            last_name = "Scott",
-                            password_hash = "$2a$11$c.5mAP83IB30EFPYuxrfMuWSEEXFKTlBKaufiMpRW0YdrSslltV2u"
+                            first_name = "Test",
+                            last_name = "User",
+                            password_hash = "$2a$11$/5Rg/hBN.7zgY5GFndmwPe9xZhahdRRaMQAOhxEh4b/JvI2GCrm1."
                         });
                 });
 

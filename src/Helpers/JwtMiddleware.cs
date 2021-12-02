@@ -6,8 +6,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CashTrack.Data.Services.UserRepository;
 using CashTrack.Helpers;
+using CashTrack.Repositories.UserRepository;
 
 namespace CashTrack.Helpers
 {
@@ -22,7 +22,7 @@ namespace CashTrack.Helpers
             _appSettings = appSettings.Value;
         }
 
-        public async Task Invoke(HttpContext context, IUserService userService)
+        public async Task Invoke(HttpContext context, IUserRepository userService)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
@@ -32,7 +32,7 @@ namespace CashTrack.Helpers
             await _next(context);
         }
 
-        private async void attachUserToContext(HttpContext context, IUserService userRepository, string token)
+        private async void attachUserToContext(HttpContext context, IUserRepository userRepository, string token)
         {
             try
             {

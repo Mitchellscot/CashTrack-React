@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.TagModels;
-using CashTrack.Services.TagRepository;
+using CashTrack.Repositories.TagRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,9 +16,9 @@ namespace CashTrack.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-        private readonly ITagService _tagService;
+        private readonly ITagRepository _tagService;
 
-        public TagController(ILogger<UserController> logger, ITagService tagService, IMapper mapper)
+        public TagController(ILogger<UserController> logger, ITagRepository tagService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;
