@@ -1,58 +1,30 @@
 using Xunit;
-using Microsoft.Net;
-using Microsoft.Net.Http;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using System.Threading.Tasks;
-using Xunit.Abstractions;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.InMemory;
 using CashTrack.Data;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using System.IO;
+using Shouldly;
+using Xunit.Abstractions;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace CashTrack.IntegrationTests
 {
-    public class CashTrackApplicationShould
+    public class CashTrackApplicationShould : IClassFixture<TestServerFixture>
     {
-        private readonly ITestOutputHelper _output;
-        private const string connString = "Host=localhost;Port=5432;Username=postgres;Password=password;Database=cash_track;";
-        private const string contentRoot = @"E:\Code\CashTrack\src\";
+        private TestServerFixture _fixture;
+        private ITestOutputHelper _output;
 
-        public CashTrackApplicationShould(ITestOutputHelper output)
+        public CashTrackApplicationShould(TestServerFixture fixture, ITestOutputHelper output)
         {
+            _fixture = fixture;
             _output = output;
         }
         [Fact]
         public async Task RenderApplication()
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.test.json")
-                .Build();
-            var builder = new WebHostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseEnvironment("Test")
-                .UseConfiguration(configuration)
-                .ConfigureServices(services =>
-                {
-                    services.AddDbContext<AppDbContext>(options =>
-                    {
-                        options.UseNpgsql(configuration.GetConnectionString("TestDB"));
-                    });
-                })
-                .UseStartup<CashTrack.Startup>();
-
-            var server = new TestServer(builder);
-
-            var client = server.CreateClient();
             //var response = await client.GetAsync("/api/expense/100");
 
             //response.EnsureSuccessStatusCode();
@@ -65,15 +37,18 @@ namespace CashTrack.IntegrationTests
 
 
             postRequest.Content = new StringContent(
-                JsonConvert.SerializeObject(new { name = "mitchell", password = "password" }), Encoding.UTF8, "application/json"
+                JsonConvert.SerializeObject(new { name = "mitch", password = "password" }), Encoding.UTF8, "application/json"
                 );
             var requestContent = await postRequest.Content.ReadAsStringAsync();
             _output.WriteLine(requestContent);
-            var postResponse = await client.SendAsync(postRequest);
-            //postResponse.EnsureSuccessStatusCode();
+            var postResponse = await _fixture.Client.SendAsync(postRequest);
+            postResponse.EnsureSuccessStatusCode();
             var responseString2 = await postResponse.Content.ReadAsStringAsync();
+            var responseObject = new { id = "", firstName = "", lastName = "", email = "", token = "" };
             _output.WriteLine(responseString2);
-            Assert.Contains("Mitchell", responseString2);
+            var userReponse = JsonConvert.DeserializeAnonymousType(responseString2, responseObject);
+            userReponse.token.ShouldNotBeEmpty();
+            Assert.Contains("mitch", responseString2);
 
         }
     }
