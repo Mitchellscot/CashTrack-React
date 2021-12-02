@@ -34,13 +34,13 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnAnAuthenticatedUser()
         {
             var request = GetAuthenticationRequest() with { Name = "Test" };
-            var sut = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(path, request);
 
-            var response = JsonConvert.DeserializeObject<Authentication.Response>(await sut.Content.ReadAsStringAsync());
+            var responseBody = JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync());
 
-            sut.EnsureSuccessStatusCode();
-            response.Token.ShouldNotBeEmpty();
-            response.FirstName.ShouldBe(request.Name);
+            response.EnsureSuccessStatusCode();
+            responseBody.Token.ShouldNotBeEmpty();
+            responseBody.FirstName.ShouldBe(request.Name);
             PrintRequestAndResponse(request, response);
         }
 
@@ -51,10 +51,10 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnUnauthorizedWithWrongPassword(string password)
         {
             var request = GetAuthenticationRequest() with { Password = password };
-            var sut = await _fixture.SendPostRequestAsync(path, request);
-            sut.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            var response = await _fixture.SendPostRequestAsync(path, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
             PrintRequestAndResponse(request,
-                JsonConvert.DeserializeObject(await sut.Content.ReadAsStringAsync()));
+                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
 
         [Theory]
@@ -65,10 +65,10 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnUnauthorizedWithWrongUserName(string username)
         {
             var request = GetAuthenticationRequest() with { Name = username };
-            var sut = await _fixture.SendPostRequestAsync(path, request);
-            sut.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            var response = await _fixture.SendPostRequestAsync(path, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
             PrintRequestAndResponse(request,
-                JsonConvert.DeserializeObject(await sut.Content.ReadAsStringAsync()));
+                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
 
         [Theory]
@@ -76,11 +76,11 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnBadRequestWithEmptyPassword(string password)
         {
             var request = GetAuthenticationRequest() with { Password = password };
-            var sut = await _fixture.SendPostRequestAsync(path, request);
-            sut.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            var response = await _fixture.SendPostRequestAsync(path, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             PrintRequestAndResponse(request,
-                JsonConvert.DeserializeObject(await sut.Content.ReadAsStringAsync()));
+                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
 
         [Theory]
@@ -88,11 +88,11 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnBadRequestWithEmptyUsername(string username)
         {
             var request = GetAuthenticationRequest() with { Name = username };
-            var sut = await _fixture.SendPostRequestAsync(path, request);
-            sut.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            var response = await _fixture.SendPostRequestAsync(path, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             PrintRequestAndResponse(request,
-                JsonConvert.DeserializeObject(await sut.Content.ReadAsStringAsync()));
+                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
 
         private Authentication.Request GetAuthenticationRequest()

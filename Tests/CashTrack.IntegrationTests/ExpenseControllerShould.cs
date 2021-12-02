@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using Shouldly;
+using Newtonsoft.Json;
 
 namespace CashTrack.IntegrationTests
 {
@@ -21,7 +22,7 @@ namespace CashTrack.IntegrationTests
             _fixture = fixture;
             _output = output;
         }
-
+        #region SingleId
         [Theory]
         [ExpenseIdData]
         public async void ReturnASingleExpense(string id)
@@ -46,11 +47,27 @@ namespace CashTrack.IntegrationTests
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
-
             _output.WriteLine(responseString);
 
             Assert.Contains($"No expense found with an id of {id}", responseString);
         }
+        [Theory]
+        [InlineData("%")]
+        [InlineData("A")]
+        [EmptyData]
+        public async void ReturnAnErrorWithInvalidInput(object input)
+        {
+            var response = await _fixture.Client.GetAsync(path + "/" + input);
+            response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+            PrintRequestAndResponse(input,
+                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
+        }
+        #endregion
 
+        private void PrintRequestAndResponse(object request, object response)
+        {
+            _output.WriteLine(request.ToString());
+            _output.WriteLine(response.ToString());
+        }
     }
 }
