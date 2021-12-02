@@ -16,12 +16,15 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace CashTrack.IntegrationTests
 {
     public class CashTrackApplicationShould
     {
         private readonly ITestOutputHelper _output;
+        private const string connString = "Host=localhost;Port=5432;Username=postgres;Password=password;Database=cash_track;";
+        private const string contentRoot = @"E:\Code\CashTrack\src\";
 
         public CashTrackApplicationShould(ITestOutputHelper output)
         {
@@ -30,17 +33,19 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task RenderApplication()
         {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.test.json")
+                .Build();
             var builder = new WebHostBuilder()
-                .UseContentRoot(@"E:\Code\CashTrack\src\")
-                .UseEnvironment("Development")
-                .UseConfiguration(new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json")
-                    .Build())
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseEnvironment("Test")
+                .UseConfiguration(configuration)
                 .ConfigureServices(services =>
                 {
                     services.AddDbContext<AppDbContext>(options =>
                     {
-                        options.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=password;Database=cash_track;");
+                        options.UseNpgsql(configuration.GetConnectionString("TestDB"));
                     });
                 })
                 .UseStartup<CashTrack.Startup>();

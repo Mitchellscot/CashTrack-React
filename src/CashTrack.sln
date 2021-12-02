@@ -6,10 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashTrack.Tests", "..\Tests\CashTrack.Tests\CashTrack.Tests.csproj", "{D2BE2986-795B-48F0-818F-2E134D9947CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{557968D8-2926-4B82-8EF2-626947402A17}"
-	ProjectSection(SolutionItems) = preProject
-		appsettings.Development.json = appsettings.Development.json
-		appsettings.json = appsettings.json
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CashTrack.IntegrationTests", "..\Tests\CashTrack.IntegrationTests\CashTrack.IntegrationTests.csproj", "{7253009E-8F38-44E2-BEB1-A60DE05340C9}"
 EndProject
