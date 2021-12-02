@@ -47,13 +47,13 @@ namespace CashTrack.Repositories.UserRepository
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            var user = _context.Users.Where(u => u.id == id);
-            if (!user.Any())
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.id == id);
+            if (user == null)
             {
                 _logger.LogInformation($"No user found with id {id}");
                 return null;
             }
-            return await user.FirstOrDefaultAsync();
+            return user;
         }
 
         private string GenerateJwtToken(User user)
