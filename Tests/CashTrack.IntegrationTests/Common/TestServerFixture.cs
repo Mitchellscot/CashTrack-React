@@ -9,6 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Bogus;
+using Newtonsoft.Json;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace CashTrack.IntegrationTests
 {
@@ -16,7 +20,7 @@ namespace CashTrack.IntegrationTests
     {
         private readonly TestServer _testServer;
         public HttpClient Client { get; }
-        public Faker _faker;
+        public Faker Faker;
 
         public TestServerFixture()
         {
@@ -38,7 +42,7 @@ namespace CashTrack.IntegrationTests
                 .UseStartup<CashTrack.Startup>();
             _testServer = new TestServer(builder);
             Client = _testServer.CreateClient();
-            _faker = new Faker();
+            Faker = new Faker();
         }
 
         private string GetContentRootPath()
@@ -47,6 +51,20 @@ namespace CashTrack.IntegrationTests
             var relativePathToWebProject = @"..\..\..\..\..\src";
             return Path.Combine(testProjectPath, relativePathToWebProject);
         }
+
+        public async Task<HttpResponseMessage> SendPostRequestAsync(string path, object request)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, path)
+            {
+                Content = new StringContent(
+                    JsonConvert.SerializeObject(request),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+            return await Client.SendAsync(message);
+
+        }
+
         public void Dispose()
         {
             Client.Dispose();

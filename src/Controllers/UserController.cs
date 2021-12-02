@@ -7,6 +7,7 @@ using AutoMapper;
 using System.Threading.Tasks;
 using System;
 using CashTrack.Repositories.UserRepository;
+using Microsoft.AspNetCore.Http;
 
 namespace CashTrack.Controllers
 {
@@ -44,7 +45,7 @@ namespace CashTrack.Controllers
             catch (Exception ex)
             {
                 _logger.LogInformation($"HEY MITCH - ERROR AUTHENTICATING {ex.Message} {ex.GetType().ToString()} {ex.InnerException} {ex.StackTrace}");
-                return BadRequest(new { message = ex.Message.ToString() });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

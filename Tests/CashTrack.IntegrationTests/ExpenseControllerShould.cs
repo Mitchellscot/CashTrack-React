@@ -51,5 +51,6 @@ namespace CashTrack.IntegrationTests
 
             Assert.Contains($"No expense found with an id of {id}", responseString);
         }
+
     }
 }
