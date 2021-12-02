@@ -87,6 +87,7 @@ namespace CashTrack
                 .WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
             //app.UseAuthorization();

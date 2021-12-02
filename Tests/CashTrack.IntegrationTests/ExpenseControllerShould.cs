@@ -8,6 +8,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Shouldly;
 using Newtonsoft.Json;
+using CashTrack.Models.ExpenseModels;
 
 namespace CashTrack.IntegrationTests
 {
@@ -63,11 +64,28 @@ namespace CashTrack.IntegrationTests
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
         #endregion
+        [Fact]
+        public async Task ReturnAllExpenses()
+        {
+            var response = await _fixture.Client.GetAsync(path + "/" + "?dateoptions=1");
+
+            response.EnsureSuccessStatusCode();
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            _output.WriteLine(responseString);
+
+            Assert.Contains($"\"id\"", responseString);
+        }
 
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
+        }
+        private Expense.Request GetExpenseRequest()
+        {
+            return new Expense.Request();
         }
     }
 }
