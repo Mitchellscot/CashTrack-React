@@ -1,10 +1,11 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import Login from '../../components/Login/Login';
-import {useSelector} from 'react-redux';
+//import {useSelector} from 'react-redux';
 
 function ProtectedRoute(props) {
-  const loggedIn = useSelector((store) => store.login.loggedIn);
+  //const loggedIn = useSelector((store) => store.login.loggedIn);
+  const loggedIn = localStorage.getItem('user');
   const {
     authRedirect,
     ...otherProps

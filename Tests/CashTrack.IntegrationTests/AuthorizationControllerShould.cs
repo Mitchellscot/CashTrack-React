@@ -1,34 +1,24 @@
 using Xunit;
 using System.Threading.Tasks;
-using CashTrack.Data;
-using System.Collections.Generic;
-using System.Net.Http;
 using Newtonsoft.Json;
-using System.Text;
-using System.IO;
 using Shouldly;
 using Xunit.Abstractions;
-using Microsoft.Extensions.PlatformAbstractions;
-using CashTrack.Models.UserModels;
-using System.Net.Http.Headers;
-using System.Linq;
 using System.Net;
 using CashTrack.IntegrationTests.Common;
 using CashTrack.Models.AuthenticationModels;
 
 namespace CashTrack.IntegrationTests
 {
-    public class UserControllerShould : IClassFixture<TestServerFixture>
+    public class AuthorizationControllerShould : IClassFixture<TestServerFixture>
     {
         private TestServerFixture _fixture;
         private ITestOutputHelper _output;
         private const string path = "/api/authenticate";
 
-        public UserControllerShould(TestServerFixture fixture, ITestOutputHelper output)
+        public AuthorizationControllerShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _output = output;
             _fixture = fixture;
-
         }
 
         [Fact]
