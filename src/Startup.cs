@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.UserRepository;
 using CashTrack.Repositories.TagRepository;
+using CashTrack.Services.AuthenticationServices;
 
 namespace CashTrack
 {
@@ -57,6 +58,7 @@ namespace CashTrack
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -103,7 +105,7 @@ namespace CashTrack
            {
                spa.Options.SourcePath = "ClientApp";
 
-               if (env.IsDevelopment())
+               if (env.IsDevelopment() || env.IsEnvironment("Test"))
                {
                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                    spa.UseReactDevelopmentServer(npmScript: "start");

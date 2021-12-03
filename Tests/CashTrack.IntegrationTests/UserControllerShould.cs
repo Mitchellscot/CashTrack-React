@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using System.Linq;
 using System.Net;
 using CashTrack.IntegrationTests.Common;
+using CashTrack.Models.AuthenticationModels;
 
 namespace CashTrack.IntegrationTests
 {
@@ -21,7 +22,7 @@ namespace CashTrack.IntegrationTests
     {
         private TestServerFixture _fixture;
         private ITestOutputHelper _output;
-        private const string path = "/user/authenticate";
+        private const string path = "/api/authenticate";
 
         public UserControllerShould(TestServerFixture fixture, ITestOutputHelper output)
         {
@@ -33,6 +34,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAnAuthenticatedUser()
         {
+
             var request = GetAuthenticationRequest() with { Name = "Test" };
             var response = await _fixture.SendPostRequestAsync(path, request);
 
@@ -41,7 +43,7 @@ namespace CashTrack.IntegrationTests
             response.EnsureSuccessStatusCode();
             responseBody.Token.ShouldNotBeEmpty();
             responseBody.FirstName.ShouldBe(request.Name);
-            PrintRequestAndResponse(request, response);
+            PrintRequestAndResponse(request, responseBody);
         }
 
         [Theory]

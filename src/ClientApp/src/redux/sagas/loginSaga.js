@@ -11,7 +11,7 @@ function* loginUser(action){
             withCredentials: true,
           };
           let user = {};
-        yield axios.post('/user/authenticate', action.payload, config)
+        yield axios.post('/api/authenticate', action.payload, config)
         .then(response => {
                   localStorage.setItem('user', JSON.stringify(response.data));
                   user = response.data;

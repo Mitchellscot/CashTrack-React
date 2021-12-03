@@ -1,7 +1,6 @@
 ﻿using CashTrack.Data;
-using CashTrack.Models.UserModels;
+using CashTrack.Models.AuthenticationModels;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace CashTrack.Helpers.Validators
 {

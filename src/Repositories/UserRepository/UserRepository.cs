@@ -11,8 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.Models.UserModels;
-using BCryptNet = BCrypt.Net.BCrypt;
 using CashTrack.Data;
 using CashTrack.Helpers.Exceptions;
 
@@ -20,31 +18,13 @@ namespace CashTrack.Repositories.UserRepository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IMapper _mapper;
-        private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
-        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(
-            IOptions<AppSettings> appSettings, IMapper mapper, AppDbContext context, ILogger<UserRepository> logger)
+        public UserRepository(AppDbContext context)
         {
-            _mapper = mapper;
-            _appSettings = appSettings.Value;
             _context = context;
-            _logger = logger;
         }
 
-        public async Task<Authentication.Response> AuthenticateAsync(Authentication.Request model)
-        {
-            var user = await _context.Users.Where(u => u.first_name.ToUpper() == model.Name.ToUpper()).FirstOrDefaultAsync();
-            if (user == null || !BCryptNet.Verify(model.Password, user.password_hash))
-            {
-                return null;
-            }
-            var response = _mapper.Map<Authentication.Response>(user) with { Token = GenerateJwtToken(user) };
-            _logger.LogInformation($"{response.FirstName} logged in at {DateTime.Now}");
-            return response;
-        }
 
         public async Task<Users[]> GetAllUsers()
         {
@@ -60,27 +40,6 @@ namespace CashTrack.Repositories.UserRepository
                 throw new UserNotFoundException(id.ToString());
             }
             return user;
-        }
-
-        private string GenerateJwtToken(Users user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("id", user.id.ToString()),
-                    //if this is buggy in the future consider changing this from email to first name
-                    new Claim(ClaimTypes.Name, user.email.ToString()),
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
         }
     }
 }

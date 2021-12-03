@@ -1,5 +1,6 @@
 using AutoMapper;
 using CashTrack.Data.Entities;
+using CashTrack.Models.AuthenticationModels;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.TagModels;
 using CashTrack.Models.UserModels;
@@ -16,7 +17,6 @@ namespace CashTrack.Helpers
                 .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
-
 
             //Users is the entity... might have to fix this in the future
             CreateMap<Users, Authentication.Response>()

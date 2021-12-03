@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
+using CashTrack.Models.AuthenticationModels;
+using System.Net.Http.Headers;
 
 namespace CashTrack.IntegrationTests
 {
@@ -21,6 +23,7 @@ namespace CashTrack.IntegrationTests
         private readonly TestServer _testServer;
         public HttpClient Client { get; }
         public Faker Faker;
+        public string Token;
 
         public TestServerFixture()
         {
@@ -43,6 +46,16 @@ namespace CashTrack.IntegrationTests
             _testServer = new TestServer(builder);
             Client = _testServer.CreateClient();
             Faker = new Faker();
+            Token = GetTokenForAuthenticatedRoutes().Result;
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+        }
+
+        private async Task<string> GetTokenForAuthenticatedRoutes()
+        {
+            var request = new Authentication.Request("Test", "password");
+            var response = await SendPostRequestAsync("/api/authenticate", request);
+            return JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync()).Token;
         }
 
         private string GetContentRootPath()
