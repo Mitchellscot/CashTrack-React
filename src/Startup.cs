@@ -31,7 +31,7 @@ namespace CashTrack
             //this code is added in case I want to deploy to Heroku later:
             string DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL_STR");
 
-            string connectionString = (DATABASE_URL == null ? Configuration.GetConnectionString("DefaultConnection") : DATABASE_URL);
+            string connectionString = (DATABASE_URL == null ? Configuration.GetConnectionString("TestDB") : DATABASE_URL);
             Console.WriteLine($"Using connection string: {connectionString}");
 
             //using AppDbContext with Postgres database

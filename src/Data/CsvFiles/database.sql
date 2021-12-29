@@ -1,3 +1,12 @@
+--REMEMBER TO CREATE A SEPERATE TEST DATABASE
+--Go to startup and set Configuration.GetConnectionString("DefaultConnection") - change DefaultConnection to TestDB and then 
+--dotnet-ef database update and then go back to startup and change it back to DefaultConnection
+--also make sure postgresql timezone is set correctly before import
+
+--show timezone;
+--set timezone to 'America/Chicago';
+--also set it in the .conf file
+
 --copy data from expense main category file
 COPY expense_main_categories(id, main_category_name)
 FROM 'C:\Users\Public\db-files\expense-main-categories.csv'
