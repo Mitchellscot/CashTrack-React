@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using CashTrack.Data.Entities;
+using CashTrack.Data.CsvFiles;
 using AutoMapper;
 using BCryptNet = BCrypt.Net.BCrypt;
 
@@ -22,6 +23,8 @@ namespace CashTrack.Data
         public DbSet<Tags> Tags { get; set; }
         public DbSet<IncomeSources> IncomeSources { get; set; }
         public DbSet<IncomeCategories> IncomeCategories { get; set; }
+        public DbSet<ExpenseToReview> ExpensesToReview { get; set; }
+        public DbSet<IncomeToReview> IncomeToReview { get; set; }
 
         private IConfiguration _config;
 
@@ -57,6 +60,12 @@ namespace CashTrack.Data
                 .HasOne<Tags>(et => et.tag)
                 .WithMany(e => e.expense_tags)
                 .HasForeignKey(et => et.tag_id);
+
+
+
+
+            //add this when dependant tables are added
+            //mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile("../../CashTrackFiles/expenses - Copy.csv"));
         }
     }
 }

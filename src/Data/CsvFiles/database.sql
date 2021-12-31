@@ -1,3 +1,6 @@
+--dotnet ef commands
+--   dotnet ef migrations add init -o .\Data\Migrations
+
 --REMEMBER TO CREATE A SEPERATE TEST DATABASE
 --Go to startup and set Configuration.GetConnectionString("DefaultConnection") - change DefaultConnection to TestDB and then 
 --dotnet-ef database update and then go back to startup and change it back to DefaultConnection
