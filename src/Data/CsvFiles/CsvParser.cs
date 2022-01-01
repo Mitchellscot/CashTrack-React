@@ -20,5 +20,21 @@ namespace CashTrack.Data.CsvFiles
         {
             return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToExpenseSubCategory().ToList();
         }
+        public static List<CsvModels.CsvMerchant> ProcessMerchantFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToMerchant().ToList();
+        }
+        public static List<CsvModels.CsvIncomeCategory> ProcessIncomeCategoryFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToIncomeCategory().ToList();
+        }
+        public static List<CsvModels.CsvIncomeSource> ProcessIncomeSourceFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToIncomeSource().ToList();
+        }
+        public static List<CsvModels.CsvIncome> ProcessIncomeFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToIncome().ToList();
+        }
     }
 }

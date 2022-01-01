@@ -64,10 +64,12 @@ namespace CashTrack.Data
 
             mb.Entity<ExpenseMainCategories>().HasData(CsvParser.ProcessMainCategoryFile(CSV_FILES + "expense-main-categories.csv"));
             mb.Entity<ExpenseSubCategories>().HasData(CsvParser.ProcessSubCategoryFile(CSV_FILES + "expense-sub-categories.csv"));
+            mb.Entity<Merchants>().HasData(CsvParser.ProcessMerchantFile(CSV_FILES + "merchants.csv"));
+            mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile(CSV_FILES + "expenses.csv"));
+            mb.Entity<IncomeCategories>().HasData(CsvParser.ProcessIncomeCategoryFile(CSV_FILES + "income-categories.csv"));
+            mb.Entity<IncomeSources>().HasData(CsvParser.ProcessIncomeSourceFile(CSV_FILES + "income-sources.csv"));
+            mb.Entity<Incomes>().HasData(CsvParser.ProcessIncomeFile(CSV_FILES + "incomes.csv"));
 
-
-            //add this when dependant tables are added
-            //mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile(CSV_FILES + "expenses - Copy.csv"));
         }
     }
 }

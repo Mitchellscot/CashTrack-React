@@ -28,5 +28,32 @@ namespace CashTrack.Data.CsvFiles
             public int main_categoryid { get; set; }
             public bool in_use { get; set; }
         }
+        public class CsvMerchant
+        {
+            public int id { get; set; }
+            public string? name { get; set; }
+            public bool suggest_on_lookup { get; set; }
+            public string? city { get; set; }
+            public string? state { get; set; }
+        }
+        public class CsvIncomeCategory
+        {
+            public int id { get; set; }
+            public string? category { get; set; }
+        }
+        public class CsvIncomeSource
+        {
+            public int id { get; set; }
+            public string? source { get; set; }
+        }
+        public class CsvIncome
+        {
+            public int id { get; set; }
+            public DateTimeOffset? income_date { get; set; }
+            public decimal amount { get; set; }
+            public int categoryid { get; set; }
+            public int sourceid { get; set; }
+            public string? notes { get; set; }
+        }
     }
 }
