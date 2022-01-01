@@ -16,5 +16,9 @@ namespace CashTrack.Data.CsvFiles
         { 
             return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToExpenseMainCategory().ToList();
         }
+        public static List<CsvModels.CsvExpenseSubCategory> ProcessSubCategoryFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToExpenseSubCategory().ToList();
+        }
     }
 }

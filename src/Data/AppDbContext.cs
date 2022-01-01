@@ -14,6 +14,7 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
+        const string CSV_FILES = "../CashTrack.DataFiles/Csv/";
         public DbSet<Users> Users { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
         public DbSet<Incomes> Incomes { get; set; }
@@ -61,11 +62,12 @@ namespace CashTrack.Data
                 .WithMany(e => e.expense_tags)
                 .HasForeignKey(et => et.tag_id);
 
-
+            mb.Entity<ExpenseMainCategories>().HasData(CsvParser.ProcessMainCategoryFile(CSV_FILES + "expense-main-categories.csv"));
+            mb.Entity<ExpenseSubCategories>().HasData(CsvParser.ProcessSubCategoryFile(CSV_FILES + "expense-sub-categories.csv"));
 
 
             //add this when dependant tables are added
-            //mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile("../../CashTrackFiles/expenses - Copy.csv"));
+            //mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile(CSV_FILES + "expenses - Copy.csv"));
         }
     }
 }

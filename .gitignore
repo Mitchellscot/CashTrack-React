@@ -443,3 +443,5 @@ $RECYCLE.BIN/
 
 .DS_Store
 appsettings.Local.json
+/CashTrack.DataFiles
+/src/Data/Migrations

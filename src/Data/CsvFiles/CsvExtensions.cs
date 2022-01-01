@@ -36,6 +36,20 @@ namespace CashTrack.Data.CsvFiles
                 };
             }
         }
+        public static IEnumerable<CsvModels.CsvExpenseSubCategory> ToExpenseSubCategory(this IEnumerable<string> source)
+        {
+            foreach (var line in source)
+            {
+                var columns = line.Split(',');
+                yield return new CsvModels.CsvExpenseSubCategory()
+                {
+                    id = Convert.ToInt32(columns[0]),
+                    sub_category_name = columns[1],
+                    main_categoryid = Convert.ToInt32(columns[2]),
+                    in_use = ParseBoolean(columns[3])
+                };
+            }
+        }
         private static bool ParseBoolean(string s) => s == "1";
 
     }

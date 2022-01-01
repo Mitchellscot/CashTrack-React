@@ -21,5 +21,12 @@ namespace CashTrack.Data.CsvFiles
             public int id { get; set; }
             public string? main_category_name { get; set; }
         }
+        public class CsvExpenseSubCategory
+        {
+            public int id { get; set; }
+            public string? sub_category_name { get; set; }
+            public int main_categoryid { get; set; }
+            public bool in_use { get; set; }
+        }
     }
 }
