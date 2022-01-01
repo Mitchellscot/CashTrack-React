@@ -14,6 +14,7 @@ using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.UserRepository;
 using CashTrack.Repositories.TagRepository;
 using CashTrack.Services.AuthenticationServices;
+using Microsoft.Extensions.Logging;
 
 namespace CashTrack
 {
@@ -35,9 +36,19 @@ namespace CashTrack
             Console.WriteLine($"Using connection string: {connectionString}");
 
             //using AppDbContext with Postgres database
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(connectionString)
-            );
+            services.AddDbContext<AppDbContext>(options => {
+                options.UseNpgsql(connectionString);
+                options.EnableSensitiveDataLogging(true);
+
+            });
+
+            //for ef core logging
+            services.AddLogging(loggingBuilder => {
+                loggingBuilder.AddConsole()
+                    .AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
+                loggingBuilder.AddDebug();
+            });
+
 
             //needed for webpack proxy
             services.AddCors();
