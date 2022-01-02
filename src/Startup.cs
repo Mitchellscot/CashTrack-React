@@ -29,28 +29,15 @@ namespace CashTrack
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //this code is added in case I want to deploy to Heroku later:
-            string DATABASE_URL = Environment.GetEnvironmentVariable("DATABASE_URL_STR");
-
-            string connectionString = (DATABASE_URL == null ? Configuration.GetConnectionString("TestDB") : DATABASE_URL);
+            string connectionString =Configuration.GetConnectionString("DefaultConnection");
             Console.WriteLine($"Using connection string: {connectionString}");
 
-            //using AppDbContext with Postgres database
             services.AddDbContext<AppDbContext>(options => {
                 options.UseNpgsql(connectionString);
                 options.EnableSensitiveDataLogging(true);
-
             });
 
-            //for ef core logging
-            services.AddLogging(loggingBuilder => {
-                loggingBuilder.AddConsole()
-                    .AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
-                loggingBuilder.AddDebug();
-            });
-
-
-            //needed for webpack proxy
+            //needed for webpack proxy - remove in prod
             services.AddCors();
 
             services.AddAutoMapper(typeof(Startup));
@@ -71,6 +58,7 @@ namespace CashTrack
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
            {

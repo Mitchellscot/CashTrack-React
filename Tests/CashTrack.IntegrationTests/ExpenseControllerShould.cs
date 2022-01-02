@@ -170,7 +170,7 @@ namespace CashTrack.IntegrationTests
             }
             _output.WriteLine(responseObject.ToString());
         }
-        [Fact(Skip = "No expenses entered in the last 30 days...")]
+        [Fact]
         public async Task ReturnsExpensesFromLast30Days()
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=7");
@@ -186,7 +186,7 @@ namespace CashTrack.IntegrationTests
             }
             _output.WriteLine(responseObject.ToString());
         }
-        [Fact(Skip ="No expenses entered this month...")]
+        [Fact(Skip ="No expenses entered this month")]
         public async Task ReturnsExpensesForThisMonth()
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=8");
@@ -203,7 +203,7 @@ namespace CashTrack.IntegrationTests
             }
             _output.WriteLine(responseObject.ToString());
         }
-        [Fact]
+        [Fact(Skip ="No expenses this quarter")]
         public async Task ReturnsExpensesForThisQuarter()
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=9");
@@ -220,7 +220,7 @@ namespace CashTrack.IntegrationTests
             }
             _output.WriteLine(responseObject.ToString());
         }
-        [Fact]
+        [Fact(Skip = "No expenses this Year")]
         public async Task ReturnsExpensesForThisYear()
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=10");

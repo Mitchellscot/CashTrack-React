@@ -15,12 +15,14 @@ using System.Threading.Tasks;
 using Xunit.Abstractions;
 using CashTrack.Models.AuthenticationModels;
 using System.Net.Http.Headers;
+using CashTrack.IntegrationTests.Common;
 
 namespace CashTrack.IntegrationTests
 {
     public class TestServerFixture : IDisposable
     {
         private readonly TestServer _testServer;
+        private readonly TestSettings _settings;
         public HttpClient Client { get; }
         public Faker Faker;
         public string Token;
@@ -29,7 +31,7 @@ namespace CashTrack.IntegrationTests
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.test.json")
+                .AddJsonFile("appsettings.Test.json")
                 .Build();
             var builder = new WebHostBuilder()
                 .UseContentRoot(GetContentRootPath())
@@ -39,23 +41,26 @@ namespace CashTrack.IntegrationTests
                 {
                     services.AddDbContext<AppDbContext>(options =>
                     {
-                        options.UseNpgsql(configuration.GetConnectionString("TestDB"));
+                        options.UseNpgsql(configuration.GetConnectionString("TestDb"));
                     });
                 })
                 .UseStartup<CashTrack.Startup>();
             _testServer = new TestServer(builder);
             Client = _testServer.CreateClient();
             Faker = new Faker();
-            Token = GetTokenForAuthenticatedRoutes().Result;
+            _settings = configuration.GetSection("TestSettings").Get<TestSettings>();
+            Token = GetTokenForAuthenticatedRoutes(_settings.Username, _settings.Password).Result;
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
         }
 
-        private async Task<string> GetTokenForAuthenticatedRoutes()
+        private async Task<string> GetTokenForAuthenticatedRoutes(string user, string password)
         {
-            var request = new Authentication.Request("Test", "password");
+            var request = new Authentication.Request(user, password);
             var response = await SendPostRequestAsync("/api/authenticate", request);
+            var checkthisout = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync()).Token;
+
         }
 
         private string GetContentRootPath()

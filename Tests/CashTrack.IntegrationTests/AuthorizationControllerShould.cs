@@ -6,26 +6,35 @@ using Xunit.Abstractions;
 using System.Net;
 using CashTrack.IntegrationTests.Common;
 using CashTrack.Models.AuthenticationModels;
+using Microsoft.Extensions.Configuration;
 
 namespace CashTrack.IntegrationTests
 {
     public class AuthorizationControllerShould : IClassFixture<TestServerFixture>
     {
         private TestServerFixture _fixture;
+        private readonly TestOptionsSnapshot<TestSettings> _testSettings;
         private ITestOutputHelper _output;
         private const string path = "/api/authenticate";
 
         public AuthorizationControllerShould(TestServerFixture fixture, ITestOutputHelper output)
         {
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddJsonFile("appsettings.test.json")
+                .Build();
+            var settings = new TestSettings();
+            config.GetSection("TestSettings").Bind(settings);
             _output = output;
             _fixture = fixture;
+            _testSettings = new TestOptionsSnapshot<TestSettings>(settings);
         }
 
         [Fact]
         public async Task ReturnAnAuthenticatedUser()
         {
 
-            var request = GetAuthenticationRequest() with { Name = "Test" };
+            var request = GetAuthenticationRequest();
             var response = await _fixture.SendPostRequestAsync(path, request);
 
             var responseBody = JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync());
@@ -89,7 +98,7 @@ namespace CashTrack.IntegrationTests
 
         private Authentication.Request GetAuthenticationRequest()
         { 
-            return new Authentication.Request("Test", "password");
+            return new Authentication.Request(_testSettings.Value.Username, _testSettings.Value.Password);
         }
 
         private void PrintRequestAndResponse(object request, object response)
