@@ -55,5 +55,13 @@ namespace CashTrack.Data.CsvFiles
             public int sourceid { get; set; }
             public string? notes { get; set; }
         }
+        public class CsvUser
+        {
+            public int id { get; set; }
+            public string? first_name { get; set; }
+            public string? last_name { get; set; }
+            public string? email { get; set; }
+            public string? password_hash { get; set; }
+        }
     }
 }

@@ -7,20 +7,18 @@ namespace CashTrack.Data.CsvFiles
     {
         public static IEnumerable<CsvModels.CsvExpense> ToExpenses(this IEnumerable<string> source)
         {
-            int i = 0;
             foreach (var line in source)
             {
                 var columns = line.Split(',');
-                i++;
                 yield return new CsvModels.CsvExpense()
                 {
-                    id = i,
-                    purchase_date = DateTimeOffset.Parse(columns[0]),
-                    amount = Decimal.Parse(columns[1]),
-                    categoryid = columns[2] == "" ? null : Convert.ToInt32(columns[2]),
-                    notes = columns[3] == "" ? null : columns[3],
+                    id = Convert.ToInt32(columns[0]),
+                    purchase_date = DateTimeOffset.Parse(columns[1]),
+                    amount = Decimal.Parse(columns[2]),
+                    categoryid = columns[2] == "" ? null : Convert.ToInt32(columns[3]),
                     merchantid = columns[4] == "" ? null : Convert.ToInt32(columns[4]),
-                    exclude_from_statistics = ParseBoolean(columns[5])
+                    notes = columns[3] == "" ? null : columns[5],
+                    exclude_from_statistics = ParseBoolean(columns[6])
                 };
             }
         }
@@ -91,23 +89,35 @@ namespace CashTrack.Data.CsvFiles
         }
         public static IEnumerable<CsvModels.CsvIncome> ToIncome(this IEnumerable<string> source)
         {
-            int i = 0;
             foreach (var line in source)
             {
                 var columns = line.Split(',');
-                i++;
                 yield return new CsvModels.CsvIncome()
                 {
-                    id = i,
-                    income_date = DateTimeOffset.Parse(columns[0]),
-                    amount = Convert.ToDecimal(columns[1]),
-                    categoryid = Convert.ToInt32(columns[2]),
-                    sourceid = Convert.ToInt32(columns[3]),
-                    notes = columns[4] == "" ? null : columns[4]
+                    id = Convert.ToInt32(columns[0]),
+                    income_date = DateTimeOffset.Parse(columns[1]),
+                    amount = Convert.ToDecimal(columns[2]),
+                    categoryid = Convert.ToInt32(columns[3]),
+                    sourceid = Convert.ToInt32(columns[4]),
+                    notes = columns[4] == "" ? null : columns[5]
+                };
+            }
+        }
+        public static IEnumerable<CsvModels.CsvUser> ToUser(this IEnumerable<string> source)
+        {
+            foreach (var line in source)
+            {
+                var columns = line.Split(',');
+                yield return new CsvModels.CsvUser()
+                {
+                    id = Convert.ToInt32(columns[0]),
+                    first_name = columns[1],
+                    last_name = columns[2],
+                    email = columns[3],
+                    password_hash = columns[4]
                 };
             }
         }
         private static bool ParseBoolean(string s) => s == "1";
-
     }
 }

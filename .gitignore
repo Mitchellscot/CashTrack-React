@@ -442,6 +442,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 .DS_Store
-appsettings.Local.json
-/CashTrack.DataFiles
+appsettings.json
+/ct-data
 /src/Data/Migrations

@@ -14,7 +14,7 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        const string CSV_FILES = "../CashTrack.DataFiles/Csv/";
+        const string CSV_FILES = "../ct-data/csv/";
         public DbSet<Users> Users { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
         public DbSet<Incomes> Incomes { get; set; }
@@ -36,20 +36,6 @@ namespace CashTrack.Data
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            Users firstUser = new Users()
-            {
-                id = 1,
-                first_name = "Test",
-                last_name = "User",
-                email = "Mitchellscott@me.com",
-                password_hash = BCryptNet.HashPassword("password"),
-            };
-
-            var userArray = new Users[1]{
-                firstUser
-            };
-
-            mb.Entity<Users>().HasData(userArray);
 
             mb.Entity<ExpenseTags>().HasKey(et => new { et.expense_id, et.tag_id });
 
@@ -69,6 +55,8 @@ namespace CashTrack.Data
             mb.Entity<IncomeCategories>().HasData(CsvParser.ProcessIncomeCategoryFile(CSV_FILES + "income-categories.csv"));
             mb.Entity<IncomeSources>().HasData(CsvParser.ProcessIncomeSourceFile(CSV_FILES + "income-sources.csv"));
             mb.Entity<Incomes>().HasData(CsvParser.ProcessIncomeFile(CSV_FILES + "incomes.csv"));
+            mb.Entity<Users>().HasData(CsvParser.ProcessUserFile(CSV_FILES + "users.csv"));
+
 
         }
     }

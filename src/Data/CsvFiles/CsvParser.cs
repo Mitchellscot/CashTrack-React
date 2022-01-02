@@ -36,5 +36,9 @@ namespace CashTrack.Data.CsvFiles
         {
             return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToIncome().ToList();
         }
+        public static List<CsvModels.CsvUser> ProcessUserFile(string path)
+        {
+            return File.ReadAllLines(path).Skip(1).Where(l => l.Length > 1).ToUser().ToList();
+        }
     }
 }
