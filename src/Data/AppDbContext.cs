@@ -36,7 +36,6 @@ namespace CashTrack.Data
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-
             mb.Entity<ExpenseTags>().HasKey(et => new { et.expense_id, et.tag_id });
 
             mb.Entity<ExpenseTags>()
