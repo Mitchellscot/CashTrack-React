@@ -37,6 +37,13 @@ namespace CashTrack
                 options.EnableSensitiveDataLogging(true);
             });
 
+            //for ef core logging
+            services.AddLogging(loggingBuilder => {
+                loggingBuilder.AddConsole()
+                    .AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
+                loggingBuilder.AddDebug();
+            });
+
             //needed for webpack proxy - remove in prod
             services.AddCors();
 
