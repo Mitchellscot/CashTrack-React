@@ -15,9 +15,8 @@ namespace CashTrack.Data.Entities
         public decimal amount { get; set; }
         [StringLength(255)]
         public string notes { get; set; }
-
-        //future features
-        //public IncomeCategories category { get; set; }
-        //public IncomeSources source { get; set; }
+        public IncomeCategories SuggestedCategory { get; set; }
+        public IncomeSources SuggestedSource { get; set; }
+        public bool IsReviewed { get; set; }
     }
 }
