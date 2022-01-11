@@ -14,8 +14,8 @@ namespace CashTrack.Data.Entities
         public decimal amount { get; set; }
         [StringLength(255)]
         public string notes { get; set; }
-        public ExpenseSubCategories SuggestedSubCategory { get; set; }
-        public Merchants SuggestedMerchant { get; set; }
-        public bool IsReviewed {get; set;}
+        public ExpenseSubCategories suggested_category { get; set; }
+        public Merchants suggested_merchant { get; set; }
+        public bool is_reviewed {get; set;}
     }
 }
