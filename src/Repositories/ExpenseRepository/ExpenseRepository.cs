@@ -1,18 +1,14 @@
 ﻿using CashTrack.Data;
-using CashTrack.Data.Entities;
 using CashTrack.Helpers;
 using CashTrack.Models.ExpenseModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
 using CashTrack.Helpers.Exceptions;
-using Npgsql;
 using CashTrack.Models.Common;
 using AutoMapper;
 
