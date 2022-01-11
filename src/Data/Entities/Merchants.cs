@@ -18,6 +18,8 @@ namespace CashTrack.Data.Entities
         public bool suggest_on_lookup { get; set; }
         public string city { get; set; }
         public string state { get; set; }
+        public bool is_online { get; set; }
+        public string notes { get; set; }
         public ICollection<Expenses> expenses { get; set; }
     }
 }
