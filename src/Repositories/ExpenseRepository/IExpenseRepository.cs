@@ -7,7 +7,7 @@ namespace CashTrack.Repositories.ExpenseRepository
     public interface IExpenseRepository
     {
         Task<bool> Commit();
-        Task<Expense.Response> GetExpensesAsync(Expense.Request request);
-        Task<Expense.Response> GetExpenseByIdAsync(int id);
+        Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request);
+        Task<ExpenseModels.Response> GetExpenseByIdAsync(int id);
     }
 }

@@ -39,7 +39,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Expense.Response> GetExpenseByIdAsync(int id)
+        public async Task<ExpenseModels.Response> GetExpenseByIdAsync(int id)
         {
             var singleExpense = await _context.Expenses
                 .Include(x => x.expense_tags)
@@ -52,14 +52,14 @@ namespace CashTrack.Repositories.ExpenseRepository
             {
                 throw new ExpenseNotFoundException(id.ToString());
             }
-            var response = new Expense.Response
+            var response = new ExpenseModels.Response
             {
-                Expenses = new[] { _mapper.Map<Expense.ExpenseTransaction>(singleExpense) }
+                Expenses = new[] { _mapper.Map<ExpenseModels.ExpenseTransaction>(singleExpense) }
             };
             return response;
         }
 
-        public async Task<Expense.Response> GetExpensesAsync(Expense.Request request) => request.DateOptions switch
+        public async Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request) => request.DateOptions switch
         {
             //1
             DateOptions.All => await GetAllExpensesAsync(request),
@@ -91,7 +91,7 @@ namespace CashTrack.Repositories.ExpenseRepository
 
         };
 
-        private async Task<Expense.Response> GetAllExpensesAsync(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetAllExpensesAsync(ExpenseModels.Request request)
         {
             try
             {
@@ -107,11 +107,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForAllExpenses(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -128,7 +128,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             return (int)totalPages;
         }
 
-        private async Task<Expense.Response> GetExpensesFromSpecificDateAsync(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromSpecificDateAsync(ExpenseModels.Request request)
         {
             try
             {
@@ -144,11 +144,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -171,7 +171,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expense.Response> GetExpensesFromMonthAndYearAsync(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromMonthAndYearAsync(ExpenseModels.Request request)
         {
             var monthBeginDate = GetMonthBeginDate(request.BeginDate).ToUniversalTime();
             var monthEndDate = GetMonthEndDate(request.BeginDate).ToUniversalTime();
@@ -189,11 +189,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForMonthAndYear(request.PageSize, monthBeginDate, monthEndDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -238,7 +238,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
             _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
         };
-        private async Task<Expense.Response> GetExpensesForQuarterAsync(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesForQuarterAsync(ExpenseModels.Request request)
         {
             var quarterDates = GetQuarterDatesFromDate(request.BeginDate);
             try
@@ -256,11 +256,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
 
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForExpenseQuarter(request.PageSize, quarterDates.startDate, quarterDates.endDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -291,7 +291,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             10 or 11 or 12 => (startDate: new DateTimeOffset(date.Year, 10, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
             _ => throw new ArgumentException($"Unable to determine quarter from given date {date}", nameof(date))
         };
-        private async Task<Expense.Response> GetExpensesForAYearAsync(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesForAYearAsync(ExpenseModels.Request request)
         {
             var yearDates = GetYearDatesFromDate(request.BeginDate);
             try
@@ -309,11 +309,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
 
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForExpenseYear(request.PageSize, yearDates.startDate, yearDates.endDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -341,7 +341,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
         }
 
-        private async Task<Expense.Response> GetExpensesByDateRange(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesByDateRange(ExpenseModels.Request request)
         {
             try
             {
@@ -357,11 +357,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForDateRange(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -385,7 +385,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             }
         }
 
-        private async Task<Expense.Response> GetExpensesFromLast30Days(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromLast30Days(ExpenseModels.Request request)
         {
             try
             {
@@ -401,11 +401,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForLast30Days(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -428,7 +428,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expense.Response> GetExpensesFromCurrentMonth(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromCurrentMonth(ExpenseModels.Request request)
         {
             var beginMonthDate = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
             try
@@ -445,11 +445,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentMonth(request.PageSize, beginMonthDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -472,7 +472,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expense.Response> GetExpensesFromCurrentQuarter(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromCurrentQuarter(ExpenseModels.Request request)
         {
             var beginQuarterDate = GetQuarterDatesFromDate(DateTimeOffset.UtcNow);
             try
@@ -489,11 +489,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentQuarter(request.PageSize, beginQuarterDate.startDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -516,7 +516,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        private async Task<Expense.Response> GetExpensesFromCurrentYear(Expense.Request request)
+        private async Task<ExpenseModels.Response> GetExpensesFromCurrentYear(ExpenseModels.Request request)
         {
             var beginYearDate = new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
             try
@@ -533,11 +533,11 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
                     .ToArrayAsync();
-                var response = new Expense.Response
+                var response = new ExpenseModels.Response
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentYear(request.PageSize, beginYearDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<Expense.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
