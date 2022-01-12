@@ -29,6 +29,29 @@ namespace CashTrack.Repositories.MerchantRepository
 
         public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
         {
+            if (request.SearchTerm != null)
+            {
+                try
+                {
+                    var merchants = await _context.Merchants
+                        .Where(x => x.name.ToLower().Contains(request.SearchTerm.ToLower()))
+                        .OrderBy(x => x.name)
+                        .Skip((request.PageNumber - 1) * request.PageSize)
+                        .Take(request.PageSize)
+                        .ToArrayAsync();
+                    var response = new MerchantModels.Response
+                    {
+                        TotalPages = await GetTotalPagesForAllMerchantSearch(request.PageSize, request.SearchTerm),
+                        PageNumber = request.PageNumber,
+                        Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
+                    };
+                    return response;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
             try
             {
                 var merchants = await _context.Merchants
@@ -48,8 +71,13 @@ namespace CashTrack.Repositories.MerchantRepository
             {
                 throw;
             }
-            //just get all the merchants. Name and Id I suppose. Alphabetical order. 
-            //add a search controller too I suppose (search by name)
+        }
+        private async Task<int> GetTotalPagesForAllMerchantSearch(int pageSize, string searchTerm)
+        {
+            var query = await _context.Merchants.Where(x => x.name.ToLower().Contains(searchTerm.ToLower())).ToArrayAsync();
+            var totalNumberOfRecords = (decimal)query.Count();
+            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
+            return (int)totalPages;
         }
         private async Task<int> GetTotalPagesForAllMerchants(int pageSize)
         { 

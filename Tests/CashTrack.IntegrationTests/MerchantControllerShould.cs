@@ -45,6 +45,19 @@ namespace CashTrack.IntegrationTests
             responseObject.Merchants.Count().ShouldBe(50);
             responseObject.PageNumber.ShouldBe(2);
         }
+        [Theory]
+        [InlineData("Costco")]
+        [InlineData("John")]
+        [InlineData("Home")]
+        public async Task ReturnMerchantsWithMatchingSearchTerm(string searchTerm)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"?searchterm={searchTerm}");
+            response.EnsureSuccessStatusCode();
+            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
+            responseObject.Merchants.Count().ShouldBeGreaterThan(1);
+            responseObject.Merchants.First().Name.ShouldContain(searchTerm);
+            PrintRequestAndResponse(path + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
+        }
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
