@@ -31,7 +31,7 @@ namespace CashTrack
         public void ConfigureServices(IServiceCollection services)
         {
             const string devDb = "DefaultConnection";
-            const string testDb = "TestDb";
+            //const string testDb = "TestDb";
             string connectionString =Configuration.GetConnectionString(devDb);
             Console.WriteLine($"Using connection string: {connectionString}");
 

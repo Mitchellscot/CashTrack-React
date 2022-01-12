@@ -14,7 +14,7 @@ namespace CashTrack.Data.CsvFiles
                 {
                     id = Convert.ToInt32(columns[0]),
                     purchase_date = DateTimeOffset.Parse(columns[1]),
-                    amount = Decimal.Parse(columns[2]),
+                    amount = Math.Round(Decimal.Parse(columns[2]), 2),
                     categoryid = columns[2] == "" ? null : Convert.ToInt32(columns[3]),
                     merchantid = columns[4] == "" ? null : Convert.ToInt32(columns[4]),
                     notes = columns[3] == "" ? null : columns[5],
@@ -98,7 +98,7 @@ namespace CashTrack.Data.CsvFiles
                 {
                     id = Convert.ToInt32(columns[0]),
                     income_date = DateTimeOffset.Parse(columns[1]),
-                    amount = Convert.ToDecimal(columns[2]),
+                    amount = Math.Round(Convert.ToDecimal(columns[2]), 2),
                     categoryid = Convert.ToInt32(columns[3]),
                     sourceid = Convert.ToInt32(columns[4]),
                     notes = columns[4] == "" ? null : columns[5]
