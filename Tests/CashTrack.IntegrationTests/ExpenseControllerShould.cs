@@ -73,7 +73,7 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(path + "/" + "?dateoptions=1");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.TotalPages.ShouldBeGreaterThan(287);
         }
@@ -86,7 +86,7 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=2&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
@@ -99,7 +99,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=3&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -119,7 +119,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=4&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -139,7 +139,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=5&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -159,7 +159,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -175,7 +175,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=7");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -191,7 +191,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=8");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -208,7 +208,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=9");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -225,7 +225,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=10");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<Expense.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
             responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
@@ -362,9 +362,9 @@ namespace CashTrack.IntegrationTests
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
         }
-        private Expense.Request GetExpenseRequest()
+        private ExpenseModels.Request GetExpenseRequest()
         {
-            return new Expense.Request();
+            return new ExpenseModels.Request();
         }
     }
 }

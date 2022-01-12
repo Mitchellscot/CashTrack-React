@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CashTrack.Models.ExpenseModels
 {
-    public class Expense
+    public class ExpenseModels
     {
         public record Request
         {

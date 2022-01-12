@@ -35,14 +35,14 @@ namespace CashTrack.Tests.Controllers
         public void ReturnASingleExpenseResponse()
         {
             var result = _sut.GetAnExpenseById(1);
-            var viewResult = Assert.IsType<Task<ActionResult<Expense.Response>>>(result);
+            var viewResult = Assert.IsType<Task<ActionResult<ExpenseModels.Response>>>(result);
         }
         [Fact]
         public void ReturnsMultipleExpenseResponse()
         {
-            var request = new Expense.Request();
+            var request = new ExpenseModels.Request();
             var result = _sut.GetAllExpenses(request);
-            var viewResult = Assert.IsType<Task<ActionResult<Expense.Response>>>(result);
+            var viewResult = Assert.IsType<Task<ActionResult<ExpenseModels.Response>>>(result);
         }
     }
 }

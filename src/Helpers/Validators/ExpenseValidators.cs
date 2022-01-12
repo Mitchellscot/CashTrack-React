@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace CashTrack.Helpers.Validators
 {
-    public class ExpenseValidators : AbstractValidator<Expense.Request>
+    public class ExpenseValidators : AbstractValidator<ExpenseModels.Request>
     {
         public ExpenseValidators()
         {

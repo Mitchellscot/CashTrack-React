@@ -35,6 +35,9 @@ namespace CashTrack.Data.CsvFiles
             public bool suggest_on_lookup { get; set; }
             public string? city { get; set; }
             public string? state { get; set; }
+            public string? notes { get; set; }
+            public bool is_online { get; set; }
+
         }
         public class CsvIncomeCategory
         {

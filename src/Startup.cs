@@ -15,6 +15,7 @@ using CashTrack.Repositories.UserRepository;
 using CashTrack.Repositories.TagRepository;
 using CashTrack.Services.AuthenticationServices;
 using Microsoft.Extensions.Logging;
+using CashTrack.Repositories.MerchantRepository;
 
 namespace CashTrack
 {
@@ -61,6 +62,7 @@ namespace CashTrack
             });
 
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<IMerchantRepository, MerchantRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
