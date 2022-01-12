@@ -3,6 +3,8 @@ using CashTrack.Data;
 using CashTrack.Models.MerchantModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CashTrack.Repositories.MerchantRepository
@@ -25,11 +27,36 @@ namespace CashTrack.Repositories.MerchantRepository
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
+        public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var merchants = await _context.Merchants
+                    .OrderBy(x => x.name)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToArrayAsync();
+                var response = new MerchantModels.Response
+                {
+                    TotalPages = await GetTotalPagesForAllMerchants(request.PageSize),
+                    PageNumber = request.PageNumber,
+                    Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
+                };         
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             //just get all the merchants. Name and Id I suppose. Alphabetical order. 
             //add a search controller too I suppose (search by name)
+        }
+        private async Task<int> GetTotalPagesForAllMerchants(int pageSize)
+        { 
+            var query = await _context.Merchants.ToArrayAsync();
+            var totalNumberOfRecords = (decimal)query.Count();
+            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
+            return (int)totalPages;
         }
 
         public Task<MerchantModels.Merchant> GetMerchantsByIdAsync(int id)
@@ -42,5 +69,8 @@ namespace CashTrack.Repositories.MerchantRepository
             //Average spent at this merchant
             //Maybe a stats class that includes total, average, amount spent by year, etc.... do that later.
         }
+        //ideas on merchant stats...
+        //Total all time, total this year, average all time, average this year, number of times shopped there, 
+        //and then per year... so min max av per year (advanced stats I suppose) 
     }
 }

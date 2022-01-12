@@ -59,7 +59,9 @@ namespace CashTrack.Data.CsvFiles
                     name = columns[1],
                     suggest_on_lookup = ParseBoolean(columns[2]),
                     city = null,
-                    state = null
+                    state = null,
+                    is_online = ParseBoolean(columns[5]),
+                    notes = null
                 };
             }
         }
