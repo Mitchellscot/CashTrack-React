@@ -40,12 +40,12 @@ namespace CashTrack.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<MerchantModels.Response>> GetAMerchantById(int id)
+        public async Task<ActionResult<MerchantModels.Merchant>> GetAMerchantById(int id)
         {
             try
             {
-                var result = await _merchantRepository.GetMerchantsByIdAsync(id);
-                return Ok(_mapper.Map<MerchantModels.Response>(result));
+                var result = await _merchantRepository.GetMerchantByIdAsync(id);
+                return Ok(_mapper.Map<MerchantModels.Merchant>(result));
             }
             catch (MerchantNotFoundException ex)
             {

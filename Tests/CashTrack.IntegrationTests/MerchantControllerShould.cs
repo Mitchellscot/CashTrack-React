@@ -58,6 +58,33 @@ namespace CashTrack.IntegrationTests
             responseObject.Merchants.First().Name.ShouldContain(searchTerm);
             PrintRequestAndResponse(path + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
         }
+
+        //randomize these numbers
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        public async Task ReturnMerchantWithMatchingId(int id)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/{id}");
+            response.EnsureSuccessStatusCode();
+            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Merchant>(await response.Content.ReadAsStringAsync());
+            responseObject.ShouldNotBeNull();
+            PrintRequestAndResponse(path + $"/{id}", await response.Content.ReadAsStringAsync());
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(int.MaxValue)]
+        [InlineData(int.MinValue)]
+        public async Task ThrowExceptionWithInvalidId(int id)
+        {
+            var response = await _fixture.Client.GetAsync(path + "/" + id);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            Assert.Contains($"No merchant found with an id of {id}", responseString);
+            PrintRequestAndResponse(path + $"/99999999", await response.Content.ReadAsStringAsync());
+        }
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());

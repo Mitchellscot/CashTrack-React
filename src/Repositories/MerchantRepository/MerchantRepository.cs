@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Data;
+using CashTrack.Data.Entities;
+using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.MerchantModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -87,15 +89,20 @@ namespace CashTrack.Repositories.MerchantRepository
             return (int)totalPages;
         }
 
-        public Task<MerchantModels.Merchant> GetMerchantsByIdAsync(int id)
+        public async Task<Merchants> GetMerchantByIdAsync(int id)
         {
-            throw new System.NotImplementedException();
             //It would be cool to get:
             //Merchant details (duh)
             //A list of all purchases at this merchant
             //A total amount spent at this merchant
             //Average spent at this merchant
             //Maybe a stats class that includes total, average, amount spent by year, etc.... do that later.
+            var query = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
+
+            if (query == null)
+                throw new MerchantNotFoundException(id.ToString());
+
+            return (query);
         }
         //ideas on merchant stats...
         //Total all time, total this year, average all time, average this year, number of times shopped there, 
