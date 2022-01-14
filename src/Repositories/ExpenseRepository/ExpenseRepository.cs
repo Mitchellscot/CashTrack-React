@@ -40,7 +40,7 @@ namespace CashTrack.Repositories.ExpenseRepository
         }
 
         public async Task<Expense.Response> GetExpenseByIdAsync(int id)
-        {
+        { 
             var singleExpense = await _context.Expenses
                 .Include(x => x.expense_tags)
                 .ThenInclude(x => x.tag)
@@ -57,6 +57,22 @@ namespace CashTrack.Repositories.ExpenseRepository
                 Expenses = new[] { _mapper.Map<Expense.ExpenseTransaction>(singleExpense) }
             };
             return response;
+        }
+
+        public async Task<Expenses> GetExpenseByIdTEST(int id)
+        {
+            var singleExpense = await _context.Expenses
+                .Include(x => x.expense_tags)
+                .ThenInclude(x => x.tag)
+                .Include(x => x.merchant)
+                .Include(x => x.category)
+                .ThenInclude(x => x.main_category)
+                .SingleOrDefaultAsync(x => x.id == id);
+            if (singleExpense == null)
+            {
+                throw new ExpenseNotFoundException(id.ToString());
+            }
+            return singleExpense;
         }
 
         public async Task<Expense.Response> GetExpensesAsync(Expense.Request request) => request.DateOptions switch

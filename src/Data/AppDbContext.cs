@@ -29,7 +29,8 @@ namespace CashTrack.Data
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            var csvFileDirectory = _config["CsvFileDirectory"];
+            //var csvFileDirectory = _config["CsvFileDirectory"];
+            var csvFileDirectory = @"c:\Users\Mitch\Code\CashTrack\ct-data\csv\";
 
             mb.Entity<ExpenseTags>().HasKey(et => new { et.expense_id, et.tag_id });
 
