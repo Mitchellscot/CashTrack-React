@@ -2,7 +2,6 @@
 using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
-using CashTrack.IntegrationTests;
 using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -79,13 +78,12 @@ namespace CashTrack.Tests.Repositories
                         expenses = new List<Expenses>()
                     }
                 });
-                context.SaveChanges();
+                context.SaveChanges(); 
                 var expenseRepository = new ExpenseRepository(_settings, context, _logger, _mapper);
 
                 var x = expenseRepository.GetExpenseByIdTEST(1);
                 Assert.Contains("25", x.Result.amount.ToString());
             }
         }
-
     }
 }
