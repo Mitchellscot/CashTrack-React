@@ -42,7 +42,7 @@ namespace CashTrack.Services.AuthenticationServices
             _logger.LogInformation($"{response.FirstName} logged in at {DateTime.Now}");
             return response;
         }
-        private string GenerateJwtToken(Users user)
+        internal string GenerateJwtToken(Users user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

@@ -33,14 +33,13 @@ namespace CashTrack.Tests.Controllers
             _service = Mock.Of<IAuthenticationService>();
             _controller = new AuthenticateController(_logger, _service, _mapper);
         }
-        [Fact]
-        public void SignUserIn()
-        {
-            var request = new Authentication.Request("mitchell", "password");
-            var result = _controller.Authenticate(request);
-            var viewResult = Assert.IsType<Task<ActionResult<Authentication.Response>>>(result);
-            
-        }
+        //[Fact]
+        //public void SignUserIn()
+        //{
+        //    var request = new Authentication.Request("mitchell", "password");
+        //    var result = _controller.Authenticate(request);
+        //    var viewResult = Assert.IsType<Task<ActionResult<Authentication.Response>>>(result); 
+        //}
         //[Fact]
         //public void ReturnsInvalidPassword()
         //{

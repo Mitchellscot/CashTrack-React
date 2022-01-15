@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CashTrack.csproj" />
+    <ProjectReference Include="..\CashTrack.IntegrationTests\CashTrack.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
