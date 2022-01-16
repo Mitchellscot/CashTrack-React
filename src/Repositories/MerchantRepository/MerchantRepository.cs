@@ -40,6 +40,14 @@ namespace CashTrack.Repositories.MerchantRepository
                         .OrderBy(x => x.name)
                         .Skip((request.PageNumber - 1) * request.PageSize)
                         .Take(request.PageSize)
+                        .Select(m => new MerchantModels.Merchant
+                        {
+                            Id = m.id,
+                            Name = m.name,
+                            City = m.city,
+                            IsOnline = m.is_online,
+                            NumberOfExpenses = _context.Expenses.Count(x => x.merchant.id == m.id)
+                        })
                         .ToArrayAsync();
                     var response = new MerchantModels.Response
                     {
@@ -60,6 +68,14 @@ namespace CashTrack.Repositories.MerchantRepository
                     .OrderBy(x => x.name)
                     .Skip((request.PageNumber - 1) * request.PageSize)
                     .Take(request.PageSize)
+                    .Select(m => new MerchantModels.Merchant
+                    {
+                        Id = m.id,
+                        Name = m.name,
+                        City = m.city,
+                        IsOnline = m.is_online,
+                        NumberOfExpenses = _context.Expenses.Count(x => x.merchant.id == m.id)
+                    })
                     .ToArrayAsync();
                 var response = new MerchantModels.Response
                 {
@@ -88,7 +104,7 @@ namespace CashTrack.Repositories.MerchantRepository
             var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
             return (int)totalPages;
         }
-
+        //this needs to change to return merchant details
         public async Task<Merchants> GetMerchantByIdAsync(int id)
         {
             //It would be cool to get:

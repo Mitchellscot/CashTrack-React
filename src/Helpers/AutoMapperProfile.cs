@@ -46,8 +46,6 @@ namespace CashTrack.Helpers
                 .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
                 .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
                 .ForMember(m => m.City, o => o.MapFrom(src => src.city))
-                .ForMember(m => m.State, o => o.MapFrom(src => src.state))
-                .ForMember(m => m.Notes, o => o.MapFrom(src => src.notes))
                 .ForMember(m => m.IsOnline, o => o.MapFrom(src => src.is_online))
                 .ReverseMap();
         }
