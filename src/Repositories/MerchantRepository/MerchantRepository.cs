@@ -105,15 +105,9 @@ namespace CashTrack.Repositories.MerchantRepository
             return (int)totalPages;
         }
         //this needs to change to return merchant details
-        public async Task<Merchants> GetMerchantByIdAsync(int id)
+        public async Task<MerchantModels.MerchantDetail> GetMerchantByIdAsync(int id)
         {
-            //It would be cool to get:
-            //Merchant details (duh)
-            //A list of all purchases at this merchant
-            //A total amount spent at this merchant
-            //Average spent at this merchant
-            //Maybe a stats class that includes total, average, amount spent by year, etc.... do that later.
-            var query = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
+            var Merchant = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
 
             if (query == null)
                 throw new MerchantNotFoundException(id.ToString());

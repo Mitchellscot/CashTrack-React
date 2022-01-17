@@ -33,6 +33,13 @@ namespace CashTrack.Models.ExpenseModels
             public string SubCategory { get; set; }
             public string MainCategory { get; set; }
         }
+        public record ExpenseQuickView
+        { 
+            public int Id { get; set; }
+            public string PurchaseDate { get; set; }
+            public decimal Amount { get; set; }
+            public string SubCategory { get; set; }
+        }
     }
 
 }
