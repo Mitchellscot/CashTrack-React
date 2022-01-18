@@ -22,17 +22,23 @@ namespace CashTrack.Models.ExpenseModels
             public int TotalPages { get; set; }
             public ExpenseTransaction[] Expenses { get; set; }
         }
-        public record ExpenseTransaction
-        {
-            public int Id { get; set; }
-            public DateTimeOffset PurchaseDate { get; set; }
-            public decimal Amount { get; set; }
-            public string Notes { get; set; }
-            public string Merchant { get; set; }
-            public ICollection<Tag> Tags { get; set; }
-            public string SubCategory { get; set; }
-            public string MainCategory { get; set; }
-        }
     }
-
+    public record ExpenseTransaction
+    {
+        public int Id { get; set; }
+        public DateTimeOffset PurchaseDate { get; set; }
+        public decimal Amount { get; set; }
+        public string Notes { get; set; }
+        public string Merchant { get; set; }
+        public ICollection<Tag> Tags { get; set; }
+        public string SubCategory { get; set; }
+        public string MainCategory { get; set; }
+    }
+    public record ExpenseQuickView
+    {
+        public int Id { get; set; }
+        public string PurchaseDate { get; set; }
+        public decimal Amount { get; set; }
+        public string SubCategory { get; set; }
+    }
 }

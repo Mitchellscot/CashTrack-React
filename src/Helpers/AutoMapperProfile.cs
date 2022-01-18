@@ -19,14 +19,13 @@ namespace CashTrack.Helpers
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
 
-            //Users is the entity... might have to fix this in the future
             CreateMap<Users, Authentication.Response>()
                 .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
                 .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
 
-            CreateMap<Expenses, ExpenseModels.ExpenseTransaction>()
+            CreateMap<Expenses, ExpenseTransaction>()
                 .ForMember(e => e.Id, o => o.MapFrom(src => src.id))
                 .ForMember(e => e.PurchaseDate, o => o.MapFrom(src => src.purchase_date))
                 .ForMember(e => e.Amount, o => o.MapFrom(src => src.amount))
@@ -42,7 +41,7 @@ namespace CashTrack.Helpers
                 .ForMember(t => t.TagName, o => o.MapFrom(src => src.tag_name))
                 .ReverseMap();
 
-            CreateMap<Merchants, MerchantModels.Merchant>()
+            CreateMap<Merchants, Merchant>()
                 .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
                 .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
                 .ForMember(m => m.City, o => o.MapFrom(src => src.city))

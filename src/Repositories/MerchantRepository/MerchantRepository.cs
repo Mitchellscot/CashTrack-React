@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CashTrack.Data;
 using CashTrack.Data.Entities;
+using CashTrack.Helpers.Aggregators;
 using CashTrack.Helpers.Exceptions;
+using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -40,7 +42,7 @@ namespace CashTrack.Repositories.MerchantRepository
                         .OrderBy(x => x.name)
                         .Skip((request.PageNumber - 1) * request.PageSize)
                         .Take(request.PageSize)
-                        .Select(m => new MerchantModels.Merchant
+                        .Select(m => new Merchant
                         {
                             Id = m.id,
                             Name = m.name,
@@ -53,7 +55,7 @@ namespace CashTrack.Repositories.MerchantRepository
                     {
                         TotalPages = await GetTotalPagesForAllMerchantSearch(request.PageSize, request.SearchTerm),
                         PageNumber = request.PageNumber,
-                        Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
+                        Merchants = _mapper.Map<Merchant[]>(merchants)
                     };
                     return response;
                 }
@@ -68,7 +70,7 @@ namespace CashTrack.Repositories.MerchantRepository
                     .OrderBy(x => x.name)
                     .Skip((request.PageNumber - 1) * request.PageSize)
                     .Take(request.PageSize)
-                    .Select(m => new MerchantModels.Merchant
+                    .Select(m => new Merchant
                     {
                         Id = m.id,
                         Name = m.name,
@@ -81,8 +83,8 @@ namespace CashTrack.Repositories.MerchantRepository
                 {
                     TotalPages = await GetTotalPagesForAllMerchants(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
-                };         
+                    Merchants = _mapper.Map<Merchant[]>(merchants)
+                };
                 return response;
             }
             catch (Exception)
@@ -98,30 +100,98 @@ namespace CashTrack.Repositories.MerchantRepository
             return (int)totalPages;
         }
         private async Task<int> GetTotalPagesForAllMerchants(int pageSize)
-        { 
+        {
             var query = await _context.Merchants.ToArrayAsync();
             var totalNumberOfRecords = (decimal)query.Count();
             var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
             return (int)totalPages;
         }
-        //this needs to change to return merchant details
-        public async Task<Merchants> GetMerchantByIdAsync(int id)
-        {
-            //It would be cool to get:
-            //Merchant details (duh)
-            //A list of all purchases at this merchant
-            //A total amount spent at this merchant
-            //Average spent at this merchant
-            //Maybe a stats class that includes total, average, amount spent by year, etc.... do that later.
-            var query = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
 
-            if (query == null)
+        public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
+        {
+            var merchantEntity = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
+
+            if (merchantEntity == null)
                 throw new MerchantNotFoundException(id.ToString());
 
-            return (query);
+            var merchantExpenses = await _context.Expenses.Where(e => e.merchant.id == id).Include(x => x.category).ToListAsync();
+            var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
+                .Take(10)
+                .Select(x => new ExpenseQuickView(){
+                    Id = x.id,
+                    PurchaseDate = x.purchase_date.Date.ToShortDateString(),
+                    Amount = x.amount,
+                    SubCategory =  x.category == null ? "none" : x.category.sub_category_name
+                }).ToList();
+
+            var expenseTotals = merchantExpenses.Aggregate(new ExpenseTotalsAggregator(),
+                    (acc, e) => acc.Accumulate(e),
+                    acc => acc.Compute());
+
+            var expenseStatistics = merchantExpenses.GroupBy(e => e.purchase_date.Year)
+                    .Select(g =>
+                        {
+                            var results = g.Aggregate(
+                                                new ExpenseStatisticsAggregator(),
+                                (acc, e) => acc.Accumulate(e),
+                                acc => acc.Compute()
+                                                 );
+                            return new AnnualExpenseStatistics()
+                            {
+                                Year = g.Key,
+                                Average = results.Average,
+                                Min = results.Min,
+                                Max = results.Max,
+                                Total = results.Total,
+                                Count = results.Count
+                            };
+                        }).OrderBy(x => x.Year).ToList();
+
+            var subCategories = await _context.ExpenseSubCategories.ToListAsync();
+
+            var merchantExpenseCategories = subCategories.GroupJoin(merchantExpenses,
+                c => c.id, e => e.category.id, (c, g) => new
+                {
+                    Category = c.sub_category_name,
+                    Expenses = g
+                }).Select(x => new
+                {
+                    Category = x.Category,
+                    Count = x.Expenses.Count()
+                }).Where(x => x.Count > 0).OrderByDescending(x => x.Count).ToDictionary(k => k.Category, v => v.Count);
+
+            var merchantExpenseAmounts = subCategories.GroupJoin(merchantExpenses,
+                c => c.id, e => e.category.id, (c, g) => new
+                {
+                    Category = c.sub_category_name,
+                    Expenses = g
+                }).Select(x => new
+                {
+                    Category = x.Category,
+                    Sum = x.Expenses.Sum(e => e.amount)
+                }).Where(x => x.Sum > 0).OrderByDescending(x => x.Sum).ToDictionary(k => k.Category, v => v.Sum);
+
+            var mostUsedCategory = merchantExpenseCategories.FirstOrDefault().Key;
+
+            var merchantDetail = new MerchantDetail()
+            {
+                Id = merchantEntity.id,
+                Name = merchantEntity.name,
+                SuggestOnLookup = merchantEntity.suggest_on_lookup,
+                City = merchantEntity.city,
+                State = merchantEntity.state,
+                Notes = merchantEntity.notes,
+                IsOnline = merchantEntity.is_online,
+                ExpenseTotals = expenseTotals,
+                MostUsedCategory = mostUsedCategory,
+                AnnualExpenseStatistics = expenseStatistics,
+                PurchaseCategoryOccurances = merchantExpenseCategories,
+                PurchaseCategoryTotals = merchantExpenseAmounts,
+                RecentExpenses = recentExpenses
+            };
+
+            return merchantDetail;
         }
-        //ideas on merchant stats...
-        //Total all time, total this year, average all time, average this year, number of times shopped there, 
-        //and then per year... so min max av per year (advanced stats I suppose) 
+
     }
 }
