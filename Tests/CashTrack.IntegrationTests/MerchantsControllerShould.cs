@@ -59,17 +59,27 @@ namespace CashTrack.IntegrationTests
             PrintRequestAndResponse(path + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
         }
 
-        //randomize these numbers
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public async Task ReturnMerchantWithMatchingId(int id)
+        [InlineData(17)]
+        [InlineData(85)]
+        [InlineData(350)]
+        public async Task ReturnMerchantDetail(int id)
         {
+            var expectedMerchantNames = new List<string>() { "Amazon", "Costco", "Walmart" };
             var response = await _fixture.Client.GetAsync(path + $"/detail/{id}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantDetail>(await response.Content.ReadAsStringAsync());
             responseObject.ShouldNotBeNull();
+            expectedMerchantNames.ShouldContain(responseObject.Name);
+            responseObject.AnnualExpenseStatistics.ForEach(x => x.Average.ShouldBe(Math.Round(x.Total / x.Count, 2)));
+            responseObject.AnnualExpenseStatistics.ForEach(x => x.Year.ShouldBeGreaterThan(2011));
+            responseObject.AnnualExpenseStatistics.ForEach(x => x.Max.ShouldBeGreaterThan(0));
+            responseObject.AnnualExpenseStatistics.ForEach(x => x.Min.ShouldBeGreaterThan(0));
+            responseObject.ExpenseTotals.TotalSpentAllTime.ShouldBeGreaterThan(1);
+            responseObject.MostUsedCategory.ShouldNotBeEmpty();
+            responseObject.PurchaseCategoryOccurances.ShouldNotBeEmpty();
+            responseObject.PurchaseCategoryTotals.ShouldNotBeEmpty();
+            responseObject.RecentExpenses.Count.ShouldBeGreaterThan(0);
             PrintRequestAndResponse(path + $"/{id}", await response.Content.ReadAsStringAsync());
         }
         [Theory]
