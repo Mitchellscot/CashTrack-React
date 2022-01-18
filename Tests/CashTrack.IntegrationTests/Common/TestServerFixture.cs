@@ -80,7 +80,17 @@ namespace CashTrack.IntegrationTests
                     "application/json")
             };
             return await Client.SendAsync(message);
-
+        }
+        public async Task<HttpResponseMessage> SendPutRequestAsync(string path, object request)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Put, path)
+            {
+                Content = new StringContent(
+                    JsonConvert.SerializeObject(request),
+                    Encoding.UTF8,
+                    "application/json")
+            };
+            return await Client.SendAsync(message);
         }
 
         public void Dispose()

@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 using Shouldly;
 using Newtonsoft.Json;
 using System.Net;
+using CashTrack.Data.Entities;
 
 namespace CashTrack.IntegrationTests
 {
@@ -96,12 +97,12 @@ namespace CashTrack.IntegrationTests
             PrintRequestAndResponse(path + $"/99999999", await response.Content.ReadAsStringAsync());
         }
         [Fact]
-        public async Task CreateNewMerchant()
+        public async Task<int> CreateNewMerchant()
         {
             var model = new AddEditMerchant()
             {
                 Id = null,
-                Name = "Mitchell",
+                Name = $"TEST {Guid.NewGuid()}",
                 City = "Long Beach",
                 State = "CA",
                 SuggestOnLookup = true,
@@ -109,8 +110,44 @@ namespace CashTrack.IntegrationTests
                 Notes = "Created with test method"
             };
             var response = await _fixture.SendPostRequestAsync(path, model);
-            
-
+            response.StatusCode.ShouldBe(HttpStatusCode.Created);
+            var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
+            response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/merchants/detail/{responseObject.Id.ToString()}");
+            return responseObject.Id!.Value;
+        }
+        [Fact]
+        public async Task<int> UpdateNewMerchant()
+        {
+            var testId = await CreateNewMerchant();
+            var model = new AddEditMerchant()
+            {
+                Id = testId,
+                Name = $"TEST UPDATE {Guid.NewGuid()}",
+                City = "Baxter",
+                State = "MN",
+                SuggestOnLookup = false,
+                IsOnline = true,
+                Notes = "Updated with test method"
+            };
+            var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            return testId;
+        }
+        [Fact]
+        public async Task ThrowExceptionIfMerchantNameExists()
+        {
+            var model = new AddEditMerchant()
+            {
+                Id = null,
+                Name = "Costco",
+                City = "Long Beach",
+                State = "CA",
+                SuggestOnLookup = true,
+                IsOnline = false,
+                Notes = "Created with test method"
+            };
+            var response = await _fixture.SendPostRequestAsync(path, model);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         private void PrintRequestAndResponse(object request, object response)
         {

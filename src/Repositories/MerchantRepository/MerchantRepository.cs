@@ -27,7 +27,6 @@ namespace CashTrack.Repositories.MerchantRepository
         }
         public async Task<bool> Commit()
         {
-            //only return if more than one row was affected
             return (await _context.SaveChangesAsync()) > 0;
         }
 
