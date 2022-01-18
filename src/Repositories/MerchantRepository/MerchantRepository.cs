@@ -193,5 +193,27 @@ namespace CashTrack.Repositories.MerchantRepository
             return merchantDetail;
         }
 
+        public async Task<Merchants> CreateMerchant(AddEditMerchant request)
+        {
+            if (_context.Merchants.Any(x => x.name == request.Name))
+                throw new DuplicateMerchantNameException(request.Name);
+
+            if(request.Id == null)
+                request.Id = await _context.Merchants.MaxAsync(x => x.id) +1;
+
+            try
+            {
+                var merchant = _mapper.Map<Merchants>(request);
+                await _context.AddAsync(merchant);
+
+                if (await Commit())
+                    return merchant;
+                else throw new InvalidOperationException("Couldn't add merchant to the database.");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

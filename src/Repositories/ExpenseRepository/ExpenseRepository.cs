@@ -1,9 +1,6 @@
 ﻿using CashTrack.Data;
-using CashTrack.Helpers;
 using CashTrack.Models.ExpenseModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,17 +13,12 @@ namespace CashTrack.Repositories.ExpenseRepository
 {
     public class ExpenseRepository : IExpenseRepository
     {
-        private readonly AppSettings _appSettings;
         private readonly AppDbContext _context;
-        private readonly ILogger<ExpenseRepository> _logger;
         private readonly IMapper _mapper;
 
-        public ExpenseRepository(
-            IOptions<AppSettings> appSettings, AppDbContext context, ILogger<ExpenseRepository> logger, IMapper mapper)
+        public ExpenseRepository(AppDbContext context, IMapper mapper)
         {
-            _appSettings = appSettings.Value;
             _context = context;
-            _logger = logger;
             _mapper = mapper;
         }
         public async Task<bool> Commit()
@@ -527,7 +519,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                     .ThenInclude(x => x.tag)
                     .Include(x => x.merchant)
                     .Include(x => x.category)
-                    .ThenInclude(x => x.main_category)
+                    .ThenInclude(x => x.main_category) 
                     .ToArrayAsync();
                 var response = new ExpenseModels.Response
                 {
