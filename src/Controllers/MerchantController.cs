@@ -39,13 +39,13 @@ namespace CashTrack.Controllers
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MerchantModels.Merchant>> GetAMerchantById(int id)
+        [HttpGet("detail/{id}")]
+        public async Task<ActionResult<MerchantModels.MerchantDetail>> GetMerchantDetailById(int id)
         {
             try
             {
                 var result = await _merchantRepository.GetMerchantByIdAsync(id);
-                return Ok(_mapper.Map<MerchantModels.Merchant>(result));
+                return Ok(result);
             }
             catch (MerchantNotFoundException ex)
             {

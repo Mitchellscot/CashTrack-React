@@ -8,7 +8,6 @@ namespace CashTrack.Repositories.MerchantRepository
     {
         Task<bool> Commit();
         Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
-        //Returns an ENTITY - Because the mapper is in the controller. Might make it easier to test (less dependencies)
-        Task<Merchants> GetMerchantByIdAsync(int id);
+        Task<MerchantModels.MerchantDetail> GetMerchantByIdAsync(int id);
     }
 }

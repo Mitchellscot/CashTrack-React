@@ -34,25 +34,14 @@ namespace CashTrack.Models.MerchantModels
             public string State { get; set; }
             public string Notes { get; set; }
             public bool IsOnline { get; set; }
-            public int TotalSpent { get; set; }
-            public decimal TotalSpentThisMonth { get; set; }
-            public decimal TotalSpentThisYear { get; set; }
-            public decimal TotalSpentAllTime { get; set; }
+            public ExpenseModels.ExpenseModels.ExpenseTotals ExpenseTotals { get; set; }
             public string MostUsedCategory { get; set; }
-            public List<AnnualExpenseTotals> AnnualExpenseStatistics { get; set; }
+            public List<ExpenseModels.ExpenseModels.AnnualExpenseStatistics> AnnualExpenseStatistics { get; set; }
             public Dictionary<string, int> PurchaseCategoryOccurances { get; set; }
             public Dictionary<string, decimal> PurchaseCategoryTotals { get; set; }
             public List<ExpenseModels.ExpenseModels.ExpenseQuickView> RecentExpenses { get; set; }
-
-            public record AnnualExpenseTotals
-            {
-                public int Year { get; set; }
-                public int Count { get; set; }
-                public decimal Average { get; set; }
-                public decimal Min { get; set; }
-                public decimal Max { get; set; }
-                public decimal Total { get; set; }
-            }
         }
+
+
     }
 }
