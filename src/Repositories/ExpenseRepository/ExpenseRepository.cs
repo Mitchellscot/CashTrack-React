@@ -50,7 +50,7 @@ namespace CashTrack.Repositories.ExpenseRepository
             }
             var response = new ExpenseModels.Response
             {
-                Expenses = new[] { _mapper.Map<ExpenseModels.ExpenseTransaction>(singleExpense) }
+                Expenses = new[] { _mapper.Map<ExpenseTransaction>(singleExpense) }
             };
             return response;
         }
@@ -107,7 +107,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForAllExpenses(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -144,7 +144,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -189,7 +189,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForMonthAndYear(request.PageSize, monthBeginDate, monthEndDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -256,7 +256,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForExpenseQuarter(request.PageSize, quarterDates.startDate, quarterDates.endDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -309,7 +309,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForExpenseYear(request.PageSize, yearDates.startDate, yearDates.endDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -357,7 +357,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForDateRange(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -401,7 +401,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForLast30Days(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -445,7 +445,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentMonth(request.PageSize, beginMonthDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -489,7 +489,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentQuarter(request.PageSize, beginQuarterDate.startDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }
@@ -533,7 +533,7 @@ namespace CashTrack.Repositories.ExpenseRepository
                 {
                     TotalPages = await GetTotalPagesForExpenseCurrentYear(request.PageSize, beginYearDate),
                     PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseModels.ExpenseTransaction[]>(expenseTransactions)
+                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
                 };
                 return response;
             }

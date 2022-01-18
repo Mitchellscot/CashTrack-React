@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CashTrack.Helpers.Aggregators;
 using CashTrack.Models.ExpenseModels;
 
 namespace CashTrack.Models.MerchantModels
@@ -17,31 +18,29 @@ namespace CashTrack.Models.MerchantModels
             public int TotalPages { get; set; }
             public Merchant[] Merchants { get; set; }
         }
-        public record Merchant
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string City { get; set; }
-            public bool IsOnline { get; set; }
-            public int NumberOfExpenses { get; set; }
-        }
-        public record MerchantDetail
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public bool SuggestOnLookup { get; set; }
-            public string City { get; set; }
-            public string State { get; set; }
-            public string Notes { get; set; }
-            public bool IsOnline { get; set; }
-            public ExpenseModels.ExpenseModels.ExpenseTotals ExpenseTotals { get; set; }
-            public string MostUsedCategory { get; set; }
-            public List<ExpenseModels.ExpenseModels.AnnualExpenseStatistics> AnnualExpenseStatistics { get; set; }
-            public Dictionary<string, int> PurchaseCategoryOccurances { get; set; }
-            public Dictionary<string, decimal> PurchaseCategoryTotals { get; set; }
-            public List<ExpenseModels.ExpenseModels.ExpenseQuickView> RecentExpenses { get; set; }
-        }
-
-
+    }
+    public record Merchant
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
+        public bool IsOnline { get; set; }
+        public int NumberOfExpenses { get; set; }
+    }
+    public record MerchantDetail
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool SuggestOnLookup { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Notes { get; set; }
+        public bool IsOnline { get; set; }
+        public ExpenseTotals ExpenseTotals { get; set; }
+        public string MostUsedCategory { get; set; }
+        public List<AnnualExpenseStatistics> AnnualExpenseStatistics { get; set; }
+        public Dictionary<string, int> PurchaseCategoryOccurances { get; set; }
+        public Dictionary<string, decimal> PurchaseCategoryTotals { get; set; }
+        public List<ExpenseQuickView> RecentExpenses { get; set; }
     }
 }

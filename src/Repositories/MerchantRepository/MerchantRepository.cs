@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Data;
 using CashTrack.Data.Entities;
+using CashTrack.Helpers.Aggregators;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
@@ -41,7 +42,7 @@ namespace CashTrack.Repositories.MerchantRepository
                         .OrderBy(x => x.name)
                         .Skip((request.PageNumber - 1) * request.PageSize)
                         .Take(request.PageSize)
-                        .Select(m => new MerchantModels.Merchant
+                        .Select(m => new Merchant
                         {
                             Id = m.id,
                             Name = m.name,
@@ -54,7 +55,7 @@ namespace CashTrack.Repositories.MerchantRepository
                     {
                         TotalPages = await GetTotalPagesForAllMerchantSearch(request.PageSize, request.SearchTerm),
                         PageNumber = request.PageNumber,
-                        Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
+                        Merchants = _mapper.Map<Merchant[]>(merchants)
                     };
                     return response;
                 }
@@ -69,7 +70,7 @@ namespace CashTrack.Repositories.MerchantRepository
                     .OrderBy(x => x.name)
                     .Skip((request.PageNumber - 1) * request.PageSize)
                     .Take(request.PageSize)
-                    .Select(m => new MerchantModels.Merchant
+                    .Select(m => new Merchant
                     {
                         Id = m.id,
                         Name = m.name,
@@ -82,7 +83,7 @@ namespace CashTrack.Repositories.MerchantRepository
                 {
                     TotalPages = await GetTotalPagesForAllMerchants(request.PageSize),
                     PageNumber = request.PageNumber,
-                    Merchants = _mapper.Map<MerchantModels.Merchant[]>(merchants)
+                    Merchants = _mapper.Map<Merchant[]>(merchants)
                 };
                 return response;
             }
@@ -106,7 +107,7 @@ namespace CashTrack.Repositories.MerchantRepository
             return (int)totalPages;
         }
 
-        public async Task<MerchantModels.MerchantDetail> GetMerchantByIdAsync(int id)
+        public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
         {
             var merchantEntity = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
 
@@ -116,15 +117,14 @@ namespace CashTrack.Repositories.MerchantRepository
             var merchantExpenses = await _context.Expenses.Where(e => e.merchant.id == id).Include(x => x.category).ToListAsync();
             var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
                 .Take(10)
-                .Select(x => new ExpenseModels.ExpenseQuickView(){
+                .Select(x => new ExpenseQuickView(){
                     Id = x.id,
                     PurchaseDate = x.purchase_date.Date.ToShortDateString(),
                     Amount = x.amount,
-                    //this isn't working right
                     SubCategory =  x.category == null ? "none" : x.category.sub_category_name
                 }).ToList();
 
-            var expenseTotals = merchantExpenses.Aggregate(new ExpenseModels.ExpenseTotalsAggregator(),
+            var expenseTotals = merchantExpenses.Aggregate(new ExpenseTotalsAggregator(),
                     (acc, e) => acc.Accumulate(e),
                     acc => acc.Compute());
 
@@ -132,11 +132,11 @@ namespace CashTrack.Repositories.MerchantRepository
                     .Select(g =>
                         {
                             var results = g.Aggregate(
-                                                new ExpenseModels.ExpenseStatisticsAggregator(),
+                                                new ExpenseStatisticsAggregator(),
                                 (acc, e) => acc.Accumulate(e),
                                 acc => acc.Compute()
                                                  );
-                            return new ExpenseModels.AnnualExpenseStatistics()
+                            return new AnnualExpenseStatistics()
                             {
                                 Year = g.Key,
                                 Average = results.Average,
@@ -173,7 +173,7 @@ namespace CashTrack.Repositories.MerchantRepository
 
             var mostUsedCategory = merchantExpenseCategories.FirstOrDefault().Key;
 
-            var merchantDetail = new MerchantModels.MerchantDetail()
+            var merchantDetail = new MerchantDetail()
             {
                 Id = merchantEntity.id,
                 Name = merchantEntity.name,

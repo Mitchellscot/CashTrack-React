@@ -12,13 +12,13 @@ using System.Net;
 
 namespace CashTrack.IntegrationTests
 {
-    public class MerchantControllerShould : IClassFixture<TestServerFixture>
+    public class MerchantsControllerShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
         private ITestOutputHelper _output;
-        const string path = "api/merchant";
+        const string path = "api/merchants";
 
-        public MerchantControllerShould(TestServerFixture fixture, ITestOutputHelper output)
+        public MerchantsControllerShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
@@ -66,9 +66,9 @@ namespace CashTrack.IntegrationTests
         [InlineData(3)]
         public async Task ReturnMerchantWithMatchingId(int id)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/{id}");
+            var response = await _fixture.Client.GetAsync(path + $"/detail/{id}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Merchant>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MerchantDetail>(await response.Content.ReadAsStringAsync());
             responseObject.ShouldNotBeNull();
             PrintRequestAndResponse(path + $"/{id}", await response.Content.ReadAsStringAsync());
         }
@@ -78,7 +78,7 @@ namespace CashTrack.IntegrationTests
         [InlineData(int.MinValue)]
         public async Task ThrowExceptionWithInvalidId(int id)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + id);
+            var response = await _fixture.Client.GetAsync(path + $"/detail/{id}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();

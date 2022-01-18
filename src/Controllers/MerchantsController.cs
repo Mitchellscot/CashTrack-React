@@ -13,13 +13,13 @@ namespace CashTrack.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class MerchantController : ControllerBase
+    public class MerchantsController : ControllerBase
     {
-        private readonly ILogger<MerchantController> _logger;
+        private readonly ILogger<MerchantsController> _logger;
         private readonly IMerchantRepository _merchantRepository;
         private readonly IMapper _mapper;
 
-        public MerchantController(ILogger<MerchantController> logger, IMerchantRepository merchantRepository, IMapper mapper)
+        public MerchantsController(ILogger<MerchantsController> logger, IMerchantRepository merchantRepository, IMapper mapper)
         {
             _logger = logger;
             _merchantRepository = merchantRepository;
@@ -40,11 +40,11 @@ namespace CashTrack.Controllers
             }
         }
         [HttpGet("detail/{id}")]
-        public async Task<ActionResult<MerchantModels.MerchantDetail>> GetMerchantDetailById(int id)
+        public async Task<ActionResult<MerchantDetail>> GetMerchantDetail(int id)
         {
             try
             {
-                var result = await _merchantRepository.GetMerchantByIdAsync(id);
+                var result = await _merchantRepository.GetMerchantDetailAsync(id);
                 return Ok(result);
             }
             catch (MerchantNotFoundException ex)

@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
@@ -9,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;
 using CashTrack.Helpers.Exceptions;
-using Npgsql;
 
 namespace CashTrack.Controllers
 {

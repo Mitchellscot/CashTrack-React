@@ -8,6 +8,6 @@ namespace CashTrack.Repositories.MerchantRepository
     {
         Task<bool> Commit();
         Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
-        Task<MerchantModels.MerchantDetail> GetMerchantByIdAsync(int id);
+        Task<MerchantDetail> GetMerchantDetailAsync(int id);
     }
 }
