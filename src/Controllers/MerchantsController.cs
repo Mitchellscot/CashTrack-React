@@ -61,8 +61,32 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _merchantRepository.CreateMerchant(request);
-                return CreatedAtAction("Get", "Merchants", new { id = result.id }, result);
+                var result = await _merchantRepository.CreateUpdateMerchant(request);
+                //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
+                return CreatedAtAction("detail", new { id = result.id }, result);
+            }
+            catch (DuplicateMerchantNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request )
+        {
+            if (request.Id == null)
+                return BadRequest("Need a merchant id in the body of the request.");
+            try
+            {
+                var result = await _merchantRepository.CreateUpdateMerchant(request);
+                return Ok();
             }
             catch (DuplicateMerchantNameException ex)
             {

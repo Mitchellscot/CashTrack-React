@@ -193,22 +193,25 @@ namespace CashTrack.Repositories.MerchantRepository
             return merchantDetail;
         }
 
-        public async Task<Merchants> CreateMerchant(AddEditMerchant request)
+        public async Task<Merchants> CreateUpdateMerchant(AddEditMerchant request)
         {
             if (_context.Merchants.Any(x => x.name == request.Name))
                 throw new DuplicateMerchantNameException(request.Name);
 
-            if(request.Id == null)
-                request.Id = await _context.Merchants.MaxAsync(x => x.id) +1;
-
             try
             {
                 var merchant = _mapper.Map<Merchants>(request);
-                await _context.AddAsync(merchant);
+                //if the request doesn't have an id, it means it's not in the database yet so we are just updating an existing merchant
+                if (request.Id == null)
+                    await _context.AddAsync(merchant);
+                else {
+                    var entity = _context.Merchants.Attach(merchant);
+                    entity.State = EntityState.Modified;
+                } 
 
                 if (await Commit())
                     return merchant;
-                else throw new InvalidOperationException("Couldn't add merchant to the database.");
+                else throw new InvalidOperationException("Unable to save merchant to the database.");
             }
             catch (Exception)
             {

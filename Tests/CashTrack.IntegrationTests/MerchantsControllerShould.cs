@@ -95,6 +95,23 @@ namespace CashTrack.IntegrationTests
             Assert.Contains($"No merchant found with an id of {id}", responseString);
             PrintRequestAndResponse(path + $"/99999999", await response.Content.ReadAsStringAsync());
         }
+        [Fact]
+        public async Task CreateNewMerchant()
+        {
+            var model = new AddEditMerchant()
+            {
+                Id = null,
+                Name = "Mitchell",
+                City = "Long Beach",
+                State = "CA",
+                SuggestOnLookup = true,
+                IsOnline = false,
+                Notes = "Created with test method"
+            };
+            var response = await _fixture.SendPostRequestAsync(path, model);
+            
+
+        }
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
