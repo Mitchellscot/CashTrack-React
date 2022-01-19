@@ -202,8 +202,12 @@ namespace CashTrack.Repositories.MerchantRepository
                 var merchant = _mapper.Map<Merchants>(request);
                 //if the request doesn't have an id, it means it's not in the database yet so we are just updating an existing merchant
                 if (request.Id == null)
+                {
+                    merchant.id = (await _context.Merchants.OrderBy(x => x.id).LastOrDefaultAsync()).id + 1;
                     await _context.AddAsync(merchant);
-                else {
+                }
+                else
+                {
                     var entity = _context.Merchants.Attach(merchant);
                     entity.State = EntityState.Modified;
                 } 

@@ -13,6 +13,10 @@ using CashTrack.Data.Entities;
 
 namespace CashTrack.IntegrationTests
 {
+    //all i got for data cleanup right now
+    //select * from merchants where name ilike '%test%';
+    //delete from merchants where name ilike '%test%';
+
     public class MerchantsControllerShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
