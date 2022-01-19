@@ -12,6 +12,8 @@ namespace CashTrack.Repositories.ExpenseRepository
         Task<Expenses[]> GetAllExpensesPagination(int pageNumber, int pageSize);
         Task<decimal> GetCountOfAllExpenses();
         Task<Expenses[]> GetExpensesFromSpecificDatePagination(DateTimeOffset beginDate, int pageNumber, int pageSize);
-        Task<decimal> GetCountOfExpensesFromSpecificDate(DateTimeOffset date);
+        Task<decimal> GetCountOfExpensesForSpecificDate(DateTimeOffset date);
+        Task<Expenses[]> GetExpensesBetweenTwoDatesPagination(DateTimeOffset beginDate, DateTimeOffset endDate, int pageNumber, int pageSize);
+        Task<decimal> GetCountOfExpensesBetweenTwoDates(DateTimeOffset beginDate, DateTimeOffset endDate);
     }
 }

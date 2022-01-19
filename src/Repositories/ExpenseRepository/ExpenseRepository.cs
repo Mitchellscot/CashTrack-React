@@ -15,7 +15,7 @@ namespace CashTrack.Repositories.ExpenseRepository
     public class ExpenseRepository : IExpenseRepository
     {
         private readonly AppDbContext _context;
-        public ExpenseRepository(AppDbContext context, IMapper mapper)
+        public ExpenseRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -101,11 +101,47 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        public async Task<decimal> GetCountOfExpensesFromSpecificDate(DateTimeOffset date)
+        public async Task<decimal> GetCountOfExpensesForSpecificDate(DateTimeOffset date)
         {
             try
             {
                 return (decimal)await _context.Expenses.Where(x => x.purchase_date == date.ToUniversalTime()).CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<Expenses[]> GetExpensesBetweenTwoDatesPagination(DateTimeOffset beginDate, DateTimeOffset endDate, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                .Where(x => x.purchase_date >= beginDate && x.purchase_date <= endDate)
+                .OrderBy(x => x.purchase_date)
+                .ThenBy(x => x.id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Include(x => x.expense_tags)
+                .ThenInclude(x => x.tag)
+                .Include(x => x.merchant)
+                .Include(x => x.category)
+                .ThenInclude(x => x.main_category)
+                .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<decimal> GetCountOfExpensesBetweenTwoDates(DateTimeOffset beginDate, DateTimeOffset endDate)
+        {
+            try
+            {
+                return (decimal)await _context.Expenses
+                .Where(x => x.purchase_date >= beginDate && x.purchase_date <= endDate)
+                .CountAsync();
             }
             catch (Exception)
             {
