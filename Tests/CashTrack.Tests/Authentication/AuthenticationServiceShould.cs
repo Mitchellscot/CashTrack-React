@@ -60,6 +60,7 @@ namespace CashTrack.Tests.Authentication
             Assert.NotNull(henryToken);
             Assert.NotNull(henryTokenAgain);
             Assert.NotNull(lydiaToken);
+            //this might fail if the tests are taking a long time... that's alright just rerun it. Or delete it, whatever.
             Assert.Equal(henryToken, henryTokenAgain);
             Assert.NotEqual(henryToken, lydiaToken);
         }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;
 using CashTrack.Helpers.Exceptions;
+using CashTrack.Services.ExpenseService;
 
 namespace CashTrack.Controllers
 {
@@ -22,9 +23,9 @@ namespace CashTrack.Controllers
 
         private readonly IMapper _mapper;
         private readonly ILogger<ExpenseController> _logger;
-        private readonly IExpenseRepository _expenseService;
+        private readonly IExpenseService _expenseService;
 
-        public ExpenseController(ILogger<ExpenseController> logger, IExpenseRepository expenseService, IMapper mapper)
+        public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;
@@ -32,7 +33,7 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ExpenseModels.Response>> GetAllExpenses([FromQuery]ExpenseModels.Request request)
+        public async Task<ActionResult<ExpenseModels.Response>> GetAllExpenses([FromQuery] ExpenseModels.Request request)
         {
             try
             {
@@ -49,12 +50,12 @@ namespace CashTrack.Controllers
         //api/expense/{id}
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseModels.Response>> GetAnExpenseById(int id)
+        public async Task<ActionResult<ExpenseTransaction>> GetAnExpenseById(int id)
         {
             try
             {
                 var result = await _expenseService.GetExpenseByIdAsync(id);
-                return Ok(_mapper.Map<ExpenseModels.Response>(result));
+                return Ok(result);
             }
             catch (ExpenseNotFoundException ex)
             {

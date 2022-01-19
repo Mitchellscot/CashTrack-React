@@ -19,7 +19,9 @@ namespace CashTrack.Models.ExpenseModels
         public record Response
         {
             public int PageNumber { get; set; }
+            public int PageSize { get; set; }
             public int TotalPages { get; set; }
+            public int TotalExpenses { get; set; }
             public ExpenseTransaction[] Expenses { get; set; }
         }
     }

@@ -8,7 +8,7 @@ namespace CashTrack.Services.MerchantService
     {
         Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
         Task<MerchantDetail> GetMerchantDetailAsync(int id);
-        Task<Merchants> CreateUpdateMerchant(AddEditMerchant request);
-        Task<bool> DeleteMerchant(int id);
+        Task<Merchants> CreateUpdateMerchantAsync(AddEditMerchant request);
+        Task<bool> DeleteMerchantAsync(int id);
     }
 }

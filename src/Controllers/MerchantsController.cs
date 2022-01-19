@@ -59,7 +59,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _merchantService.CreateUpdateMerchant(request);
+                var result = await _merchantService.CreateUpdateMerchantAsync(request);
                 //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
                 return CreatedAtAction("detail", new { id = result.id }, result);
             }
@@ -83,7 +83,7 @@ namespace CashTrack.Controllers
                 return BadRequest("Need a merchant id in the body of the request.");
             try
             {
-                var result = await _merchantService.CreateUpdateMerchant(request);
+                var result = await _merchantService.CreateUpdateMerchantAsync(request);
                 return Ok();
             }
             catch (DuplicateMerchantNameException ex)
@@ -104,7 +104,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                if (await _merchantService.DeleteMerchant(id))
+                if (await _merchantService.DeleteMerchantAsync(id))
                     return Ok();
                 else
                     return BadRequest("Error occured while deleting merchant.");
