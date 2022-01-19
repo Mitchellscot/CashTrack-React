@@ -8,12 +8,15 @@ namespace CashTrack.Repositories.MerchantRepository
         Task<bool> CreateMerchant(Merchants merchant);
         Task<bool> UpdateMerchant(Merchants merchant);
         Task<bool> DeleteMerchant(Merchants merchant);
-        Task<Merchants> GetMerchantByIdAsync(int id);
-        Task<Merchants[]> GetMerchantsPaginationAsync(int pageSize, int pageNumber);
-        Task<Merchants[]> GetAllMerchantsAsync();
-        Task<Merchants[]> GetMerchantsBySearchTermAsync(string searchTerm, int pageSize, int pageNumber);
+        Task<Merchants> GetMerchantById(int id);
+        Task<Merchants[]> GetMerchantsPagination(int pageSize, int pageNumber);
+        Task<Merchants[]> GetMerchantsPaginationSearchTerm(string searchTerm, int pageSize, int pageNumber);
+        Task<decimal> GetCountOfAllMerchants();
+        Task<decimal> GetCountOfAllMerchantsSearch(string searchTerm);
+        Task<Merchants[]> GetAllMerchantsNoTracking();
+
         //these might go in the Expense repo...
         Task<int> GetNumberOfExpensesForMerchant(int id);
-        Task<Expenses[]> GetExpensesAndCategoriesByMerchantIdAsync(int id);
+        Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id);
     }
 }

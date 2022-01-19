@@ -30,7 +30,7 @@ namespace CashTrack.Services.MerchantService
         {
             if (request.SearchTerm != null)
             {
-                var merchants = await _merchantRepo.GetMerchantsBySearchTermAsync(request.SearchTerm, request.PageSize, request.PageNumber);
+                var merchants = await _merchantRepo.GetMerchantsPaginationSearchTerm(request.SearchTerm, request.PageSize, request.PageNumber);
                 var merchantViewModels = merchants.Select(m => new Merchant
                 {
                     Id = m.id,
@@ -42,7 +42,7 @@ namespace CashTrack.Services.MerchantService
 
                 var searchTermResponse = new MerchantModels.Response
                 {
-                    TotalPages = GetTotalPagesForAllMerchantSearch(merchantViewModels, request.PageSize),
+                    TotalPages = await GetTotalPagesForAllMerchantSearch(request.SearchTerm, request.PageSize),
                     PageNumber = request.PageNumber,
                     Merchants = merchantViewModels
                 };
@@ -50,7 +50,7 @@ namespace CashTrack.Services.MerchantService
             }
             else
             {
-                var merchants = await _merchantRepo.GetMerchantsPaginationAsync(request.PageSize, request.PageNumber);
+                var merchants = await _merchantRepo.GetMerchantsPagination(request.PageSize, request.PageNumber);
                 var merchantViewModels = merchants.Select(m => new Merchant
                 {
                     Id = m.id,
@@ -62,7 +62,7 @@ namespace CashTrack.Services.MerchantService
 
                 var response = new MerchantModels.Response
                 {
-                    TotalPages = GetTotalPagesForAllMerchants(merchantViewModels, request.PageSize),
+                    TotalPages = await GetTotalPagesForAllMerchants(request.PageSize),
                     PageNumber = request.PageNumber,
                     Merchants = merchantViewModels
                 };
@@ -70,25 +70,25 @@ namespace CashTrack.Services.MerchantService
             }
         }
 
-        private int GetTotalPagesForAllMerchantSearch(Merchant[] merchants, int pageSize)
+        private async Task<int> GetTotalPagesForAllMerchantSearch(string searchTerm, int pageSize)
         {
-            var totalNumberOfRecords = (decimal)merchants.Length;
+            var totalNumberOfRecords = await _merchantRepo.GetCountOfAllMerchantsSearch(searchTerm);
             var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
             return (int)totalPages;
         }
-        private int GetTotalPagesForAllMerchants(Merchant[] merchants, int pageSize)
+        private async Task<int> GetTotalPagesForAllMerchants(int pageSize)
         {
-            var totalNumberOfRecords = (decimal)merchants.Length;
+            var totalNumberOfRecords = await _merchantRepo.GetCountOfAllMerchants();
             var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
             return (int)totalPages;
         }
 
         public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
         {
-            var merchantEntity = await _merchantRepo.GetMerchantByIdAsync(id);
+            var merchantEntity = await _merchantRepo.GetMerchantById(id);
             //might have to check for exceptions here I don't know, there is a check for them in the repo
 
-            var merchantExpenses = await _merchantRepo.GetExpensesAndCategoriesByMerchantIdAsync(id);
+            var merchantExpenses = await _merchantRepo.GetExpensesAndCategoriesByMerchantId(id);
 
             var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
                 .Take(10)
@@ -170,7 +170,7 @@ namespace CashTrack.Services.MerchantService
 
         public async Task<Merchants> CreateUpdateMerchant(AddEditMerchant request)
         {
-            var merchants = await _merchantRepo.GetAllMerchantsAsync();
+            var merchants = await _merchantRepo.GetAllMerchantsNoTracking();
             if (merchants.Any(x => x.name == request.Name))
                 throw new DuplicateMerchantNameException(request.Name);
 
@@ -195,7 +195,7 @@ namespace CashTrack.Services.MerchantService
 
         public async Task<bool> DeleteMerchant(int id)
         {
-            var merchant = await _merchantRepo.GetMerchantByIdAsync(id);
+            var merchant = await _merchantRepo.GetMerchantById(id);
             if (merchant == null)
                 throw new MerchantNotFoundException(id.ToString());
 

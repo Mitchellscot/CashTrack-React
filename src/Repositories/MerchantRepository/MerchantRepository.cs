@@ -21,7 +21,7 @@ namespace CashTrack.Repositories.MerchantRepository
             _context = context;
         }
 
-        public async Task<Expenses[]> GetExpensesAndCategoriesByMerchantIdAsync(int id)
+        public async Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace CashTrack.Repositories.MerchantRepository
             }
         }
 
-        public async Task<Merchants> GetMerchantByIdAsync(int id)
+        public async Task<Merchants> GetMerchantById(int id)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace CashTrack.Repositories.MerchantRepository
             }
         }
 
-        public async Task<Merchants[]> GetMerchantsPaginationAsync(int pageSize, int pageNumber)
+        public async Task<Merchants[]> GetMerchantsPagination(int pageSize, int pageNumber)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace CashTrack.Repositories.MerchantRepository
 
         }
 
-        public async Task<Merchants[]> GetMerchantsBySearchTermAsync(string searchTerm, int pageSize, int pageNumber)
+        public async Task<Merchants[]> GetMerchantsPaginationSearchTerm(string searchTerm, int pageSize, int pageNumber)
         {
             try
             {
@@ -99,11 +99,11 @@ namespace CashTrack.Repositories.MerchantRepository
             }
         }
 
-        public async Task<Merchants[]> GetAllMerchantsAsync()
+        public async Task<Merchants[]> GetAllMerchantsNoTracking()
         {
             try
             {
-                return await _context.Merchants.ToArrayAsync();
+                return await _context.Merchants.AsNoTracking().ToArrayAsync();
             }
             catch (Exception)
             {
@@ -134,7 +134,6 @@ namespace CashTrack.Repositories.MerchantRepository
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -145,6 +144,30 @@ namespace CashTrack.Repositories.MerchantRepository
             {
                 _context.Remove(merchant);
                 return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<decimal> GetCountOfAllMerchants()
+        {
+            try
+            {
+                return (decimal)await _context.Merchants.CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<decimal> GetCountOfAllMerchantsSearch(string searchTerm)
+        {
+            try
+            {
+                return (decimal)await _context.Merchants.Where(x => x.name.Contains(searchTerm)).CountAsync();
             }
             catch (Exception)
             {
