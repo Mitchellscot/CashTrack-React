@@ -23,11 +23,12 @@ namespace CashTrack.Services.ExpenseService
 
             var response = new ExpenseModels.Response
             {
+                PageNumber = 1,
+                TotalPages = 1,
                 Expenses = new[] { _mapper.Map<ExpenseTransaction>(singleExpense) }
             };
             return response;
         }
-
         public async Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request) => request.DateOptions switch
         {
             //1
@@ -59,39 +60,47 @@ namespace CashTrack.Services.ExpenseService
             _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
         };
-        private async Task<ExpenseModels.Response> GetAllExpensesAsync(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetAllExpensesAsync(ExpenseModels.Request request)
         {
             var expenseTransactions = await _expenseRepo.GetAllExpensesPagination(request.PageNumber, request.PageSize);
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesForAllExpenses(request.PageSize),
+                TotalPages = await GetTotalPages(request.PageSize),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
             };
             return response;
         }
-        private async Task<int> GetTotalPagesForAllExpenses(int pageSize)
+        internal async Task<int> GetTotalPages(int pageSize, DateTimeOffset? beginDate = null, DateTimeOffset? endDate = null)
         {
-            var totalNumberOfRecords = await _expenseRepo.GetCountOfAllExpenses();
-            return (int)Math.Ceiling(totalNumberOfRecords / pageSize);
+            decimal numberOfRecords = 0;
+            if (beginDate == null && endDate == null)
+            {
+                numberOfRecords = await _expenseRepo.GetCountOfAllExpenses();
+            }
+            else if (beginDate != null && endDate == null)
+            {
+                numberOfRecords = await _expenseRepo.GetCountOfExpensesForSpecificDate(beginDate.Value);
+            }
+            else if (beginDate != null && endDate != null)
+            {
+                numberOfRecords = await _expenseRepo.GetCountOfExpensesBetweenTwoDates(beginDate.Value, endDate.Value);
+            }
+            var totalPages = (int)Math.Ceiling(numberOfRecords / (decimal)pageSize);
+            return totalPages == 0 ? 1 : totalPages;
         }
-        private async Task<ExpenseModels.Response> GetExpensesFromSpecificDateAsync(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesFromSpecificDateAsync(ExpenseModels.Request request)
         {
             var expenseTransactions = await _expenseRepo.GetExpensesFromSpecificDatePagination(request.BeginDate, request.PageNumber, request.PageSize);
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
+                TotalPages = await GetTotalPages(request.PageSize, request.BeginDate),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
             };
             return response;
         }
-        private async Task<int> GetTotalPagesForSpecificDate(int pageSize, DateTimeOffset date)
-        {
-            var countOfExpenses = await _expenseRepo.GetCountOfExpensesForSpecificDate(date);
-            return (int)Math.Ceiling(countOfExpenses / (decimal)pageSize);
-        }
-        private async Task<ExpenseModels.Response> GetExpensesForSpecificMonthAsync(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesForSpecificMonthAsync(ExpenseModels.Request request)
         {
             var monthBeginDate = GetMonthBeginDate(request.BeginDate).ToUniversalTime();
             var monthEndDate = GetMonthEndDate(request.BeginDate).ToUniversalTime();
@@ -100,26 +109,21 @@ namespace CashTrack.Services.ExpenseService
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, monthBeginDate, monthEndDate),
+                TotalPages = await GetTotalPages(request.PageSize, monthBeginDate, monthEndDate),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
             };
             return response;
 
         }
-        private async Task<int> GetTotalPagesBetweenTwoDates(int pageSize, DateTimeOffset monthBeginDate, DateTimeOffset monthEndDate)
-        {
-            var totalPages = await _expenseRepo.GetCountOfExpensesBetweenTwoDates(monthBeginDate, monthEndDate);
-            return (int)Math.Ceiling(totalPages / (decimal)pageSize);
-        }
-        private DateTimeOffset GetMonthBeginDate(DateTimeOffset date)
+        internal DateTimeOffset GetMonthBeginDate(DateTimeOffset date)
         {
             var beginingOfMonth = new DateTimeOffset(
                 date.Year, date.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0)
                 );
             return beginingOfMonth;
         }
-        private DateTimeOffset GetMonthEndDate(DateTimeOffset date)
+        internal DateTimeOffset GetMonthEndDate(DateTimeOffset date)
         {
             var monthEndDate = GetLastDayOfMonth(date);
             var endingOfMonth = new DateTimeOffset(
@@ -127,14 +131,14 @@ namespace CashTrack.Services.ExpenseService
                 );
             return endingOfMonth;
         }
-        private int GetLastDayOfMonth(DateTimeOffset date) => date.Month switch
+        internal int GetLastDayOfMonth(DateTimeOffset date) => date.Month switch
         {
             4 or 6 or 9 or 11 => 30,
             1 or 3 or 5 or 7 or 8 or 10 or 12 => 31,
             2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
             _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
         };
-        private async Task<ExpenseModels.Response> GetExpensesForQuarterAsync(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesForQuarterAsync(ExpenseModels.Request request)
         {
             var quarterDates = GetQuarterDatesFromDate(request.BeginDate);
 
@@ -142,7 +146,7 @@ namespace CashTrack.Services.ExpenseService
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, quarterDates.startDate, quarterDates.endDate),
+                TotalPages = await GetTotalPages(request.PageSize, quarterDates.startDate, quarterDates.endDate),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
             };
@@ -157,7 +161,7 @@ namespace CashTrack.Services.ExpenseService
             10 or 11 or 12 => (startDate: new DateTimeOffset(date.Year, 10, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
             _ => throw new ArgumentException($"Unable to determine quarter from given date {date}", nameof(date))
         };
-        private async Task<ExpenseModels.Response> GetExpensesForAYearAsync(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesForAYearAsync(ExpenseModels.Request request)
         {
             var yearDates = GetYearDatesFromDate(request.BeginDate);
 
@@ -165,29 +169,29 @@ namespace CashTrack.Services.ExpenseService
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, yearDates.startDate, yearDates.endDate),
+                TotalPages = await GetTotalPages(request.PageSize, yearDates.startDate, yearDates.endDate),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
             };
             return response;
         }
-        private (DateTimeOffset startDate, DateTimeOffset endDate) GetYearDatesFromDate(DateTimeOffset date)
+        internal (DateTimeOffset startDate, DateTimeOffset endDate) GetYearDatesFromDate(DateTimeOffset date)
         {
             return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
         }
-        private async Task<ExpenseModels.Response> GetExpensesByDateRange(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesByDateRange(ExpenseModels.Request request)
         {
             var expenses = await _expenseRepo.GetExpensesBetweenTwoDatesPagination(request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime(), request.PageNumber, request.PageSize);
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
+                TotalPages = await GetTotalPages(request.PageSize, request.BeginDate.ToUniversalTime(), request.EndDate.ToUniversalTime()),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
         }
-        private async Task<ExpenseModels.Response> GetExpensesFromLast30Days(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesFromLast30Days(ExpenseModels.Request request)
         {
             var thirtyDaysAgo = DateTimeOffset.UtcNow.AddDays(-30);
             var today = DateTimeOffset.UtcNow;
@@ -196,52 +200,52 @@ namespace CashTrack.Services.ExpenseService
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, thirtyDaysAgo, today),
+                TotalPages = await GetTotalPages(request.PageSize, thirtyDaysAgo, today),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
         }
-        private async Task<ExpenseModels.Response> GetExpensesFromCurrentMonth(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesFromCurrentMonth(ExpenseModels.Request request)
         {
             var beginMonthDate = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
             var today = DateTimeOffset.UtcNow;
 
-            var expenses = _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginMonthDate, today, request.PageNumber, request.PageSize);
+            var expenses = await _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginMonthDate, today, request.PageNumber, request.PageSize);
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, beginMonthDate, today),
+                TotalPages = await GetTotalPages(request.PageSize, beginMonthDate, today),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
         }
-        private async Task<ExpenseModels.Response> GetExpensesFromCurrentQuarter(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesFromCurrentQuarter(ExpenseModels.Request request)
         {
             var beginQuarterDate = GetQuarterDatesFromDate(DateTimeOffset.UtcNow);
             var today = DateTimeOffset.UtcNow;
 
-            var expenses = _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginQuarterDate.startDate, today, request.PageNumber, request.PageSize);
+            var expenses = await _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginQuarterDate.startDate, today, request.PageNumber, request.PageSize);
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, beginQuarterDate.startDate, today),
+                TotalPages = await GetTotalPages(request.PageSize, beginQuarterDate.startDate, today),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
         }
-        private async Task<ExpenseModels.Response> GetExpensesFromCurrentYear(ExpenseModels.Request request)
+        internal async Task<ExpenseModels.Response> GetExpensesFromCurrentYear(ExpenseModels.Request request)
         {
             var beginYearDate = new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
             var today = DateTimeOffset.UtcNow;
 
-            var expenses = _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginYearDate, today, request.PageNumber, request.PageSize);
+            var expenses = await _expenseRepo.GetExpensesBetweenTwoDatesPagination(beginYearDate, today, request.PageNumber, request.PageSize);
 
             var response = new ExpenseModels.Response
             {
-                TotalPages = await GetTotalPagesBetweenTwoDates(request.PageSize, beginYearDate, today),
+                TotalPages = await GetTotalPages(request.PageSize, beginYearDate, today),
                 PageNumber = request.PageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
