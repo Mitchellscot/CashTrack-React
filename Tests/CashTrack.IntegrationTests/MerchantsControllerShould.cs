@@ -30,7 +30,7 @@ namespace CashTrack.IntegrationTests
         }
         [Fact]
         public async Task ReturnAllMerchants()
-        { 
+        {
             var response = await _fixture.Client.GetAsync(path);
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
@@ -134,6 +134,7 @@ namespace CashTrack.IntegrationTests
                 Notes = "Updated with test method"
             };
             var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
+            var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
         [Fact]

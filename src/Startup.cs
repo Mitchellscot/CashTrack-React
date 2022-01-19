@@ -16,6 +16,8 @@ using CashTrack.Repositories.TagRepository;
 using CashTrack.Services.AuthenticationServices;
 using Microsoft.Extensions.Logging;
 using CashTrack.Repositories.MerchantRepository;
+using CashTrack.Services.MerchantService;
+using CashTrack.Repositories.SubCategoriesRepository.cs;
 
 namespace CashTrack
 {
@@ -32,16 +34,18 @@ namespace CashTrack
         {
             //const string devDb = "DefaultConnection";
             const string testDb = "TestDb";
-            string connectionString =Configuration.GetConnectionString(testDb);
+            string connectionString = Configuration.GetConnectionString(testDb);
             Console.WriteLine($"Using connection string: {connectionString}");
 
-            services.AddDbContext<AppDbContext>(options => {
+            services.AddDbContext<AppDbContext>(options =>
+            {
                 options.UseNpgsql(connectionString);
                 options.EnableSensitiveDataLogging(true);
             });
 
             //for ef core logging
-            services.AddLogging(loggingBuilder => {
+            services.AddLogging(loggingBuilder =>
+            {
                 loggingBuilder.AddConsole()
                     .AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
                 loggingBuilder.AddDebug();
@@ -65,9 +69,11 @@ namespace CashTrack
 
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IMerchantRepository, MerchantRepository>();
+            services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // In production, the React files will be served from this directory

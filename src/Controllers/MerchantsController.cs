@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.MerchantModels;
-using CashTrack.Repositories.MerchantRepository;
+using CashTrack.Services.MerchantService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -16,21 +16,19 @@ namespace CashTrack.Controllers
     public class MerchantsController : ControllerBase
     {
         private readonly ILogger<MerchantsController> _logger;
-        private readonly IMerchantRepository _merchantRepository;
-        private readonly IMapper _mapper;
+        private readonly IMerchantService _merchantService;
 
-        public MerchantsController(ILogger<MerchantsController> logger, IMerchantRepository merchantRepository, IMapper mapper)
+        public MerchantsController(ILogger<MerchantsController> logger, IMerchantService merchantService)
         {
             _logger = logger;
-            _merchantRepository = merchantRepository;
-            _mapper = mapper;
+            _merchantService = merchantService;
         }
         [HttpGet]
         public async Task<ActionResult<MerchantModels.Response>> GetAllMerchants([FromQuery] MerchantModels.Request request)
         {
             try
             {
-                var response = await _merchantRepository.GetMerchantsAsync(request);
+                var response = await _merchantService.GetMerchantsAsync(request);
                 return response;
             }
             catch (Exception ex)
@@ -44,7 +42,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _merchantRepository.GetMerchantDetailAsync(id);
+                var result = await _merchantService.GetMerchantDetailAsync(id);
                 return Ok(result);
             }
             catch (MerchantNotFoundException ex)
@@ -61,7 +59,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _merchantRepository.CreateUpdateMerchant(request);
+                var result = await _merchantService.CreateUpdateMerchant(request);
                 //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
                 return CreatedAtAction("detail", new { id = result.id }, result);
             }
@@ -79,13 +77,13 @@ namespace CashTrack.Controllers
             }
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request )
+        public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request)
         {
             if (request.Id == null)
                 return BadRequest("Need a merchant id in the body of the request.");
             try
             {
-                var result = await _merchantRepository.CreateUpdateMerchant(request);
+                var result = await _merchantService.CreateUpdateMerchant(request);
                 return Ok();
             }
             catch (DuplicateMerchantNameException ex)
@@ -106,7 +104,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                if(await _merchantRepository.DeleteMerchant(id))
+                if (await _merchantService.DeleteMerchant(id))
                     return Ok();
                 else
                     return BadRequest("Error occured while deleting merchant.");
