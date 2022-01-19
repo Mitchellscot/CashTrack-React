@@ -31,7 +31,7 @@ namespace CashTrack.Tests.Controllers
         public void ReturnASingleExpenseResponse()
         {
             var result = _sut.GetAnExpenseById(1);
-            var viewResult = Assert.IsType<Task<ActionResult<ExpenseModels.Response>>>(result);
+            var viewResult = Assert.IsType<Task<ActionResult<ExpenseTransaction>>>(result);
         }
         [Fact]
         public void ReturnsMultipleExpenseResponse()

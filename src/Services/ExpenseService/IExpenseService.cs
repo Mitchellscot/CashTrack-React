@@ -5,7 +5,7 @@ namespace CashTrack.Services.ExpenseService
 {
     public interface IExpenseService
     {
-        Task<ExpenseModels.Response> GetExpenseByIdAsync(int id);
+        Task<ExpenseTransaction> GetExpenseByIdAsync(int id);
         Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request);
     }
 }

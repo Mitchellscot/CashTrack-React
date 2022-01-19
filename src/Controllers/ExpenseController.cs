@@ -50,12 +50,12 @@ namespace CashTrack.Controllers
         //api/expense/{id}
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseModels.Response>> GetAnExpenseById(int id)
+        public async Task<ActionResult<ExpenseTransaction>> GetAnExpenseById(int id)
         {
             try
             {
                 var result = await _expenseService.GetExpenseByIdAsync(id);
-                return Ok(_mapper.Map<ExpenseModels.Response>(result));
+                return Ok(result);
             }
             catch (ExpenseNotFoundException ex)
             {
