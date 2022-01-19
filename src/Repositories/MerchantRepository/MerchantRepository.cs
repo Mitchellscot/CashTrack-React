@@ -1,11 +1,7 @@
 ﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
-using CashTrack.Helpers.Aggregators;
 using CashTrack.Helpers.Exceptions;
-using CashTrack.Models.ExpenseModels;
-using CashTrack.Models.MerchantModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

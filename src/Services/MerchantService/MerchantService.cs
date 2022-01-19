@@ -168,7 +168,7 @@ namespace CashTrack.Services.MerchantService
             return merchantDetail;
         }
 
-        public async Task<Merchants> CreateUpdateMerchant(AddEditMerchant request)
+        public async Task<Merchants> CreateUpdateMerchantAsync(AddEditMerchant request)
         {
             var merchants = await _merchantRepo.GetAllMerchantsNoTracking();
             if (merchants.Any(x => x.name == request.Name))
@@ -193,7 +193,7 @@ namespace CashTrack.Services.MerchantService
             return merchant;
         }
 
-        public async Task<bool> DeleteMerchant(int id)
+        public async Task<bool> DeleteMerchantAsync(int id)
         {
             var merchant = await _merchantRepo.GetMerchantById(id);
             if (merchant == null)

@@ -39,6 +39,8 @@
 
   <ItemGroup>
     <Folder Include="Aggregators\" />
+    <Folder Include="Files\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
