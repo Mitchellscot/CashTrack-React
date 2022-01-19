@@ -74,52 +74,23 @@ namespace CashTrack.Services.ExpenseService
         private async Task<int> GetTotalPagesForAllExpenses(int pageSize)
         {
             var totalNumberOfRecords = await _expenseRepo.GetCountOfAllExpenses();
-            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
-            return (int)totalPages;
+            return (int)Math.Ceiling(totalNumberOfRecords / pageSize);
         }
-
         private async Task<ExpenseModels.Response> GetExpensesFromSpecificDateAsync(ExpenseModels.Request request)
         {
-            try
+            var expenseTransactions = await _expenseRepo.GetExpensesFromSpecificDatePagination(request.BeginDate, request.PageNumber, request.PageSize);
+            var response = new ExpenseModels.Response
             {
-                var expenseTransactions = await _context.Expenses
-                    .Where(x => x.purchase_date == request.BeginDate.ToUniversalTime())
-                    .OrderByDescending(x => x.purchase_date)
-                    .ThenByDescending(x => x.id)
-                    .Skip((request.PageNumber - 1) * request.PageSize)
-                    .Take(request.PageSize)
-                    .Include(x => x.expense_tags)
-                    .ThenInclude(x => x.tag)
-                    .Include(x => x.merchant)
-                    .Include(x => x.category)
-                    .ThenInclude(x => x.main_category)
-                    .ToArrayAsync();
-                var response = new ExpenseModels.Response
-                {
-                    TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
-                    PageNumber = request.PageNumber,
-                    Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
-                };
-                return response;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+                TotalPages = await GetTotalPagesForSpecificDate(request.PageSize, request.BeginDate),
+                PageNumber = request.PageNumber,
+                Expenses = _mapper.Map<ExpenseTransaction[]>(expenseTransactions)
+            };
+            return response;
         }
         private async Task<int> GetTotalPagesForSpecificDate(int pageSize, DateTimeOffset date)
         {
-            try
-            {
-                var getTotalPages = await _context.Expenses
-                    .Where(x => x.purchase_date == date.ToUniversalTime())
-                    .ToArrayAsync();
-                return (int)Math.Ceiling((decimal)getTotalPages.Count() / (decimal)pageSize);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var countOfExpenses = await _expenseRepo.GetCountOfExpensesFromSpecificDate(date);
+            return (int)Math.Ceiling(countOfExpenses / (decimal)pageSize);
         }
         private async Task<ExpenseModels.Response> GetExpensesFromMonthAndYearAsync(ExpenseModels.Request request)
         {

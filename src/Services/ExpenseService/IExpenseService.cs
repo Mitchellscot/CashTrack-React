@@ -8,5 +8,6 @@ namespace CashTrack.Services.ExpenseService
         Task<ExpenseModels.Response> GetExpenseByIdAsync(int id);
         Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request);
         Task<ExpenseModels.Response> GetAllExpensesAsync(ExpenseModels.Request request);
+        Task<ExpenseModels.Response> GetExpensesFromSpecificDateAsync(ExpenseModels.Request request);
     }
 }
