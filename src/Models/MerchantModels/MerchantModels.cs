@@ -19,6 +19,16 @@ namespace CashTrack.Models.MerchantModels
             public Merchant[] Merchants { get; set; }
         }
     }
+    public record AddEditMerchant
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public bool SuggestOnLookup { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public bool IsOnline { get; set; }
+        public string Notes { get; set; }
+    }
     public record Merchant
     {
         public int Id { get; set; }

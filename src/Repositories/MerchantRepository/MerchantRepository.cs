@@ -27,7 +27,6 @@ namespace CashTrack.Repositories.MerchantRepository
         }
         public async Task<bool> Commit()
         {
-            //only return if more than one row was affected
             return (await _context.SaveChangesAsync()) > 0;
         }
 
@@ -193,5 +192,46 @@ namespace CashTrack.Repositories.MerchantRepository
             return merchantDetail;
         }
 
+        public async Task<Merchants> CreateUpdateMerchant(AddEditMerchant request)
+        {
+            if (_context.Merchants.Any(x => x.name == request.Name))
+                throw new DuplicateMerchantNameException(request.Name);
+
+            try
+            {
+                var merchant = _mapper.Map<Merchants>(request);
+                //if the request doesn't have an id, it means it's not in the database yet so we are just updating an existing merchant
+                if (request.Id == null)
+                    await _context.AddAsync(merchant);
+                else {
+                    var entity = _context.Merchants.Attach(merchant);
+                    entity.State = EntityState.Modified;
+                } 
+
+                if (await Commit())
+                    return merchant;
+                else throw new InvalidOperationException("Unable to save merchant to the database.");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteMerchant(int id)
+        {
+            var merchant = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
+            if (merchant == null)
+                throw new MerchantNotFoundException(id.ToString());
+            try
+            {
+                _context.Merchants.Remove(merchant);
+                return await Commit();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

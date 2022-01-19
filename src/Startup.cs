@@ -30,9 +30,9 @@ namespace CashTrack
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            const string devDb = "DefaultConnection";
-            //const string testDb = "TestDb";
-            string connectionString =Configuration.GetConnectionString(devDb);
+            //const string devDb = "DefaultConnection";
+            const string testDb = "TestDb";
+            string connectionString =Configuration.GetConnectionString(testDb);
             Console.WriteLine($"Using connection string: {connectionString}");
 
             services.AddDbContext<AppDbContext>(options => {
