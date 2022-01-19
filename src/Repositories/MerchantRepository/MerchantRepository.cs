@@ -217,5 +217,21 @@ namespace CashTrack.Repositories.MerchantRepository
                 throw;
             }
         }
+
+        public async Task<bool> DeleteMerchant(int id)
+        {
+            var merchant = await _context.Merchants.SingleOrDefaultAsync(x => x.id == id);
+            if (merchant == null)
+                throw new MerchantNotFoundException(id.ToString());
+            try
+            {
+                _context.Merchants.Remove(merchant);
+                return await Commit();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
