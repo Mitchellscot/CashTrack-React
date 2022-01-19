@@ -116,7 +116,7 @@ namespace CashTrack.IntegrationTests
             return responseObject.Id!.Value;
         }
         [Fact]
-        public async Task<int> UpdateNewMerchant()
+        public async Task UpdateNewMerchant()
         {
             var testId = await CreateNewMerchant();
             var model = new AddEditMerchant()
@@ -131,7 +131,13 @@ namespace CashTrack.IntegrationTests
             };
             var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
-            return testId;
+        }
+        [Fact]
+        public async Task DeleteAMerchant()
+        {
+            var testId = await CreateNewMerchant();
+            var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
         [Fact]
         public async Task ThrowExceptionIfMerchantNameExists()
