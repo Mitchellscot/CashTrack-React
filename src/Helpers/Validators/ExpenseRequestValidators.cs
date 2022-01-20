@@ -4,9 +4,9 @@ using System;
 
 namespace CashTrack.Helpers.Validators
 {
-    public class ExpenseValidators : AbstractValidator<ExpenseModels.Request>
+    public class ExpenseRequestValidators : AbstractValidator<ExpenseModels.Request>
     {
-        public ExpenseValidators()
+        public ExpenseRequestValidators()
         {
             RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
             RuleFor(x => x.PageNumber).GreaterThan(0);
