@@ -293,5 +293,11 @@ namespace CashTrack.Services.ExpenseService
 
             return expense;
         }
+        public async Task<bool> DeleteExpenseAsync(int id)
+        {
+            var expense = await _expenseRepo.GetExpenseById(id);
+
+            return await _expenseRepo.DeleteExpense(expense);
+        }
     }
 }

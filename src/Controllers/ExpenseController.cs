@@ -68,16 +68,53 @@ namespace CashTrack.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AddEditExpense>> CreateUpdateExpense([FromBody] AddEditExpense request)
+        public async Task<ActionResult<AddEditExpense>> CreateExpense([FromBody] AddEditExpense request)
         {
             try
             {
                 var result = await _expenseService.CreateUpdateExpenseAsync(request);
-                return CreatedAtAction("/expense/{result.id}", new { id = result.id }, result);
+                //FIX THIS
+                return CreatedAtAction($"/expense/{result.id}", new { id = result.id }, result);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
+            }
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AddEditExpense>> UpdateExpense([FromBody] AddEditExpense request)
+        {
+            if (request.Id == null)
+                return BadRequest("Need an Id to update an expense.");
+
+            try
+            {
+                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
+            }
+        }
+        [HttpDelete]
+        public async Task<ActionResult> DeleteExpense(int id)
+        {
+            try
+            {
+                var result = await _expenseService.DeleteExpenseAsync(id);
+                if (!result)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to delete expense");
+
+                return Ok();
+            }
+            catch (ExpenseNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
 

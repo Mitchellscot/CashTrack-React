@@ -80,7 +80,7 @@ namespace CashTrack.Controllers
         public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request)
         {
             if (request.Id == null)
-                return BadRequest("Need a merchant id in the body of the request.");
+                return BadRequest("Need a merchant id to update a merchant.");
             try
             {
                 var result = await _merchantService.CreateUpdateMerchantAsync(request);
@@ -90,13 +90,9 @@ namespace CashTrack.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
         [HttpDelete("{id}")]
@@ -111,7 +107,7 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
     }

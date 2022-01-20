@@ -197,15 +197,8 @@ namespace CashTrack.Services.MerchantService
         public async Task<bool> DeleteMerchantAsync(int id)
         {
             var merchant = await _merchantRepo.GetMerchantById(id);
-            if (merchant == null)
-                throw new MerchantNotFoundException(id.ToString());
 
-            var success = await _merchantRepo.DeleteMerchant(merchant);
-
-            if (!success)
-                throw new Exception("Unable to delete merchant");
-
-            return success;
+            return await _merchantRepo.DeleteMerchant(merchant);
         }
     }
 }
