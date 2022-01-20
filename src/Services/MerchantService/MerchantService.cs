@@ -4,6 +4,7 @@ using CashTrack.Helpers.Aggregators;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
+using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Repositories.SubCategoriesRepository.cs;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,14 @@ namespace CashTrack.Services.MerchantService
     {
         private readonly IMapper _mapper;
         private readonly IMerchantRepository _merchantRepo;
+        private readonly IExpenseRepository _expenseRepo;
         private readonly ISubCategoryRepository _subCategoryRepository;
 
-        public MerchantService(IMapper mapper, IMerchantRepository merchantRepository, ISubCategoryRepository subCategoryRepository)
+        public MerchantService(IMapper mapper, IMerchantRepository merchantRepository, ISubCategoryRepository subCategoryRepository, IExpenseRepository expenseRepository)
         {
             _mapper = mapper;
             _merchantRepo = merchantRepository;
+            _expenseRepo = expenseRepository;
             _subCategoryRepository = subCategoryRepository;
         }
 
@@ -37,7 +40,7 @@ namespace CashTrack.Services.MerchantService
                     Name = m.name,
                     City = m.city,
                     IsOnline = m.is_online,
-                    NumberOfExpenses = _merchantRepo.GetNumberOfExpensesForMerchant(m.id).Result
+                    NumberOfExpenses = _expenseRepo.GetNumberOfExpensesForMerchant(m.id).Result
                 }).ToArray();
 
                 var searchTermResponse = new MerchantModels.Response
@@ -57,7 +60,7 @@ namespace CashTrack.Services.MerchantService
                     Name = m.name,
                     City = m.city,
                     IsOnline = m.is_online,
-                    NumberOfExpenses = _merchantRepo.GetNumberOfExpensesForMerchant(m.id).Result
+                    NumberOfExpenses = _expenseRepo.GetNumberOfExpensesForMerchant(m.id).Result
                 }).ToArray();
 
                 var response = new MerchantModels.Response
@@ -86,9 +89,8 @@ namespace CashTrack.Services.MerchantService
         public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
         {
             var merchantEntity = await _merchantRepo.GetMerchantById(id);
-            //might have to check for exceptions here I don't know, there is a check for them in the repo
 
-            var merchantExpenses = await _merchantRepo.GetExpensesAndCategoriesByMerchantId(id);
+            var merchantExpenses = await _expenseRepo.GetExpensesAndCategoriesByMerchantId(id);
 
             var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
                 .Take(10)

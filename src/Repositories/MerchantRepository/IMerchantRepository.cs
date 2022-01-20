@@ -14,9 +14,5 @@ namespace CashTrack.Repositories.MerchantRepository
         Task<decimal> GetCountOfAllMerchants();
         Task<decimal> GetCountOfAllMerchantsSearch(string searchTerm);
         Task<Merchants[]> GetAllMerchantsNoTracking();
-
-        //these might go in the Expense repo...
-        Task<int> GetNumberOfExpensesForMerchant(int id);
-        Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id);
     }
 }

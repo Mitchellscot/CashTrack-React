@@ -17,19 +17,6 @@ namespace CashTrack.Repositories.MerchantRepository
             _context = context;
         }
 
-        public async Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id)
-        {
-            try
-            {
-                var expenses = await _context.Expenses.Where(e => e.merchant.id == id).Include(x => x.category).ToArrayAsync();
-                return expenses;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public async Task<Merchants> GetMerchantById(int id)
         {
             try
@@ -78,19 +65,6 @@ namespace CashTrack.Repositories.MerchantRepository
             }
             catch (Exception)
             {
-                throw;
-            }
-        }
-
-        public async Task<int> GetNumberOfExpensesForMerchant(int id)
-        {
-            try
-            {
-                return await _context.Expenses.CountAsync(x => x.merchant.id == id);
-            }
-            catch (Exception)
-            {
-
                 throw;
             }
         }
