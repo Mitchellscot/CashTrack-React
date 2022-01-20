@@ -325,7 +325,7 @@ namespace CashTrack.Services.ExpenseService
         public async Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request)
         {
             var expenses = await _expenseRepo.GetExpensesForAmountSearchPagination(request.Query, request.PageNumber, request.PageSize);
-            var pagesAndExpenses = await GetCountOfExpensesForSearchingAmount(request.Query, request.PageSize);
+            var pagesAndExpenses = await GetCountOfPagesForSearchingAmount(request.Query, request.PageSize);
 
             var response = new ExpenseModels.Response
             {
@@ -337,9 +337,31 @@ namespace CashTrack.Services.ExpenseService
             };
             return response;
         }
-        internal async Task<(int totalPages, int totalExpenses)> GetCountOfExpensesForSearchingAmount(decimal amount, int pageSize)
+        internal async Task<(int totalPages, int totalExpenses)> GetCountOfPagesForSearchingAmount(decimal amount, int pageSize)
         {
             decimal numberOfExpenses = await _expenseRepo.GetCountOfExpensesForAmountSearch(amount);
+            var totalPages = (int)Math.Ceiling(numberOfExpenses / (decimal)pageSize);
+            return (totalPages == 0 ? 1 : totalPages, (int)numberOfExpenses);
+        }
+
+        public async Task<ExpenseModels.Response> GetExpensesBySubCategoryAsync(ExpenseModels.SubCategorySearchRequest request)
+        {
+            var expenses = await _expenseRepo.GetExpensesForSubCategoryPagination(request.SubCategoryId, request.PageNumber, request.PageSize);
+            var pagesAndExpenses = await GetCountOfPagesForSubCategory(request.SubCategoryId, request.PageSize);
+
+            var response = new ExpenseModels.Response
+            {
+                PageSize = request.PageSize,
+                PageNumber = request.PageNumber,
+                TotalPages = pagesAndExpenses.totalPages,
+                TotalExpenses = pagesAndExpenses.totalExpenses,
+                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
+            };
+            return response;
+        }
+        internal async Task<(int totalPages, int totalExpenses)> GetCountOfPagesForSubCategory(int subCategoryId, int pageSize)
+        {
+            decimal numberOfExpenses = await _expenseRepo.GetCountOfExpensesForSubCategoryAsync(subCategoryId);
             var totalPages = (int)Math.Ceiling(numberOfExpenses / (decimal)pageSize);
             return (totalPages == 0 ? 1 : totalPages, (int)numberOfExpenses);
         }

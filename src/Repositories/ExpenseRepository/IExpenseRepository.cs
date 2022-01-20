@@ -18,6 +18,8 @@ namespace CashTrack.Repositories.ExpenseRepository
         Task<decimal> GetCountOfExpensesForNotesSearch(string searchTerm);
         Task<Expenses[]> GetExpensesForAmountSearchPagination(decimal amount, int pageNumber, int pageSize);
         Task<decimal> GetCountOfExpensesForAmountSearch(decimal amount);
+        Task<Expenses[]> GetExpensesForSubCategoryPagination(int subCategoryId, int pageNumber, int pageSize);
+        Task<decimal> GetCountOfExpensesForSubCategoryAsync(int subCategoryId);
         Task<int> GetNumberOfExpensesForMerchant(int id);
         Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id);
         Task<bool> CreateExpense(Expenses expense);

@@ -94,12 +94,32 @@ namespace CashTrack.Controllers
         {
             if (string.IsNullOrEmpty(request.Query.ToString()))
             {
-                return BadRequest("This endpoint requres a search term");
+                return BadRequest("This endpoint requres an amount to search for.");
             }
 
             try
             {
                 var response = await _expenseService.GetExpensesByAmountAsync(request);
+                return Ok(response);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        //api/expense/category
+        //returns transactions from a given category
+        [HttpGet("category")]
+        public async Task<ActionResult<ExpenseModels.Response>> GetExpenseByCategory([FromQuery] ExpenseModels.SubCategorySearchRequest request)
+        {
+            if (string.IsNullOrEmpty(request.SubCategoryId.ToString()))
+            {
+                return BadRequest("This endpoint requres a sub category id.");
+            }
+
+            try
+            {
+                var response = await _expenseService.GetExpensesBySubCategoryAsync(request);
                 return Ok(response);
             }
             catch (System.Exception ex)
@@ -160,21 +180,7 @@ namespace CashTrack.Controllers
             }
         }
 
-        //    //api/expense/category
-        //    //returns transactions from a given category
-        //    [HttpGet("/category/{categoryId}")]
-        //    public async Task<ActionResult<ExpenseModel[]>> GetcategoryExpenses(int categoryId)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
+
 
         //    //api/expense/category/stats
         //    //Accepts an object that contains a category id

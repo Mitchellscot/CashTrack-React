@@ -45,6 +45,12 @@ namespace CashTrack.Models.ExpenseModels
             public int PageNumber { get; set; } = 1;
             public int PageSize { get; set; } = 25;
         }
+        public record SubCategorySearchRequest
+        {
+            public int SubCategoryId { get; set; }
+            public int PageNumber { get; set; } = 1;
+            public int PageSize { get; set; } = 25;
+        }
     }
     public record AddEditExpense
     {

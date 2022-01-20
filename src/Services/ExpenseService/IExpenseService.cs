@@ -12,6 +12,8 @@ namespace CashTrack.Services.ExpenseService
         Task<bool> DeleteExpenseAsync(int id);
         Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request);
         Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request);
+        Task<ExpenseModels.Response> GetExpensesBySubCategoryAsync(ExpenseModels.SubCategorySearchRequest request);
+
 
     }
 }

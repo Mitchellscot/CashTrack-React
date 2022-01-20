@@ -186,11 +186,11 @@ namespace CashTrack.Repositories.ExpenseRepository
             }
         }
 
-        public Task<Expenses[]> GetExpensesForNotesSearchPagination(string searchTerm, int pageNumber, int pageSize)
+        public async Task<Expenses[]> GetExpensesForNotesSearchPagination(string searchTerm, int pageNumber, int pageSize)
         {
             try
             {
-                var expenses = _context.Expenses
+                var expenses = await _context.Expenses
                     .Where(x => x.notes.Contains(searchTerm))
                     .OrderBy(x => x.purchase_date)
                     .ThenBy(x => x.id)
@@ -224,11 +224,11 @@ namespace CashTrack.Repositories.ExpenseRepository
             }
         }
 
-        public Task<Expenses[]> GetExpensesForAmountSearchPagination(decimal amount, int pageNumber, int pageSize)
+        public async Task<Expenses[]> GetExpensesForAmountSearchPagination(decimal amount, int pageNumber, int pageSize)
         {
             try
             {
-                var expenses = _context.Expenses
+                var expenses = await _context.Expenses
                     .Where(x => x.amount.Equals(amount))
                     .OrderBy(x => x.purchase_date)
                     .ThenBy(x => x.id)
@@ -283,6 +283,44 @@ namespace CashTrack.Repositories.ExpenseRepository
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<Expenses[]> GetExpensesForSubCategoryPagination(int subCategoryId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(x => x.categoryid == subCategoryId)
+                    .OrderBy(x => x.purchase_date)
+                    .ThenBy(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<decimal> GetCountOfExpensesForSubCategoryAsync(int subCategoryId)
+        {
+            try
+            {
+                return (decimal)await _context.Expenses
+                .Where(x => x.categoryid == subCategoryId)
+                .CountAsync();
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
