@@ -279,7 +279,6 @@ namespace CashTrack.IntegrationTests
             responseString.ShouldContain("BeginDate");
             _output.WriteLine(responseString);
         }
-
         [Theory]
         [InlineData("-1")]
         [InlineData("13")]
@@ -355,6 +354,33 @@ namespace CashTrack.IntegrationTests
             responseString.ShouldContain("EndDate");
             _output.WriteLine(responseString);
         }
+        [Theory]
+        [InlineData("Henry")]
+        [InlineData("Sarah")]
+        [InlineData("Lydia")]
+        public async Task ReturnsExpensesForAGivenSearchTerm(string searchTerm)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/notes?searchTerm={searchTerm}");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            _output.WriteLine(responseObject.ToString());
+            responseObject.PageNumber.ShouldBeGreaterThan(0);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+        }
+        [Theory]
+        [EmptyData]
+        public async Task ErrorWhenSearchTermIsntValid(string invalidSearch)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/notes?searchTerm={invalidSearch}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            responseString.ShouldContain("searchTerm");
+            _output.WriteLine(responseString);
+        }
+
         #endregion
         #region Create Update Delete
         [Fact]
