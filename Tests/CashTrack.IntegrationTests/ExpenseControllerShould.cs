@@ -380,6 +380,33 @@ namespace CashTrack.IntegrationTests
             responseString.ShouldContain("searchTerm");
             _output.WriteLine(responseString);
         }
+        [Theory]
+        [InlineData(25)]
+        [InlineData(25.5)]
+        [InlineData(25.5011111)]
+        public async Task ReturnsExpensesForAGivenSearchAmount(decimal query)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/amount?query={query}");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            _output.WriteLine(responseObject.ToString());
+            responseObject.PageNumber.ShouldBeGreaterThan(0);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+        }
+        [Theory]
+        [InlineData(0.00)]
+        [InlineData(-25.000000000033)]
+        public async Task ErrorWhenSearchAmountIsntValid(decimal query)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/amount?query={query}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            responseString.ShouldContain("query");
+            _output.WriteLine(responseString);
+        }
 
         #endregion
         #region Create Update Delete
