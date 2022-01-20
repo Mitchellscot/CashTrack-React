@@ -407,6 +407,34 @@ namespace CashTrack.IntegrationTests
             responseString.ShouldContain("query");
             _output.WriteLine(responseString);
         }
+        [Theory]
+        [InlineData(31)]
+        [InlineData(1)]
+        [InlineData(72)]
+        public async Task ReturnsExpensesForAGivenSubCategoryId(int id)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/category?subcategoryid={id}");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            _output.WriteLine(responseObject.ToString());
+            responseObject.PageNumber.ShouldBeGreaterThan(0);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-25)]
+        [InlineData(int.MaxValue)]
+        public async Task ErrorWhenCategoryIdIsntValid(int id)
+        {
+            var response = await _fixture.Client.GetAsync(path + $"/category?subcategoryid={id}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            responseString.ShouldContain("category");
+            _output.WriteLine(responseString);
+        }
 
         #endregion
         #region Create Update Delete
