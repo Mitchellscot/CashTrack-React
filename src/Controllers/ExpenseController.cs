@@ -69,7 +69,7 @@ namespace CashTrack.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<AddEditExpense>> CreateExpense([FromBody] AddEditExpense request)
+        public async Task<ActionResult<AddEditExpense>> CreateExpense(AddEditExpense request)
         {
             try
             {

@@ -1,12 +1,8 @@
-﻿using CashTrack.Data;
-using CashTrack.Models.ExpenseModels;
-using CashTrack.Repositories.ExpenseRepository;
+﻿using CashTrack.Models.ExpenseModels;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Repositories.SubCategoriesRepository.cs;
-using CashTrack.Services.ExpenseService;
 using FluentValidation;
 using System;
-using System.Globalization;
 using System.Linq;
 
 namespace CashTrack.Helpers.Validators
@@ -17,6 +13,7 @@ namespace CashTrack.Helpers.Validators
         {
             RuleFor(x => x.Amount).NotEmpty().GreaterThan(0);
             RuleFor(x => x.PurchaseDate).NotEmpty();
+            RuleFor(x => x.PurchaseDate).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Purchase Date cannot be in the future.");
             RuleFor(x => x.SubCategoryId).NotEmpty().GreaterThan(0).WithMessage("Must provide a category ID");
             RuleFor(x => x.SubCategoryId).MustAsync(async (model, value, _) =>
             {

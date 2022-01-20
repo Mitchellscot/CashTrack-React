@@ -399,12 +399,60 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
+        [Theory]
+        [InlineData(-25.00)]
+        [InlineData(0)]
+        public async Task ErrorWhenAddingExpenseWithInvalidAmount(decimal invalidAmount)
+        {
+            var expense = GetAddEditExpense() with { Amount = invalidAmount };
+            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditExpense.Amount));
+            _output.WriteLine(responseString);
+        }
+        [Theory]
+        [InlineData(-25)]
+        [InlineData(0)]
+        [InlineData(int.MaxValue)]
+        public async Task ErrorWhenAddingExpenseWithInvalidMerchantId(int invalidMerchant)
+        {
+            var expense = GetAddEditExpense() with { MerchantId = invalidMerchant };
+            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditExpense.MerchantId));
+            _output.WriteLine(responseString);
+        }
+        [Theory]
+        [InlineData("2984-04-24")]
+        public async Task ErrorWhenAddingExpenseWithInvalidPurchaseDate(DateTimeOffset invalidDate)
+        {
+            var expense = GetAddEditExpense() with { PurchaseDate = invalidDate };
+            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditExpense.PurchaseDate));
+            _output.WriteLine(responseString);
+        }
         #endregion
 
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
+        }
+        private AddEditExpense GetAddEditExpense()
+        {
+            return new AddEditExpense()
+            {
+                PurchaseDate = DateTime.Now,
+                Amount = 25.00m,
+                SubCategoryId = 31
+            };
         }
     }
 }
