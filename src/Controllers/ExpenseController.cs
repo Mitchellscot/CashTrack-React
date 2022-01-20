@@ -67,6 +67,26 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        //api/expense/notes/{searchTerm}
+        //returns transactions that contain a specific word in the notes section
+        [HttpGet("notes")]
+        public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByNotes([FromQuery] ExpenseModels.NotesSearchRequest request)
+        {
+            if (string.IsNullOrEmpty(request.SearchTerm))
+            {
+                return BadRequest("This endpoint requres a search term");
+            }
+
+            try
+            {
+                var response = await _expenseService.GetExpensesByNotesAsync(request);
+                return Ok(response);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<ActionResult<AddEditExpense>> CreateExpense(AddEditExpense request)
@@ -119,121 +139,6 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-
-        //    //api/expense/date/total
-        //    //accepts a date in string format
-        //    //Returns the amount spent that day
-        //    [HttpGet("/date/total")]
-        //    public async Task<ActionResult<int>> GetExpenseTotalByDate([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/date-range/total
-        //    //accepts two dates in json obj format
-        //    //returns the amount of money spent between those two dates
-        //    [HttpGet("/date-range/total")]
-        //    public async Task<ActionResult<int>> GetExpenseTotalByDateRange([FromBody] DateRangeRequest dateRange)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(dateRange.BeginDate)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/month/total
-        //    //accepts a datetime
-        //    //returns the amount of money spent that month
-        //    [HttpGet("/month/total")]
-        //    public async Task<ActionResult<int>> GetExpenseTotalByMonth([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/year/total
-        //    //accepts a datetime
-        //    //returns the amount of money spent that year
-        //    [HttpGet("/year/total")]
-        //    public async Task<ActionResult<int>> GetExpenseTotalByYear([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/quarter/total
-        //    //accepts a datetime and an int indicating the quarter
-        //    //returns an int that is the sum amount of money spent that quarter
-        //    [HttpGet("/quarter/total")]
-        //    //DateRequest contains a parameter that is an int and indicates the quarter. Default is 0.
-        //    public async Task<ActionResult<int>> GetExpenseTotalByQuarter([FromBody] DateRequest date)
-        //    {
-        //        try
-        //        {
-        //            //DateTime.TryParse(date)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/amount
-        //    //accepts an amount and returns all expenses that match that amount
-        //    //Expenses queried by amount, returns a collection
-        //    //Not sure how often this will get used, or where, but it's handy.
-        //    [HttpGet("/amount")]
-        //    public async Task<ActionResult<ExpeseModel[]>> GetExpensesByAmount([FromBody] int amount)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
 
         //    //api/expense/merchant/{merchantId}
         //    //accepts an int indicating the merchant Id
@@ -315,21 +220,7 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/notes/{searchTerm}
-        //    //returns transactions that contain a specific word in the notes section
-        //    [HttpGet("/notes/{searchTerm}")]
-        //    public async Task<ActionResult<ExpenseModel[]>> GetExpensesByNotes(string searchTerm)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
+
 
         //    //api/expense/category
         //    //returns transactions from a given category
