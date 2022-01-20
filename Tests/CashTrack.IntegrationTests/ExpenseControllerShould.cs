@@ -24,10 +24,10 @@ namespace CashTrack.IntegrationTests
             _fixture = fixture;
             _output = output;
         }
-        #region SingleExpense
+        #region Single Expense
         [Theory]
         [ExpenseIdData]
-        public async void ReturnASingleExpense(string id)
+        public async Task ReturnASingleExpense(string id)
         {
             var response = await _fixture.Client.GetAsync(path + "/" + id);
 
@@ -43,7 +43,7 @@ namespace CashTrack.IntegrationTests
         [InlineData(0)]
         [InlineData(int.MaxValue)]
         [InlineData(int.MinValue)]
-        public async void ErrorWithInvalidId(int id)
+        public async Task ErrorWithInvalidId(int id)
         {
             var response = await _fixture.Client.GetAsync(path + "/" + id);
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
@@ -57,16 +57,16 @@ namespace CashTrack.IntegrationTests
         [InlineData("%")]
         [InlineData("A")]
         [EmptyData]
-        public async void ErrorWithInvalidInput(object input)
+        public async Task ErrorWithInvalidInput(object input)
         {
             var response = await _fixture.Client.GetAsync(path + "/" + input);
-            response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             PrintRequestAndResponse(input,
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
         #endregion
 
-        #region MultipleExpenses
+        #region Multiple Expenses
         [Fact]
         public async Task ReturnAllExpenses()
         {
@@ -194,8 +194,8 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=8");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
-            responseObject.PageNumber.ShouldBeGreaterThan(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(1);
+            responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
             var expenseList = responseObject.Expenses.ToList();
             var thisMonth = DateTimeOffset.Now.Month;
@@ -211,8 +211,8 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=9");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
-            responseObject.PageNumber.ShouldBeGreaterThan(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(1);
+            responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
             var expenseList = responseObject.Expenses.ToList();
             var thisYear = DateTimeOffset.Now.Year;
@@ -228,8 +228,8 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=10");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
-            responseObject.PageNumber.ShouldBeGreaterThan(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(1);
+            responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
+            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
 
             var expenseList = responseObject.Expenses.ToList();
             var thisYear = DateTimeOffset.Now.Year;
@@ -356,15 +356,55 @@ namespace CashTrack.IntegrationTests
             _output.WriteLine(responseString);
         }
         #endregion
+        #region Create Update Delete
+        [Fact]
+        public async Task<int> CreateNewExpense()
+        {
+            var model = new AddEditExpense()
+            {
+                Id = null,
+                PurchaseDate = DateTime.Now,
+                Amount = 1.00m,
+                Notes = $"TEST EXPENSE {Guid.NewGuid()}",
+                MerchantId = 85,
+                SubCategoryId = 31
+            };
+            var response = await _fixture.SendPostRequestAsync(path, model);
+            response.StatusCode.ShouldBe(HttpStatusCode.Created);
+            var responseObject = JsonConvert.DeserializeObject<AddEditExpense>(await response.Content.ReadAsStringAsync());
+            response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/{responseObject.Id.ToString()}");
+            return responseObject.Id!.Value;
+        }
+        [Fact]
+        public async Task UpdateAnExpense()
+        {
+            var testId = await CreateNewExpense();
+            var model = new AddEditExpense()
+            {
+                Id = testId,
+                PurchaseDate = DateTime.Now,
+                Amount = 2.00m,
+                Notes = $"TEST UPDATE {Guid.NewGuid()}",
+                MerchantId = 86,
+                SubCategoryId = 29
+            };
+            var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
+            var responseString = await response.Content.ReadAsStringAsync();
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+        [Fact]
+        public async Task DeleteAnExpense()
+        {
+            var testId = await CreateNewExpense();
+            var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+        #endregion
 
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
-        }
-        private ExpenseModels.Request GetExpenseRequest()
-        {
-            return new ExpenseModels.Request();
         }
     }
 }
