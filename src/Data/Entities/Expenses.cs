@@ -15,9 +15,11 @@ namespace CashTrack.Data.Entities
         [Required]
         public decimal amount { get; set; }
         [StringLength(50)]
+        public int? merchantid { get; set; }
         public Merchants? merchant { get; set; }
         [StringLength(255)]
         public string? notes { get; set; }
+        public int? categoryid { get; set; }
         public ExpenseSubCategories? category { get; set; }
         public bool exclude_from_statistics { get; set; }
         public ICollection<ExpenseTags>? expense_tags { get; set; }

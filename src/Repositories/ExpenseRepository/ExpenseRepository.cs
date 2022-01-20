@@ -148,5 +148,42 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
+        public async Task<bool> CreateExpense(Expenses expense)
+        {
+            try
+            {
+                await _context.Expenses.AddAsync(expense);
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> UpdateExpense(Expenses expense)
+        {
+            try
+            {
+                var entity = _context.Expenses.Attach(expense);
+                entity.State = EntityState.Modified;
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<bool> DeleteExpense(Expenses expense)
+        {
+            try
+            {
+                _context.Expenses.Remove(expense);
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

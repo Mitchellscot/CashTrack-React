@@ -1,4 +1,5 @@
-﻿using CashTrack.Models.ExpenseModels;
+﻿using CashTrack.Data.Entities;
+using CashTrack.Models.ExpenseModels;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.ExpenseService
@@ -7,5 +8,6 @@ namespace CashTrack.Services.ExpenseService
     {
         Task<ExpenseTransaction> GetExpenseByIdAsync(int id);
         Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request);
+        Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request);
     }
 }

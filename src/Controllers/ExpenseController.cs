@@ -67,6 +67,20 @@ namespace CashTrack.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult<AddEditExpense>> CreateUpdateExpense([FromBody] AddEditExpense request)
+        {
+            try
+            {
+                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                return CreatedAtAction("/expense/{result.id}", new { id = result.id }, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
         //    //api/expense/date/total
         //    //accepts a date in string format
         //    //Returns the amount spent that day
