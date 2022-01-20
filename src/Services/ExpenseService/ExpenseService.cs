@@ -272,7 +272,7 @@ namespace CashTrack.Services.ExpenseService
             };
             return response;
         }
-        public async Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request)
+        public async Task<AddEditExpense> CreateUpdateExpenseAsync(AddEditExpense request)
         {
             var expense = _mapper.Map<Expenses>(request);
 
@@ -287,11 +287,11 @@ namespace CashTrack.Services.ExpenseService
             {
                 success = await _expenseRepo.UpdateExpense(expense);
             }
-
+            var dto = _mapper.Map<AddEditExpense>(expense);
             if (!success)
                 throw new Exception("Couldn't save expense to the database.");
 
-            return expense;
+            return dto;
         }
         public async Task<bool> DeleteExpenseAsync(int id)
         {

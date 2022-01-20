@@ -22,14 +22,10 @@ namespace CashTrack.Controllers
 
         //also, think about how you can reduce the number of controllers here this is rediculous
 
-        private readonly IMapper _mapper;
-        private readonly ILogger<ExpenseController> _logger;
         private readonly IExpenseService _expenseService;
 
-        public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(IExpenseService expenseService)
         {
-            _mapper = mapper;
-            _logger = logger;
             _expenseService = expenseService;
         }
 
@@ -43,16 +39,17 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
 
-        //api/expense/{id}
-        //returns one expense
         [HttpGet("{id}")]
         public async Task<ActionResult<ExpenseTransaction>> GetAnExpenseById(int id)
         {
+            //I'M THINKING that we will have this displayed in a modal
+            //I don't think it needs it's own dedicated page, just a modal that hovers over
+            //a table that displays all the expenses in a table. Click on the expense in the table,
+            //modal pops up, can edit or delete or whatever... makes it easy as there isn't much info here.
             try
             {
                 var result = await _expenseService.GetExpenseByIdAsync(id);
@@ -67,8 +64,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //api/expense/notes/{searchTerm}
-        //returns transactions that contain a specific word in the notes section
+
         [HttpGet("notes")]
         public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByNotes([FromQuery] ExpenseModels.NotesSearchRequest request)
         {
@@ -87,8 +83,6 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //api/expense/amount?query=25.00
-        //returns transactions that contain a specific amount
         [HttpGet("amount")]
         public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByAmount([FromQuery] ExpenseModels.AmountSearchRequest request)
         {
@@ -134,9 +128,9 @@ namespace CashTrack.Controllers
             try
             {
                 var result = await _expenseService.CreateUpdateExpenseAsync(request);
-                var expense = _mapper.Map<AddEditExpense>(result);
-                var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{expense.Id.Value}");
-                return Created(location, expense);
+
+                var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{result.Id.Value}");
+                return Created(location, result);
             }
             catch (Exception ex)
             {
@@ -180,26 +174,7 @@ namespace CashTrack.Controllers
             }
         }
 
-
-
-        //    //api/expense/category/stats
-        //    //Accepts an object that contains a category id
-        //    //returns all transactions that match that criteria
-        //    [HttpGet("/category/{categoryId}/stats")]
-        //    //create a category Request model that has a category Id and a date range object
-        //    public async Task<ActionResult<categoryStats>> GetcategoryStats([FromBody] int categoryId)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
+        //NEXT UP - MAIN CATEGORY SEARCH
 
         //    //api/expense/tags/{tagId}
         //    //Accepts a tag id

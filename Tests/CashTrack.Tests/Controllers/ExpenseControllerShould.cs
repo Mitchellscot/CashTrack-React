@@ -15,17 +15,13 @@ namespace CashTrack.Tests.Controllers
     {
         private readonly ExpenseController _sut;
         private readonly ITestOutputHelper _output;
-        public IMapper _mapper { get; }
-        private readonly ILogger<ExpenseController> _logger;
         public IExpenseService _service { get; }
 
         public ExpenseControllerShould(ITestOutputHelper output)
         {
             _output = output;
-            _mapper = Mock.Of<IMapper>();
-            _logger = Mock.Of<ILogger<ExpenseController>>();
             _service = Mock.Of<IExpenseService>();
-            _sut = new ExpenseController(_logger, _service, _mapper);
+            _sut = new ExpenseController(_service);
         }
         [Fact]
         public void ReturnASingleExpenseResponse()
