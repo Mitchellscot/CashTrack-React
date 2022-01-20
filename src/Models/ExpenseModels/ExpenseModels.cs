@@ -31,6 +31,20 @@ namespace CashTrack.Models.ExpenseModels
             public int PageSize { get; set; } = 25;
             public string SearchTerm { get; set; } = null;
         }
+        public record AmountSearchRequest
+        {
+            private decimal _query;
+            public decimal Query
+            {
+                get { return _query; }
+                set
+                {
+                    _query = Decimal.Round(value, 2);
+                }
+            }
+            public int PageNumber { get; set; } = 1;
+            public int PageSize { get; set; } = 25;
+        }
     }
     public record AddEditExpense
     {

@@ -16,6 +16,8 @@ namespace CashTrack.Repositories.ExpenseRepository
         Task<decimal> GetCountOfExpensesBetweenTwoDates(DateTimeOffset beginDate, DateTimeOffset endDate);
         Task<Expenses[]> GetExpensesForNotesSearchPagination(string searchTerm, int pageNumber, int pageSize);
         Task<decimal> GetCountOfExpensesForNotesSearch(string searchTerm);
+        Task<Expenses[]> GetExpensesForAmountSearchPagination(decimal amount, int pageNumber, int pageSize);
+        Task<decimal> GetCountOfExpensesForAmountSearch(decimal amount);
         Task<bool> CreateExpense(Expenses expense);
         Task<bool> UpdateExpense(Expenses expense);
         Task<bool> DeleteExpense(Expenses expense);

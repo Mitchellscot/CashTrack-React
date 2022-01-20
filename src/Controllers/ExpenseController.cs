@@ -87,6 +87,26 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        //api/expense/amount?query=25.00
+        //returns transactions that contain a specific amount
+        [HttpGet("amount")]
+        public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByAmount([FromQuery] ExpenseModels.AmountSearchRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Query.ToString()))
+            {
+                return BadRequest("This endpoint requres a search term");
+            }
+
+            try
+            {
+                var response = await _expenseService.GetExpensesByAmountAsync(request);
+                return Ok(response);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
         [HttpPost]
         public async Task<ActionResult<AddEditExpense>> CreateExpense(AddEditExpense request)

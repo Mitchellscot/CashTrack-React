@@ -223,5 +223,43 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
+
+        public Task<Expenses[]> GetExpensesForAmountSearchPagination(decimal amount, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var expenses = _context.Expenses
+                    .Where(x => x.amount.Equals(amount))
+                    .OrderBy(x => x.purchase_date)
+                    .ThenBy(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<decimal> GetCountOfExpensesForAmountSearch(decimal amount)
+        {
+            try
+            {
+                return (decimal)await _context.Expenses
+                .Where(x => x.amount.Equals(amount))
+                .CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
