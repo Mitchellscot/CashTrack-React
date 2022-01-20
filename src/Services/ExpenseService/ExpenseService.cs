@@ -299,5 +299,27 @@ namespace CashTrack.Services.ExpenseService
 
             return await _expenseRepo.DeleteExpense(expense);
         }
+
+        public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
+        {
+            var expenses = await _expenseRepo.GetExpensesForNotesSearchPagination(request.SearchTerm, request.PageNumber, request.PageSize);
+            var pagesAndExpenses = await GetCountOfExpensesForSearchingNotes(request.SearchTerm, request.PageSize);
+
+            var response = new ExpenseModels.Response
+            {
+                PageSize = request.PageSize,
+                PageNumber = request.PageNumber,
+                TotalPages = pagesAndExpenses.totalPages,
+                TotalExpenses = pagesAndExpenses.totalExpenses,
+                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
+            };
+            return response;
+        }
+        internal async Task<(int totalPages, int totalExpenses)> GetCountOfExpensesForSearchingNotes(string searchTerm, int pageSize)
+        {
+            decimal numberOfExpenses = await _expenseRepo.GetCountOfExpensesForNotesSearch(searchTerm);
+            var totalPages = (int)Math.Ceiling(numberOfExpenses / (decimal)pageSize);
+            return (totalPages == 0 ? 1 : totalPages, (int)numberOfExpenses);
+        }
     }
 }

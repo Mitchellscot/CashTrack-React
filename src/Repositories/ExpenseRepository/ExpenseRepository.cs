@@ -185,5 +185,43 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
+
+        public Task<Expenses[]> GetExpensesForNotesSearchPagination(string searchTerm, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var expenses = _context.Expenses
+                    .Where(x => x.notes.Contains(searchTerm))
+                    .OrderBy(x => x.purchase_date)
+                    .ThenBy(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .Include(x => x.expense_tags)
+                    .ThenInclude(x => x.tag)
+                    .Include(x => x.merchant)
+                    .Include(x => x.category)
+                    .ThenInclude(x => x.main_category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<decimal> GetCountOfExpensesForNotesSearch(string searchTerm)
+        {
+            try
+            {
+                return (decimal)await _context.Expenses
+                .Where(x => x.notes.Contains(searchTerm))
+                .CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

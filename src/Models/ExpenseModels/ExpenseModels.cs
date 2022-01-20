@@ -15,6 +15,7 @@ namespace CashTrack.Models.ExpenseModels
             public int PageSize { get; set; } = 25;
             public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
             public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
+            public string SearchTerm { get; set; } = null;
         }
         public record Response
         {
@@ -23,6 +24,12 @@ namespace CashTrack.Models.ExpenseModels
             public int TotalPages { get; set; }
             public int TotalExpenses { get; set; }
             public ExpenseTransaction[] Expenses { get; set; }
+        }
+        public record NotesSearchRequest
+        {
+            public int PageNumber { get; set; } = 1;
+            public int PageSize { get; set; } = 25;
+            public string SearchTerm { get; set; } = null;
         }
     }
     public record AddEditExpense
