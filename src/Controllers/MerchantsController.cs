@@ -37,7 +37,7 @@ namespace CashTrack.Controllers
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
-        [HttpGet("detail/{id}")]
+        [HttpGet("detail/{id:int}")]
         public async Task<ActionResult<MerchantDetail>> GetMerchantDetail(int id)
         {
             try
@@ -76,7 +76,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request)
         {
             if (request.Id == null)
@@ -95,7 +95,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteMerchant(int id)
         {
             try

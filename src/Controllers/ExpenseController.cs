@@ -8,6 +8,7 @@ using CashTrack.Models.ExpenseModels;
 using System;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Services.ExpenseService;
+using Microsoft.AspNetCore.Routing;
 
 namespace CashTrack.Controllers
 {
@@ -27,9 +28,9 @@ namespace CashTrack.Controllers
 
         public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
         {
-            this._mapper = mapper;
-            this._logger = logger;
-            this._expenseService = expenseService;
+            _mapper = mapper;
+            _logger = logger;
+            _expenseService = expenseService;
         }
 
         [HttpGet]
@@ -49,7 +50,7 @@ namespace CashTrack.Controllers
 
         //api/expense/{id}
         //returns one expense
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<ExpenseTransaction>> GetAnExpenseById(int id)
         {
             try
@@ -73,15 +74,16 @@ namespace CashTrack.Controllers
             try
             {
                 var result = await _expenseService.CreateUpdateExpenseAsync(request);
-                //FIX THIS
-                return CreatedAtAction($"/expense/{result.id}", new { id = result.id }, result);
+                var expense = _mapper.Map<AddEditExpense>(result);
+                var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{expense.Id.Value}");
+                return Created(location, expense);
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<AddEditExpense>> UpdateExpense([FromBody] AddEditExpense request)
         {
             if (request.Id == null)
@@ -97,7 +99,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteExpense(int id)
         {
             try
