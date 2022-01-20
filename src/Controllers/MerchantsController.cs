@@ -37,7 +37,7 @@ namespace CashTrack.Controllers
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
-        [HttpGet("detail/{id}")]
+        [HttpGet("detail/{id:int}")]
         public async Task<ActionResult<MerchantDetail>> GetMerchantDetail(int id)
         {
             try
@@ -76,11 +76,11 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request)
         {
             if (request.Id == null)
-                return BadRequest("Need a merchant id in the body of the request.");
+                return BadRequest("Need a merchant id to update a merchant.");
             try
             {
                 var result = await _merchantService.CreateUpdateMerchantAsync(request);
@@ -90,16 +90,12 @@ namespace CashTrack.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteMerchant(int id)
         {
             try
@@ -111,7 +107,7 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
     }

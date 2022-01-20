@@ -36,6 +36,15 @@ namespace CashTrack.Helpers
                 .ForMember(e => e.Tags, o => o.MapFrom(
                     src => src.expense_tags.Select(a => new Tag() { Id = a.tag_id, TagName = a.tag.tag_name })));
 
+            CreateMap<AddEditExpense, Expenses>()
+                .ForMember(e => e.id, o => o.MapFrom(src => src.Id))
+                .ForMember(e => e.purchase_date, o => o.MapFrom(src => src.PurchaseDate.ToUniversalTime()))
+                .ForMember(e => e.amount, o => o.MapFrom(src => src.Amount))
+                .ForMember(e => e.notes, o => o.MapFrom(src => src.Notes))
+                .ForMember(e => e.merchantid, o => o.MapFrom(src => src.MerchantId))
+                .ForMember(e => e.categoryid, o => o.MapFrom(src => src.SubCategoryId))
+                .ReverseMap();
+
             CreateMap<Tags, Tag>()
                 .ForMember(t => t.Id, o => o.MapFrom(src => src.id))
                 .ForMember(t => t.TagName, o => o.MapFrom(src => src.tag_name))
@@ -57,5 +66,6 @@ namespace CashTrack.Helpers
                 .ForMember(m => m.notes, o => o.MapFrom(src => src.Notes))
                 .ReverseMap();
         }
+
     }
 }

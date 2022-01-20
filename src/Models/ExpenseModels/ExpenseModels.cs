@@ -25,6 +25,17 @@ namespace CashTrack.Models.ExpenseModels
             public ExpenseTransaction[] Expenses { get; set; }
         }
     }
+    public record AddEditExpense
+    {
+        public int? Id { get; set; }
+        public DateTimeOffset PurchaseDate { get; set; }
+        public decimal Amount { get; set; }
+        public string Notes { get; set; }
+        public int? MerchantId { get; set; }
+        //figure this out after you get Tags CRUD set up
+        //public ICollection<Tag> Tags { get; set; }
+        public int SubCategoryId { get; set; }
+    }
     public record ExpenseTransaction
     {
         public int Id { get; set; }

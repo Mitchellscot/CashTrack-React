@@ -1,8 +1,6 @@
-﻿using CashTrack.Models.Common;
-using CashTrack.Models.ExpenseModels;
+﻿using CashTrack.Models.ExpenseModels;
 using FluentValidation;
 using System;
-using System.Globalization;
 
 namespace CashTrack.Helpers.Validators
 {

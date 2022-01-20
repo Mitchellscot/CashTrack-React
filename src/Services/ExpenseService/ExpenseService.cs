@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CashTrack.Data.Entities;
 using CashTrack.Models.Common;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Repositories.ExpenseRepository;
@@ -270,6 +271,33 @@ namespace CashTrack.Services.ExpenseService
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
+        }
+        public async Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request)
+        {
+            var expense = _mapper.Map<Expenses>(request);
+
+            var success = false;
+            if (request.Id == null)
+            {
+                //I manually set the id here because when I use the test database it messes with the id autogeneration
+                expense.id = ((int)await _expenseRepo.GetCountOfAllExpenses()) + 1;
+                success = await _expenseRepo.CreateExpense(expense);
+            }
+            else
+            {
+                success = await _expenseRepo.UpdateExpense(expense);
+            }
+
+            if (!success)
+                throw new Exception("Couldn't save expense to the database.");
+
+            return expense;
+        }
+        public async Task<bool> DeleteExpenseAsync(int id)
+        {
+            var expense = await _expenseRepo.GetExpenseById(id);
+
+            return await _expenseRepo.DeleteExpense(expense);
         }
     }
 }

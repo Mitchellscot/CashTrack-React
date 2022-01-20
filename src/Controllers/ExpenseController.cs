@@ -8,6 +8,7 @@ using CashTrack.Models.ExpenseModels;
 using System;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Services.ExpenseService;
+using Microsoft.AspNetCore.Routing;
 
 namespace CashTrack.Controllers
 {
@@ -27,9 +28,9 @@ namespace CashTrack.Controllers
 
         public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
         {
-            this._mapper = mapper;
-            this._logger = logger;
-            this._expenseService = expenseService;
+            _mapper = mapper;
+            _logger = logger;
+            _expenseService = expenseService;
         }
 
         [HttpGet]
@@ -64,6 +65,58 @@ namespace CashTrack.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<AddEditExpense>> CreateExpense(AddEditExpense request)
+        {
+            try
+            {
+                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                var expense = _mapper.Map<AddEditExpense>(result);
+                var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{expense.Id.Value}");
+                return Created(location, expense);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
+            }
+        }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<AddEditExpense>> UpdateExpense([FromBody] AddEditExpense request)
+        {
+            if (request.Id == null)
+                return BadRequest("Need an Id to update an expense.");
+
+            try
+            {
+                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
+            }
+        }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteExpense(int id)
+        {
+            try
+            {
+                var result = await _expenseService.DeleteExpenseAsync(id);
+                if (!result)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to delete expense");
+
+                return Ok();
+            }
+            catch (ExpenseNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
 

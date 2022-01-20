@@ -179,6 +179,7 @@ namespace CashTrack.Services.MerchantService
             var success = false;
             if (request.Id == null)
             {
+                //I manually set the id here because when I use the test database it messes with the id autogeneration
                 merchant.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
                 success = await _merchantRepo.CreateMerchant(merchant);
             }
@@ -188,7 +189,7 @@ namespace CashTrack.Services.MerchantService
             }
 
             if (!success)
-                throw new Exception("Couldn't save merchant");
+                throw new Exception("Couldn't save merchant to the database");
 
             return merchant;
         }
@@ -196,15 +197,8 @@ namespace CashTrack.Services.MerchantService
         public async Task<bool> DeleteMerchantAsync(int id)
         {
             var merchant = await _merchantRepo.GetMerchantById(id);
-            if (merchant == null)
-                throw new MerchantNotFoundException(id.ToString());
 
-            var success = await _merchantRepo.DeleteMerchant(merchant);
-
-            if (!success)
-                throw new Exception("Unable to delete merchant");
-
-            return success;
+            return await _merchantRepo.DeleteMerchant(merchant);
         }
     }
 }

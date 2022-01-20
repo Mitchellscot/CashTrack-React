@@ -120,7 +120,7 @@ namespace CashTrack.IntegrationTests
             return responseObject.Id!.Value;
         }
         [Fact]
-        public async Task UpdateNewMerchant()
+        public async Task UpdateAMerchant()
         {
             var testId = await CreateNewMerchant();
             var model = new AddEditMerchant()
@@ -164,10 +164,6 @@ namespace CashTrack.IntegrationTests
         {
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
-        }
-        private MerchantModels.Request GetMerchantsRequest()
-        {
-            return new MerchantModels.Request();
         }
     }
 }
