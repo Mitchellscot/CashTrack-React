@@ -9,6 +9,7 @@ using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.Common;
 using AutoMapper;
 using CashTrack.Data.Entities;
+using System.Linq.Expressions;
 
 namespace CashTrack.Repositories.ExpenseRepository
 {
@@ -318,6 +319,31 @@ namespace CashTrack.Repositories.ExpenseRepository
                 return (decimal)await _context.Expenses
                 .Where(x => x.categoryid == subCategoryId)
                 .CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+        public async Task<Expenses[]> FindWithPagination(Expression<Func<Expenses, bool>> predicate, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                        .Where(predicate)
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .OrderBy(x => x.purchase_date)
+                        .ThenBy(x => x.id)
+                        .Include(x => x.expense_tags)
+                        .ThenInclude(x => x.tag)
+                        .Include(x => x.merchant)
+                        .Include(x => x.category)
+                        .ThenInclude(x => x.main_category)
+                        .ToArrayAsync();
+                return expenses;
             }
             catch (Exception)
             {
