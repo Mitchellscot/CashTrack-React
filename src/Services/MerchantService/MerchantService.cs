@@ -59,7 +59,6 @@ namespace CashTrack.Services.MerchantService
                 Merchants = merchantViewModels
             };
             return searchTermResponse;
-
         }
 
         public async Task<MerchantDetail> GetMerchantDetailAsync(int id)

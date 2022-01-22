@@ -76,7 +76,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpPut("{id:int}")]
+        [HttpPut()]
         public async Task<ActionResult> UpdateMerchant([FromBody] AddEditMerchant request)
         {
             if (request.Id == null)

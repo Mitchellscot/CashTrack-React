@@ -102,48 +102,60 @@ namespace CashTrack.IntegrationTests
             PrintRequestAndResponse(path + $"/99999999", await response.Content.ReadAsStringAsync());
         }
         [Fact]
-        public async Task<int> CreateNewMerchant()
+        public async Task CreateAndDeleteMerchant()
         {
-            var model = new AddEditMerchant()
+            var model = GetAddEditMerchant();
+            var testId = 0;
+            try
             {
-                Id = null,
-                Name = $"TEST {Guid.NewGuid()}",
-                City = "Long Beach",
-                State = "CA",
-                SuggestOnLookup = true,
-                IsOnline = false,
-                Notes = "Created with test method"
-            };
-            var response = await _fixture.SendPostRequestAsync(path, model);
-            response.StatusCode.ShouldBe(HttpStatusCode.Created);
-            var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
-            response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/merchants/detail/{responseObject.Id.ToString()}");
-            return responseObject.Id!.Value;
+                //create merchant
+                var response = await _fixture.SendPostRequestAsync(path, model);
+                response.StatusCode.ShouldBe(HttpStatusCode.Created);
+                var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
+                testId = responseObject.Id!.Value;
+                response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/merchants/detail/{responseObject.Id.ToString()}");
+            }
+            finally
+            {
+                //delete merchant
+                var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
+
         }
         [Fact]
         public async Task UpdateAMerchant()
         {
-            var testId = await CreateNewMerchant();
-            var model = new AddEditMerchant()
+            var modelToCreate = GetAddEditMerchant();
+            var testId = 0;
+            try
             {
-                Id = testId,
-                Name = $"TEST UPDATE {Guid.NewGuid()}",
-                City = "Baxter",
-                State = "MN",
-                SuggestOnLookup = false,
-                IsOnline = true,
-                Notes = "Updated with test method"
-            };
-            var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        }
-        [Fact]
-        public async Task DeleteAMerchant()
-        {
-            var testId = await CreateNewMerchant();
-            var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                //create merchant
+                var response = await _fixture.SendPostRequestAsync(path, modelToCreate);
+                response.StatusCode.ShouldBe(HttpStatusCode.Created);
+                var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
+                testId = responseObject.Id!.Value;
+                //update merchant
+                var updatedObject = responseObject with
+                {
+                    Id = testId,
+                    Name = $"TEST UPDATE {Guid.NewGuid()}",
+                    City = "Baxter",
+                    State = "MN",
+                    SuggestOnLookup = false,
+                    IsOnline = true,
+                    Notes = "Updated with test method"
+                };
+                var updatedResponse = await _fixture.SendPutRequestAsync(path, updatedObject);
+                var responseString = await updatedResponse.Content.ReadAsStringAsync();
+                updatedResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
+            finally
+            {
+                //delete merchant
+                var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
         }
         [Fact]
         public async Task ThrowExceptionIfMerchantNameExists()
@@ -160,6 +172,21 @@ namespace CashTrack.IntegrationTests
             };
             var response = await _fixture.SendPostRequestAsync(path, model);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+
+        private AddEditMerchant GetAddEditMerchant()
+        {
+            var model = new AddEditMerchant()
+            {
+                Id = null,
+                Name = $"TEST {Guid.NewGuid()}",
+                City = "Long Beach",
+                State = "CA",
+                SuggestOnLookup = true,
+                IsOnline = false,
+                Notes = "Created with test method"
+            };
+            return model;
         }
         private void PrintRequestAndResponse(object request, object response)
         {
