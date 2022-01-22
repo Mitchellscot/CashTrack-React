@@ -12,8 +12,8 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         var user = (Users)context.HttpContext.Items["user"];
         if (user == null)
         {
-         // not logged in
-         context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            // not logged in
+            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }
     public string Roles { get; set; }

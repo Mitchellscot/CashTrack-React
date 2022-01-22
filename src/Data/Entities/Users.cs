@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
     [Table("users")]
-    public class Users
+    public class Users : IEntity
     {
         public int id { get; set; }
         [StringLength(25)]

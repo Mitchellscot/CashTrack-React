@@ -8,8 +8,18 @@ namespace CashTrack.Data.CsvFiles
         //these models are used when pulling data from the CSV files and inserting it into the database
         public class CsvExpense
         {
+            private DateTimeOffset? _purchase_date;
+
             public int id { get; set; }
-            public DateTimeOffset? purchase_date { get; set; }
+            public DateTimeOffset? purchase_date
+            {
+                get { return _purchase_date; }
+                set
+                {
+                    if (value != null)
+                        _purchase_date = value.Value.ToUniversalTime();
+                }
+            }
             public decimal? amount { get; set; }
             public int? categoryid { get; set; }
             public string? notes { get; set; }
@@ -51,8 +61,17 @@ namespace CashTrack.Data.CsvFiles
         }
         public class CsvIncome
         {
+            private DateTimeOffset? _income_date;
             public int id { get; set; }
-            public DateTimeOffset? income_date { get; set; }
+            public DateTimeOffset? income_date
+            {
+                get { return _income_date; }
+                set
+                {
+                    if (value != null)
+                        _income_date = value.Value.ToUniversalTime();
+                }
+            }
             public decimal amount { get; set; }
             public int categoryid { get; set; }
             public int sourceid { get; set; }

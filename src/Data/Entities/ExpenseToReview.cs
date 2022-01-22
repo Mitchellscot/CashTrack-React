@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
     [Table("expenses_to_review")]
-    public class ExpenseToReview
+    public class ExpenseToReview : IEntity
     {
         public int id { get; set; }
         [Required]
@@ -16,6 +16,6 @@ namespace CashTrack.Data.Entities
         public string notes { get; set; }
         public ExpenseSubCategories suggested_category { get; set; }
         public Merchants suggested_merchant { get; set; }
-        public bool is_reviewed {get; set;}
+        public bool is_reviewed { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace CashTrack.Controllers
             _authService = authService;
         }
         [HttpPost]
-        public async Task<ActionResult<Authentication.Response>> Authenticate(Authentication.Request model)
+        public async Task<ActionResult<AuthenticationModels.Response>> Authenticate(AuthenticationModels.Request model)
         {
             try
             {

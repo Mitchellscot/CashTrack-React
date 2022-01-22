@@ -6,7 +6,7 @@ namespace CashTrack.Data.Entities
 {
 
     [Table("incomes_to_review")]
-    public class IncomeToReview
+    public class IncomeToReview : IEntity
     {
         public int id { get; set; }
         [Required]

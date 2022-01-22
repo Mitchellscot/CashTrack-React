@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace CashTrack.Data.CsvFiles
 {
@@ -13,7 +14,9 @@ namespace CashTrack.Data.CsvFiles
                 yield return new CsvModels.CsvExpense()
                 {
                     id = Convert.ToInt32(columns[0]),
-                    purchase_date = DateTimeOffset.Parse(columns[1]),
+                    purchase_date = DateTimeOffset.Parse(columns[1],
+                    null
+                    , DateTimeStyles.AdjustToUniversal),
                     amount = Math.Round(Decimal.Parse(columns[2]), 2),
                     categoryid = columns[2] == "" ? null : Convert.ToInt32(columns[3]),
                     merchantid = columns[4] == "" ? null : Convert.ToInt32(columns[4]),
@@ -97,7 +100,8 @@ namespace CashTrack.Data.CsvFiles
                 yield return new CsvModels.CsvIncome()
                 {
                     id = Convert.ToInt32(columns[0]),
-                    income_date = DateTimeOffset.Parse(columns[1]),
+                    income_date = DateTimeOffset.Parse(columns[1], null
+                    , DateTimeStyles.AdjustToUniversal),
                     amount = Math.Round(Convert.ToDecimal(columns[2]), 2),
                     categoryid = Convert.ToInt32(columns[3]),
                     sourceid = Convert.ToInt32(columns[4]),

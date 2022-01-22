@@ -28,7 +28,7 @@ namespace CashTrack.Controllers
         public async Task<IActionResult> GetAllTags()
         { 
             var tags = await _tagService.GetAllTags();
-            return Ok(_mapper.Map<Tag[]>(tags));
+            return Ok(_mapper.Map<TagModel[]>(tags));
         }
     }
 }

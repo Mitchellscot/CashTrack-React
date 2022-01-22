@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
     [Table("incomes")]
-    public class Incomes
+    public class Incomes : IEntity
     {
         public int id { get; set; }
         [Required]
