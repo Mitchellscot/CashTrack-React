@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
     [Table("merchants")]
-    public class Merchants
+    public class Merchants : IEntity
     {
         public int id { get; set; }
         [StringLength(250)]

@@ -10,6 +10,8 @@
 --set timezone to 'America/Chicago';
 --also set it in the .conf file
 
+--better yet just change it to 'America/Danmarkshavn';
+
 --copy data from expense main category file
 COPY expense_main_categories(id, main_category_name)
 FROM 'C:\Users\Public\db-files\expense-main-categories.csv'

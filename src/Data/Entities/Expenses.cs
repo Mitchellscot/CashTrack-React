@@ -7,11 +7,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
     [Table("expenses")]
-    public class Expenses
+    public class Expenses : IEntity
     {
+        private DateTimeOffset _purchase_date;
         public int id { get; set; }
         [Required]
-        public DateTimeOffset purchase_date { get; set; }
+        public DateTimeOffset purchase_date
+        {
+            get { return _purchase_date; }
+            set { _purchase_date = value.ToUniversalTime(); }
+        }
         [Required]
         public decimal amount { get; set; }
         [StringLength(50)]

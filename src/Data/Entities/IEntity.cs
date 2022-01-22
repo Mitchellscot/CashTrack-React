@@ -1,4 +1,4 @@
-﻿namespace CashTrack.Repositories
+﻿namespace CashTrack.Data.Entities
 {
     public interface IEntity
     {
