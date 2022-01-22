@@ -41,69 +41,6 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-        public async Task<decimal> GetCountOfAllExpenses()
-        {
-            try
-            {
-                return (decimal)await _context.Expenses.CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<decimal> GetCountOfExpensesForSpecificDate(DateTimeOffset date)
-        {
-            try
-            {
-                return (decimal)await _context.Expenses.Where(x => x.purchase_date == date.ToUniversalTime()).CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<decimal> GetCountOfExpensesBetweenTwoDates(DateTimeOffset beginDate, DateTimeOffset endDate)
-        {
-            try
-            {
-                return (decimal)await _context.Expenses
-                .Where(x => x.purchase_date >= beginDate && x.purchase_date <= endDate)
-                .CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<decimal> GetCountOfExpensesForNotesSearch(string searchTerm)
-        {
-            try
-            {
-                return (decimal)await _context.Expenses
-                .Where(x => x.notes.Contains(searchTerm))
-                .CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<decimal> GetCountOfExpensesForAmountSearch(decimal amount)
-        {
-            try
-            {
-                return (decimal)await _context.Expenses
-                .Where(x => x.amount.Equals(amount))
-                .CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
         public async Task<int> GetNumberOfExpensesForMerchant(int id)
         {
             try
@@ -116,7 +53,6 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-
         public async Task<decimal> GetCountOfExpensesForSubCategoryAsync(int subCategoryId)
         {
             try
@@ -153,7 +89,6 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
-
         public Task<Expenses[]> Find(Expression<Func<Expenses, bool>> predicate)
         {
             throw new NotImplementedException();

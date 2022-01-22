@@ -26,26 +26,73 @@ namespace CashTrack.Services.ExpenseService
 
             return _mapper.Map<ExpenseTransaction>(singleExpense);
         }
-
         public async Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request)
         {
-            var predicate = GetPredicateForExpenseSearch(request);
-
+            var predicate = GetPredicate(request);
             var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
             var countOfExpenses = await _expenseRepo.GetCountOfExpenses(predicate);
 
+            return BuildResponse(expenses, countOfExpenses, request.PageNumber, request.PageSize);
+        }
+        public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
+        {
+            Expression<Func<Expenses, bool>> predicate = x => x.notes.Contains(request.SearchTerm);
+            var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
+            var count = await _expenseRepo.GetCountOfExpenses(predicate);
+
+            return BuildResponse(expenses, count, request.PageNumber, request.PageSize);
+        }
+        public async Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request)
+        {
+            Expression<Func<Expenses, bool>> predicate = x => x.amount == request.Query;
+            var expenses = await _expenseRepo.FindWithPagination(x => x.amount == request.Query, request.PageNumber, request.PageSize);
+            var count = await _expenseRepo.GetCountOfExpenses(predicate);
+
+            return BuildResponse(expenses, count, request.PageNumber, request.PageSize);
+
+        }
+        public async Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request)
+        {
+            var expense = _mapper.Map<Expenses>(request);
+
+            var success = false;
+            if (request.Id == null)
+            {
+                //I manually set the id here because when I use the test database it messes with the id autogeneration
+                expense.id = ((int)await _expenseRepo.GetCountOfExpenses(x => true)) + 1;
+                success = await _expenseRepo.Create(expense);
+            }
+            else
+            {
+                success = await _expenseRepo.Update(expense);
+            }
+
+            if (!success)
+                throw new Exception("Couldn't save expense to the database.");
+
+            return expense;
+        }
+        public async Task<bool> DeleteExpenseAsync(int id)
+        {
+            var expense = await _expenseRepo.GetExpenseById(id);
+
+            return await _expenseRepo.Delete(expense);
+        }
+
+        /***** HELPERS *****/
+        internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, int pageNumber, int pageSize)
+        {
             var response = new ExpenseModels.Response
             {
-                TotalPages = (int)Math.Ceiling(countOfExpenses / (decimal)request.PageSize),
-                PageSize = request.PageSize,
+                TotalPages = (int)Math.Ceiling(countOfExpenses / (decimal)pageSize),
+                PageSize = pageSize,
                 TotalExpenses = (int)countOfExpenses,
-                PageNumber = request.PageNumber,
+                PageNumber = pageNumber,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
         }
-
-        internal Expression<Func<Expenses, bool>> GetPredicateForExpenseSearch(ExpenseModels.Request request) => request.DateOptions switch
+        internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseModels.Request request) => request.DateOptions switch
         {
             //1
             DateOptions.All => (Expenses x) => true,
@@ -115,78 +162,6 @@ namespace CashTrack.Services.ExpenseService
         internal (DateTimeOffset startDate, DateTimeOffset endDate) GetYearDatesFromDate(DateTimeOffset date)
         {
             return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
-        }
-
-        public async Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request)
-        {
-            var expense = _mapper.Map<Expenses>(request);
-
-            var success = false;
-            if (request.Id == null)
-            {
-                //I manually set the id here because when I use the test database it messes with the id autogeneration
-                expense.id = ((int)await _expenseRepo.GetCountOfAllExpenses()) + 1;
-                success = await _expenseRepo.Create(expense);
-            }
-            else
-            {
-                success = await _expenseRepo.Update(expense);
-            }
-
-            if (!success)
-                throw new Exception("Couldn't save expense to the database.");
-
-            return expense;
-        }
-        public async Task<bool> DeleteExpenseAsync(int id)
-        {
-            var expense = await _expenseRepo.GetExpenseById(id);
-
-            return await _expenseRepo.Delete(expense);
-        }
-
-        public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
-        {
-            var expenses = await _expenseRepo.FindWithPagination(x => x.notes.Contains(request.SearchTerm), request.PageNumber, request.PageSize);
-            var pagesAndExpenses = await GetCountOfExpensesForSearchingNotes(request.SearchTerm, request.PageSize);
-
-            var response = new ExpenseModels.Response
-            {
-                PageSize = request.PageSize,
-                PageNumber = request.PageNumber,
-                TotalPages = pagesAndExpenses.totalPages,
-                TotalExpenses = pagesAndExpenses.totalExpenses,
-                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
-            };
-            return response;
-        }
-        internal async Task<(int totalPages, int totalExpenses)> GetCountOfExpensesForSearchingNotes(string searchTerm, int pageSize)
-        {
-            decimal numberOfExpenses = await _expenseRepo.GetCountOfExpensesForNotesSearch(searchTerm);
-            var totalPages = (int)Math.Ceiling(numberOfExpenses / (decimal)pageSize);
-            return (totalPages == 0 ? 1 : totalPages, (int)numberOfExpenses);
-        }
-
-        public async Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request)
-        {
-            var expenses = await _expenseRepo.FindWithPagination(x => x.amount == request.Query, request.PageNumber, request.PageSize);
-            var pagesAndExpenses = await GetCountOfExpensesForSearchingAmount(request.Query, request.PageSize);
-
-            var response = new ExpenseModels.Response
-            {
-                PageSize = request.PageSize,
-                PageNumber = request.PageNumber,
-                TotalPages = pagesAndExpenses.totalPages,
-                TotalExpenses = pagesAndExpenses.totalExpenses,
-                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
-            };
-            return response;
-        }
-        internal async Task<(int totalPages, int totalExpenses)> GetCountOfExpensesForSearchingAmount(decimal amount, int pageSize)
-        {
-            decimal numberOfExpenses = await _expenseRepo.GetCountOfExpensesForAmountSearch(amount);
-            var totalPages = (int)Math.Ceiling(numberOfExpenses / (decimal)pageSize);
-            return (totalPages == 0 ? 1 : totalPages, (int)numberOfExpenses);
         }
     }
 }
