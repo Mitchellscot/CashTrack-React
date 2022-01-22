@@ -36,7 +36,7 @@ namespace CashTrack.Services.ExpenseService
         }
         public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
         {
-            Expression<Func<Expenses, bool>> predicate = x => x.notes.Contains(request.SearchTerm);
+            Expression<Func<Expenses, bool>> predicate = x => x.notes.ToLower().Contains(request.SearchTerm.ToLower());
             var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
             var count = await _expenseRepo.GetCountOfExpenses(predicate);
             var amount = await _expenseRepo.GetAmountOfExpenses(predicate);

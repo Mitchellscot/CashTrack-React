@@ -33,7 +33,7 @@ namespace CashTrack.Services.MerchantService
         public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
         {
             Expression<Func<Merchants, bool>> allMerchants = (Merchants m) => true;
-            Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm);
+            Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm.ToLower());
 
             var predicate = request.SearchTerm == null ? allMerchants : merchantSearch;
 
@@ -65,7 +65,6 @@ namespace CashTrack.Services.MerchantService
         public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
         {
             var merchantEntity = await _merchantRepo.FindById(id);
-            //might have to check for exceptions here I don't know, there is a check for them in the repo
 
             var merchantExpenses = await _expenseRepo.GetExpensesAndCategories(x => x.merchantid == id);
 

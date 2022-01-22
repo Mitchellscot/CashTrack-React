@@ -52,6 +52,7 @@ namespace CashTrack.IntegrationTests
         }
         [Theory]
         [InlineData("Costco")]
+        [InlineData("costco")]
         [InlineData("John")]
         [InlineData("Home")]
         public async Task ReturnMerchantsWithMatchingSearchTerm(string searchTerm)
