@@ -10,14 +10,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace CashTrack.IntegrationTests
 {
-    public class AuthorizationControllerShould : IClassFixture<TestServerFixture>
+    public class AuthorizationEndpointsShould : IClassFixture<TestServerFixture>
     {
         private TestServerFixture _fixture;
         private readonly TestOptionsSnapshot<TestSettings> _testSettings;
         private ITestOutputHelper _output;
         private const string path = "/api/authenticate";
 
-        public AuthorizationControllerShould(TestServerFixture fixture, ITestOutputHelper output)
+        public AuthorizationEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             var config = new ConfigurationBuilder()
                 .AddEnvironmentVariables()
@@ -97,12 +97,12 @@ namespace CashTrack.IntegrationTests
         }
 
         private AuthenticationModels.Request GetAuthenticationRequest()
-        { 
+        {
             return new AuthenticationModels.Request(_testSettings.Value.Username, _testSettings.Value.Password);
         }
 
         private void PrintRequestAndResponse(object request, object response)
-        { 
+        {
             _output.WriteLine(request.ToString());
             _output.WriteLine(response.ToString());
         }
