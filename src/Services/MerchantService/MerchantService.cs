@@ -145,30 +145,26 @@ namespace CashTrack.Services.MerchantService
             return merchantDetail;
         }
 
-        public async Task<Merchants> CreateUpdateMerchantAsync(AddEditMerchant request)
+        public async Task<Merchants> CreateMerchantAsync(AddEditMerchant request)
         {
-            var merchants = await _merchantRepo.GetAllMerchantsNoTracking();
+            var merchants = await _merchantRepo.Find(x => true);
             if (merchants.Any(x => x.name == request.Name))
                 throw new DuplicateMerchantNameException(request.Name);
 
-            var merchant = _mapper.Map<Merchants>(request);
-            //if the request doesn't have an id, it means it's not in the database yet so we are just updating an existing merchant
-            var success = false;
-            if (request.Id == null)
-            {
-                //I manually set the id here because when I use the test database it messes with the id autogeneration
-                merchant.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
-                success = await _merchantRepo.Create(merchant);
-            }
-            else
-            {
-                success = await _merchantRepo.Update(merchant);
-            }
+            var merchantEntity = _mapper.Map<Merchants>(request);
 
-            if (!success)
+            //I manually set the id here because when I use the test database it messes with the id autogeneration
+            merchantEntity.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
+
+            if (!await _merchantRepo.Create(merchantEntity))
                 throw new Exception("Couldn't save merchant to the database");
 
-            return merchant;
+            return merchantEntity;
+        }
+        public async Task<bool> UpdateMerchantAsync(AddEditMerchant request)
+        {
+            var merchant = _mapper.Map<Merchants>(request);
+            return await _merchantRepo.Update(merchant);
         }
 
         public async Task<bool> DeleteMerchantAsync(int id)

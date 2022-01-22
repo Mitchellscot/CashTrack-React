@@ -17,18 +17,6 @@ namespace CashTrack.Repositories.MerchantRepository
         {
             _context = context;
         }
-        public async Task<Merchants[]> GetAllMerchantsNoTracking()
-        {
-            try
-            {
-                return await _context.Merchants.AsNoTracking().ToArrayAsync();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
         public async Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate)
         {
             try

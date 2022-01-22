@@ -9,6 +9,5 @@ namespace CashTrack.Repositories.MerchantRepository
     public interface IMerchantRepository : IRepository<Merchants>
     {
         Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
-        Task<Merchants[]> GetAllMerchantsNoTracking();
     }
 }
