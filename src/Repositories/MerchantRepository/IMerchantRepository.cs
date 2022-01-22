@@ -1,22 +1,14 @@
 ﻿using CashTrack.Data.Entities;
 using System.Threading.Tasks;
+using CashTrack.Repositories;
+using System.Linq.Expressions;
+using System;
 
 namespace CashTrack.Repositories.MerchantRepository
 {
-    public interface IMerchantRepository
+    public interface IMerchantRepository : IRepository<Merchants>
     {
-        Task<bool> CreateMerchant(Merchants merchant);
-        Task<bool> UpdateMerchant(Merchants merchant);
-        Task<bool> DeleteMerchant(Merchants merchant);
-        Task<Merchants> GetMerchantById(int id);
-        Task<Merchants[]> GetMerchantsPagination(int pageSize, int pageNumber);
-        Task<Merchants[]> GetMerchantsPaginationSearchTerm(string searchTerm, int pageSize, int pageNumber);
-        Task<decimal> GetCountOfAllMerchants();
-        Task<decimal> GetCountOfAllMerchantsSearch(string searchTerm);
+        Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
         Task<Merchants[]> GetAllMerchantsNoTracking();
-
-        //these might go in the Expense repo...
-        Task<int> GetNumberOfExpensesForMerchant(int id);
-        Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id);
     }
 }

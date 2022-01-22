@@ -4,6 +4,7 @@ using CashTrack.Helpers.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CashTrack.Repositories.MerchantRepository
@@ -16,21 +17,30 @@ namespace CashTrack.Repositories.MerchantRepository
         {
             _context = context;
         }
-
-        public async Task<Expenses[]> GetExpensesAndCategoriesByMerchantId(int id)
+        public async Task<Merchants[]> GetAllMerchantsNoTracking()
         {
             try
             {
-                var expenses = await _context.Expenses.Where(e => e.merchant.id == id).Include(x => x.category).ToArrayAsync();
-                return expenses;
+                return await _context.Merchants.AsNoTracking().ToArrayAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate)
+        {
+            try
+            {
+                return (decimal)await _context.Merchants.CountAsync(predicate);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        public async Task<Merchants> GetMerchantById(int id)
+        public async Task<Merchants> FindById(int id)
         {
             try
             {
@@ -45,15 +55,28 @@ namespace CashTrack.Repositories.MerchantRepository
                 throw;
             }
         }
+        public async Task<Merchants[]> Find(Expression<Func<Merchants, bool>> predicate)
+        {
+            try
+            {
+                var merchant = await _context.Merchants.Where(predicate).OrderBy(x => x.name).ToArrayAsync();
 
-        public async Task<Merchants[]> GetMerchantsPagination(int pageSize, int pageNumber)
+                return merchant;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<Merchants[]> FindWithPagination(Expression<Func<Merchants, bool>> predicate, int pageNumber, int pageSize)
         {
             try
             {
                 var merchants = await _context.Merchants
-                    .OrderBy(x => x.name)
+                    .Where(predicate)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
+                    .OrderBy(x => x.name)
                     .ToArrayAsync();
                 return merchants;
             }
@@ -61,58 +84,12 @@ namespace CashTrack.Repositories.MerchantRepository
             {
                 throw;
             }
-
         }
-
-        public async Task<Merchants[]> GetMerchantsPaginationSearchTerm(string searchTerm, int pageSize, int pageNumber)
+        public async Task<bool> Create(Merchants entity)
         {
             try
             {
-                var merchants = await _context.Merchants
-                    .Where(x => x.name.ToLower().Contains(searchTerm.ToLower()))
-                    .OrderBy(x => x.name)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToArrayAsync();
-                return merchants;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<int> GetNumberOfExpensesForMerchant(int id)
-        {
-            try
-            {
-                return await _context.Expenses.CountAsync(x => x.merchant.id == id);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<Merchants[]> GetAllMerchantsNoTracking()
-        {
-            try
-            {
-                return await _context.Merchants.AsNoTracking().ToArrayAsync();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<bool> CreateMerchant(Merchants merchant)
-        {
-            try
-            {
-                await _context.Merchants.AddAsync(merchant);
+                await _context.Merchants.AddAsync(entity);
                 return await (_context.SaveChangesAsync()) > 0;
             }
             catch (Exception)
@@ -120,12 +97,12 @@ namespace CashTrack.Repositories.MerchantRepository
                 throw;
             }
         }
-        public async Task<bool> UpdateMerchant(Merchants merchant)
+        public async Task<bool> Update(Merchants entity)
         {
             try
             {
-                var entity = _context.Merchants.Attach(merchant);
-                entity.State = EntityState.Modified;
+                var contextAttachedEntity = _context.Merchants.Attach(entity);
+                contextAttachedEntity.State = EntityState.Modified;
                 return await (_context.SaveChangesAsync()) > 0;
             }
             catch (Exception)
@@ -133,37 +110,12 @@ namespace CashTrack.Repositories.MerchantRepository
                 throw;
             }
         }
-
-        public async Task<bool> DeleteMerchant(Merchants merchant)
+        public async Task<bool> Delete(Merchants entity)
         {
             try
             {
-                _context.Remove(merchant);
+                _context.Remove(entity);
                 return await (_context.SaveChangesAsync()) > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<decimal> GetCountOfAllMerchants()
-        {
-            try
-            {
-                return (decimal)await _context.Merchants.CountAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<decimal> GetCountOfAllMerchantsSearch(string searchTerm)
-        {
-            try
-            {
-                return (decimal)await _context.Merchants.Where(x => x.name.Contains(searchTerm)).CountAsync();
             }
             catch (Exception)
             {

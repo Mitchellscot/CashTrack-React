@@ -15,7 +15,9 @@ namespace CashTrack.Models.MerchantModels
         public class Response
         {
             public int PageNumber { get; set; }
+            public int PageSize { get; set; } = 25;
             public int TotalPages { get; set; }
+            public decimal TotalMerchants { get; set; }
             public Merchant[] Merchants { get; set; }
         }
     }

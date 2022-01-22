@@ -139,5 +139,20 @@ namespace CashTrack.Repositories.ExpenseRepository
                 throw;
             }
         }
+        public async Task<Expenses[]> GetExpensesAndCategories(Expression<Func<Expenses, bool>> predicate)
+        {
+            try
+            {
+                var expenses = await _context.Expenses
+                    .Where(predicate)
+                    .Include(x => x.category)
+                    .ToArrayAsync();
+                return expenses;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace CashTrack.Repositories.ExpenseRepository
     {
         Task<decimal> GetCountOfExpenses(Expression<Func<Expenses, bool>> predicate);
         Task<decimal> GetAmountOfExpenses(Expression<Func<Expenses, bool>> predicate);
+        Task<Expenses[]> GetExpensesAndCategories(Expression<Func<Expenses, bool>> predicate);
     }
 }

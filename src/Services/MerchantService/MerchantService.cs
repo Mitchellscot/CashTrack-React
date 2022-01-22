@@ -4,11 +4,13 @@ using CashTrack.Helpers.Aggregators;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
+using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Repositories.SubCategoriesRepository.cs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.MerchantService
@@ -17,78 +19,55 @@ namespace CashTrack.Services.MerchantService
     {
         private readonly IMapper _mapper;
         private readonly IMerchantRepository _merchantRepo;
-        private readonly ISubCategoryRepository _subCategoryRepository;
+        private readonly ISubCategoryRepository _subCategoryRepo;
+        private readonly IExpenseRepository _expenseRepo;
 
-        public MerchantService(IMapper mapper, IMerchantRepository merchantRepository, ISubCategoryRepository subCategoryRepository)
+        public MerchantService(IMapper mapper, IMerchantRepository merchantRepo, ISubCategoryRepository subCategoryRepo, IExpenseRepository expenseRepo)
         {
             _mapper = mapper;
-            _merchantRepo = merchantRepository;
-            _subCategoryRepository = subCategoryRepository;
+            _merchantRepo = merchantRepo;
+            _subCategoryRepo = subCategoryRepo;
+            _expenseRepo = expenseRepo;
         }
 
         public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
         {
-            if (request.SearchTerm != null)
+            Expression<Func<Merchants, bool>> allMerchants = (Merchants m) => true;
+            Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm);
+
+            var predicate = request.SearchTerm == null ? allMerchants : merchantSearch;
+
+            var merchantEntities = await _merchantRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
+
+            var count = await _merchantRepo.GetCountOfMerchants(predicate);
+
+            var merchantViewModels = merchantEntities.Select(m => new Merchant
             {
-                var merchants = await _merchantRepo.GetMerchantsPaginationSearchTerm(request.SearchTerm, request.PageSize, request.PageNumber);
-                var merchantViewModels = merchants.Select(m => new Merchant
-                {
-                    Id = m.id,
-                    Name = m.name,
-                    City = m.city,
-                    IsOnline = m.is_online,
-                    NumberOfExpenses = _merchantRepo.GetNumberOfExpensesForMerchant(m.id).Result
-                }).ToArray();
+                Id = m.id,
+                Name = m.name,
+                City = m.city,
+                IsOnline = m.is_online,
+                NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.merchantid == m.id).Result
+            }).ToArray();
 
-                var searchTermResponse = new MerchantModels.Response
-                {
-                    TotalPages = await GetTotalPagesForAllMerchantSearch(request.SearchTerm, request.PageSize),
-                    PageNumber = request.PageNumber,
-                    Merchants = merchantViewModels
-                };
-                return searchTermResponse;
-            }
-            else
+            var searchTermResponse = new MerchantModels.Response
             {
-                var merchants = await _merchantRepo.GetMerchantsPagination(request.PageSize, request.PageNumber);
-                var merchantViewModels = merchants.Select(m => new Merchant
-                {
-                    Id = m.id,
-                    Name = m.name,
-                    City = m.city,
-                    IsOnline = m.is_online,
-                    NumberOfExpenses = _merchantRepo.GetNumberOfExpensesForMerchant(m.id).Result
-                }).ToArray();
+                TotalPages = (int)Math.Ceiling(count / request.PageSize),
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalMerchants = await _merchantRepo.GetCountOfMerchants(predicate),
+                Merchants = merchantViewModels
+            };
+            return searchTermResponse;
 
-                var response = new MerchantModels.Response
-                {
-                    TotalPages = await GetTotalPagesForAllMerchants(request.PageSize),
-                    PageNumber = request.PageNumber,
-                    Merchants = merchantViewModels
-                };
-                return response;
-            }
-        }
-
-        private async Task<int> GetTotalPagesForAllMerchantSearch(string searchTerm, int pageSize)
-        {
-            var totalNumberOfRecords = await _merchantRepo.GetCountOfAllMerchantsSearch(searchTerm);
-            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
-            return (int)totalPages;
-        }
-        private async Task<int> GetTotalPagesForAllMerchants(int pageSize)
-        {
-            var totalNumberOfRecords = await _merchantRepo.GetCountOfAllMerchants();
-            var totalPages = Math.Ceiling(totalNumberOfRecords / pageSize);
-            return (int)totalPages;
         }
 
         public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
         {
-            var merchantEntity = await _merchantRepo.GetMerchantById(id);
+            var merchantEntity = await _merchantRepo.FindById(id);
             //might have to check for exceptions here I don't know, there is a check for them in the repo
 
-            var merchantExpenses = await _merchantRepo.GetExpensesAndCategoriesByMerchantId(id);
+            var merchantExpenses = await _expenseRepo.GetExpensesAndCategories(x => x.merchantid == id);
 
             var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
                 .Take(10)
@@ -122,7 +101,7 @@ namespace CashTrack.Services.MerchantService
                         };
                     }).OrderBy(x => x.Year).ToList();
 
-            var subCategories = await _subCategoryRepository.GetAllSubCategoriesAsync();
+            var subCategories = await _subCategoryRepo.GetAllSubCategoriesAsync();
 
             var merchantExpenseCategories = subCategories.GroupJoin(merchantExpenses,
                 c => c.id, e => e.category.id, (c, g) => new
@@ -181,11 +160,11 @@ namespace CashTrack.Services.MerchantService
             {
                 //I manually set the id here because when I use the test database it messes with the id autogeneration
                 merchant.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
-                success = await _merchantRepo.CreateMerchant(merchant);
+                success = await _merchantRepo.Create(merchant);
             }
             else
             {
-                success = await _merchantRepo.UpdateMerchant(merchant);
+                success = await _merchantRepo.Update(merchant);
             }
 
             if (!success)
@@ -196,9 +175,9 @@ namespace CashTrack.Services.MerchantService
 
         public async Task<bool> DeleteMerchantAsync(int id)
         {
-            var merchant = await _merchantRepo.GetMerchantById(id);
+            var merchant = await _merchantRepo.FindById(id);
 
-            return await _merchantRepo.DeleteMerchant(merchant);
+            return await _merchantRepo.Delete(merchant);
         }
     }
 }

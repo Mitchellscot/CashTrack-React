@@ -25,7 +25,7 @@ namespace CashTrack.Helpers.Validators
                 {
                     RuleFor(x => x.MerchantId).GreaterThan(0).MustAsync(async (model, value, _) =>
                     {
-                        return ((int)await _merchantRepo.GetCountOfAllMerchants()) > value;
+                        return ((int)await _merchantRepo.GetCountOfMerchants(x => true)) > value;
                     }).WithMessage("Invalid Merchant Id");
                 });
         }
