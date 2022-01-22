@@ -20,6 +20,18 @@ namespace CashTrack.Repositories.ExpenseRepository
         {
             _context = context;
         }
+        public async Task<Expenses[]> Find(Expression<Func<Expenses, bool>> predicate)
+        {
+            try
+            {
+                return await _context.Expenses.Where(predicate).ToArrayAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         public async Task<Expenses> FindById(int id)
         {
             try
@@ -35,31 +47,6 @@ namespace CashTrack.Repositories.ExpenseRepository
                     throw new ExpenseNotFoundException(id.ToString());
 
                 return expense;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<int> GetNumberOfExpensesForMerchant(int id)
-        {
-            try
-            {
-                return await _context.Expenses.CountAsync(x => x.merchant.id == id);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<decimal> GetCountOfExpensesForSubCategoryAsync(int subCategoryId)
-        {
-            try
-            {
-                return (decimal)await _context.Expenses
-                .Where(x => x.categoryid == subCategoryId)
-                .CountAsync();
             }
             catch (Exception)
             {
@@ -133,6 +120,19 @@ namespace CashTrack.Repositories.ExpenseRepository
                 return (decimal)await _context.Expenses
                 .Where(predicate)
                 .CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<decimal> GetAmountOfExpenses(Expression<Func<Expenses, bool>> predicate)
+        {
+            try
+            {
+                return (decimal)await _context.Expenses
+                .Where(predicate)
+                .SumAsync(x => x.amount);
             }
             catch (Exception)
             {

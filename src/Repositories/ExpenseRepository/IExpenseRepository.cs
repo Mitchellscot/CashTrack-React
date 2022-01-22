@@ -10,5 +10,6 @@ namespace CashTrack.Repositories.ExpenseRepository
     public interface IExpenseRepository : IRepository<Expenses>
     {
         Task<decimal> GetCountOfExpenses(Expression<Func<Expenses, bool>> predicate);
+        Task<decimal> GetAmountOfExpenses(Expression<Func<Expenses, bool>> predicate);
     }
 }

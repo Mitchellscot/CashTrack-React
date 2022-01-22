@@ -29,25 +29,29 @@ namespace CashTrack.Services.ExpenseService
         {
             var predicate = GetPredicate(request);
             var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
-            var countOfExpenses = await _expenseRepo.GetCountOfExpenses(predicate);
+            var count = await _expenseRepo.GetCountOfExpenses(predicate);
+            var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
 
-            return BuildResponse(expenses, countOfExpenses, request.PageNumber, request.PageSize);
+            return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
         }
         public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
         {
             Expression<Func<Expenses, bool>> predicate = x => x.notes.Contains(request.SearchTerm);
             var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
             var count = await _expenseRepo.GetCountOfExpenses(predicate);
+            var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
 
-            return BuildResponse(expenses, count, request.PageNumber, request.PageSize);
+
+            return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
         }
         public async Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request)
         {
             Expression<Func<Expenses, bool>> predicate = x => x.amount == request.Query;
             var expenses = await _expenseRepo.FindWithPagination(x => x.amount == request.Query, request.PageNumber, request.PageSize);
             var count = await _expenseRepo.GetCountOfExpenses(predicate);
+            var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
 
-            return BuildResponse(expenses, count, request.PageNumber, request.PageSize);
+            return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
 
         }
         public async Task<Expenses> CreateExpenseAsync(AddEditExpense request)
@@ -78,7 +82,6 @@ namespace CashTrack.Services.ExpenseService
 
             return await _expenseRepo.Delete(expense);
         }
-
         /***** HELPERS *****/
         internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseModels.Request request) => request.DateOptions switch
         {
@@ -107,21 +110,21 @@ namespace CashTrack.Services.ExpenseService
                 x.purchase_date >= DateTimeOffset.UtcNow.AddDays(-30),
             //8
             DateOptions.CurrentMonth => (Expenses x) =>
-                x.purchase_date >= new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0)) &&
+                x.purchase_date >= GetCurrentMonth() &&
                 x.purchase_date <= DateTimeOffset.UtcNow,
             //9
             DateOptions.CurrentQuarter => (Expenses x) =>
-                x.purchase_date >= GetQuarterDatesFromDate(DateTime.UtcNow).startDate &&
+                x.purchase_date >= GetCurrentQuarter() &&
                 x.purchase_date <= DateTimeOffset.UtcNow,
             //10
             DateOptions.CurrentYear => (Expenses x) =>
-                x.purchase_date >= new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)) &&
+                x.purchase_date >= GetCurrentYear() &&
                 x.purchase_date <= DateTimeOffset.UtcNow,
 
             _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
         };
-        internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, int pageNumber, int pageSize)
+        internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, decimal amount, int pageNumber, int pageSize)
         {
             var response = new ExpenseModels.Response
             {
@@ -129,9 +132,23 @@ namespace CashTrack.Services.ExpenseService
                 PageSize = pageSize,
                 TotalExpenses = (int)countOfExpenses,
                 PageNumber = pageNumber,
+                TotalAmount = amount,
                 Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
             };
             return response;
+        }
+        internal DateTimeOffset GetCurrentMonth()
+        {
+            return new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+        }
+        internal DateTimeOffset GetCurrentQuarter()
+        {
+            //Expression doesn't understand it if I just punch this in so I am making a sub method and it works...
+            return GetQuarterDatesFromDate(DateTime.UtcNow).startDate;
+        }
+        internal DateTimeOffset GetCurrentYear()
+        {
+            return new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
         }
         internal (DateTimeOffset startDate, DateTimeOffset endDate) GetMonthDatesFromDate(DateTimeOffset date)
         {
