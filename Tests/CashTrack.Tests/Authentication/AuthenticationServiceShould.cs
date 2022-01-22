@@ -3,7 +3,7 @@ using CashTrack.Data;
 using CashTrack.Data.Entities;
 using CashTrack.Helpers;
 using CashTrack.IntegrationTests;
-using CashTrack.Services.AuthenticationServices;
+using CashTrack.Services.AuthenticationService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

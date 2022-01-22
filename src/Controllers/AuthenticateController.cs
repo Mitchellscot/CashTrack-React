@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using System;
-using CashTrack.Services.AuthenticationServices;
+using CashTrack.Services.AuthenticationService;
 using Microsoft.AspNetCore.Http;
 
 namespace CashTrack.Controllers

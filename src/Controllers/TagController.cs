@@ -14,21 +14,11 @@ namespace CashTrack.Controllers
     [ApiController]
     public class TagController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<UserController> _logger;
-        private readonly ITagRepository _tagService;
+        //private readonly ITagRepository _tagService;
 
-        public TagController(ILogger<UserController> logger, ITagRepository tagService, IMapper mapper)
-        {
-            this._mapper = mapper;
-            this._logger = logger;
-            this._tagService = tagService;
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllTags()
-        { 
-            var tags = await _tagService.GetAllTags();
-            return Ok(_mapper.Map<TagModel[]>(tags));
-        }
+        //public TagController(ITagRepository tagService)
+        //{
+        //    this._tagService = tagService;
+        //}
     }
 }
