@@ -19,6 +19,7 @@ using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Services.MerchantService;
 using CashTrack.Repositories.SubCategoriesRepository.cs;
 using CashTrack.Services.ExpenseService;
+using CashTrack.Services.UserService;
 
 namespace CashTrack
 {
@@ -74,6 +75,7 @@ namespace CashTrack
             services.AddScoped<IMerchantService, MerchantService>();
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));

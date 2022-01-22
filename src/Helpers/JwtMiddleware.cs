@@ -6,9 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CashTrack.Helpers;
 using CashTrack.Repositories.UserRepository;
-using CashTrack.Data;
 
 namespace CashTrack.Helpers
 {
@@ -23,17 +21,17 @@ namespace CashTrack.Helpers
             _appSettings = appSettings.Value;
         }
 
-        public async Task Invoke(HttpContext context, IUserRepository userRepository)
+        public async Task Invoke(HttpContext context, IUserRepository userRepo)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
-                await attachUserToContext(context, userRepository, token);
+                await attachUserToContext(context, userRepo, token);
 
             await _next(context);
         }
 
-        private async Task attachUserToContext(HttpContext context, IUserRepository userRepository, string token)
+        private async Task attachUserToContext(HttpContext context, IUserRepository userRepo, string token)
         {
             try
             {
@@ -53,7 +51,7 @@ namespace CashTrack.Helpers
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
                 // attach user to context on successful jwt validation
-                context.Items["user"] = await userRepository.GetUserByIdAsync(userId);
+                context.Items["user"] = await userRepo.FindById(userId);
             }
             catch
             {

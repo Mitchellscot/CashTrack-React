@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CashTrack.Models.UserModels;
-using Microsoft.AspNetCore.Authorization;
-using CashTrack.Data.Entities;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
@@ -9,6 +7,7 @@ using System;
 using CashTrack.Repositories.UserRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Helpers.Exceptions;
+using CashTrack.Services.UserService;
 
 namespace CashTrack.Controllers
 {
@@ -18,9 +17,9 @@ namespace CashTrack.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UserController> _logger;
-        private readonly IUserRepository _userService;
+        private readonly IUserService _userService;
 
-        public UserController(ILogger<UserController> logger, IUserRepository userService, IMapper mapper)
+        public UserController(ILogger<UserController> logger, IUserService userService, IMapper mapper)
         {
             this._mapper = mapper;
             this._logger = logger;
@@ -50,7 +49,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var users = await _userService.GetAllUsers();
+                var users = await _userService.GetAllUsersAsync();
                 return Ok(_mapper.Map<User.Response[]>(users));
             }
             catch (Exception ex)

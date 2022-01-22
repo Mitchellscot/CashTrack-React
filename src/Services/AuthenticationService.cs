@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using CashTrack.Helpers;
 using System.Security.Claims;
 using FluentValidation;
+using CashTrack.Models.UserModels;
 
 namespace CashTrack.Services.AuthenticationServices
 {
@@ -75,6 +76,13 @@ namespace CashTrack.Services.AuthenticationServices
         {
             CreateMap<Users, Authentication.Response>()
                 .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
+                .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
+                .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
+                .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
+
+            //I'm putting the mapping for users here since I don't have a user service
+            CreateMap<Users, User.Response>()
+                .ForMember(u => u.id, o => o.MapFrom(src => src.id))
                 .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
