@@ -14,9 +14,15 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using CashTrack.Helpers;
 using System.Security.Claims;
+using FluentValidation;
 
 namespace CashTrack.Services.AuthenticationServices
 {
+    public interface IAuthenticationService
+    {
+        Task<Authentication.Response> AuthenticateAsync(Authentication.Request model);
+    }
+
     public class AuthenticationService : IAuthenticationService
     {
         private readonly AppDbContext _context;
@@ -61,6 +67,17 @@ namespace CashTrack.Services.AuthenticationServices
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+    }
+    public class AuthorizationProfile : Profile
+    {
+        public AuthorizationProfile()
+        {
+            CreateMap<Users, Authentication.Response>()
+                .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
+                .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
+                .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
+                .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
         }
     }
 }

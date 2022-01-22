@@ -19,11 +19,7 @@ namespace CashTrack.Helpers
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
 
-            CreateMap<Users, Authentication.Response>()
-                .ForMember(u => u.Id, o => o.MapFrom(src => src.id))
-                .ForMember(u => u.FirstName, o => o.MapFrom(src => src.first_name))
-                .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
-                .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
+
 
             CreateMap<Expenses, ExpenseTransaction>()
                 .ForMember(e => e.Id, o => o.MapFrom(src => src.id))
