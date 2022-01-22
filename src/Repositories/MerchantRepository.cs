@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 
 namespace CashTrack.Repositories.MerchantRepository
 {
+    public interface IMerchantRepository : IRepository<Merchants>
+    {
+        Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
+    }
     public class MerchantRepository : IMerchantRepository
     {
         private readonly AppDbContext _context;
-
         public MerchantRepository(AppDbContext context)
         {
             _context = context;

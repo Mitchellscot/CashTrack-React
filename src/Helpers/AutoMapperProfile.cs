@@ -19,8 +19,6 @@ namespace CashTrack.Helpers
                 .ForMember(u => u.LastName, o => o.MapFrom(src => src.last_name))
                 .ForMember(u => u.Email, o => o.MapFrom(src => src.email));
 
-
-
             CreateMap<Expenses, ExpenseTransaction>()
                 .ForMember(e => e.Id, o => o.MapFrom(src => src.id))
                 .ForMember(e => e.PurchaseDate, o => o.MapFrom(src => src.purchase_date))
@@ -45,23 +43,6 @@ namespace CashTrack.Helpers
                 .ForMember(t => t.Id, o => o.MapFrom(src => src.id))
                 .ForMember(t => t.TagName, o => o.MapFrom(src => src.tag_name))
                 .ReverseMap();
-
-            CreateMap<Merchants, Merchant>()
-                .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
-                .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
-                .ForMember(m => m.City, o => o.MapFrom(src => src.city))
-                .ForMember(m => m.IsOnline, o => o.MapFrom(src => src.is_online))
-                .ReverseMap();
-
-            CreateMap<AddEditMerchant, Merchants>()
-                .ForMember(m => m.id, o => o.MapFrom(src => src.Id))
-                .ForMember(m => m.name, o => o.MapFrom(src => src.Name))
-                .ForMember(m => m.is_online, o => o.MapFrom(src => src.IsOnline))
-                .ForMember(m => m.city, o => o.MapFrom(src => src.City))
-                .ForMember(m => m.state, o => o.MapFrom(src => src.State))
-                .ForMember(m => m.notes, o => o.MapFrom(src => src.Notes))
-                .ReverseMap();
         }
-
     }
 }

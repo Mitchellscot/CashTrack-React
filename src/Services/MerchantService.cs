@@ -7,7 +7,6 @@ using CashTrack.Models.MerchantModels;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Repositories.SubCategoriesRepository.cs;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,6 +14,14 @@ using System.Threading.Tasks;
 
 namespace CashTrack.Services.MerchantService
 {
+    public interface IMerchantService
+    {
+        Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
+        Task<MerchantDetail> GetMerchantDetailAsync(int id);
+        Task<Merchants> CreateMerchantAsync(AddEditMerchant request);
+        Task<bool> UpdateMerchantAsync(AddEditMerchant request);
+        Task<bool> DeleteMerchantAsync(int id);
+    }
     public class MerchantService : IMerchantService
     {
         private readonly IMapper _mapper;
@@ -41,7 +48,7 @@ namespace CashTrack.Services.MerchantService
 
             var count = await _merchantRepo.GetCountOfMerchants(predicate);
 
-            var merchantViewModels = merchantEntities.Select(m => new Merchant
+            var merchantViewModels = merchantEntities.Select(m => new MerchantListItem
             {
                 Id = m.id,
                 Name = m.name,
@@ -172,6 +179,27 @@ namespace CashTrack.Services.MerchantService
             var merchant = await _merchantRepo.FindById(id);
 
             return await _merchantRepo.Delete(merchant);
+        }
+    }
+    public class MerchantMapperProfile : Profile
+    {
+        public MerchantMapperProfile()
+        {
+            CreateMap<Merchants, MerchantListItem>()
+                .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
+                .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
+                .ForMember(m => m.City, o => o.MapFrom(src => src.city))
+                .ForMember(m => m.IsOnline, o => o.MapFrom(src => src.is_online))
+                .ReverseMap();
+
+            CreateMap<AddEditMerchant, Merchants>()
+                .ForMember(m => m.id, o => o.MapFrom(src => src.Id))
+                .ForMember(m => m.name, o => o.MapFrom(src => src.Name))
+                .ForMember(m => m.is_online, o => o.MapFrom(src => src.IsOnline))
+                .ForMember(m => m.city, o => o.MapFrom(src => src.City))
+                .ForMember(m => m.state, o => o.MapFrom(src => src.State))
+                .ForMember(m => m.notes, o => o.MapFrom(src => src.Notes))
+                .ReverseMap();
         }
     }
 }
