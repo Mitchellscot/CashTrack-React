@@ -6,200 +6,198 @@ using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.MerchantRepository;
-using CashTrack.Repositories.SubCategoriesRepository.cs;
+using CashTrack.Repositories.SubCategoriesRepository;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CashTrack.Services.MerchantService
+namespace CashTrack.Services.MerchantService;
+public interface IMerchantService
 {
-    public interface IMerchantService
+    Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
+    Task<MerchantDetail> GetMerchantDetailAsync(int id);
+    Task<Merchants> CreateMerchantAsync(AddEditMerchant request);
+    Task<bool> UpdateMerchantAsync(AddEditMerchant request);
+    Task<bool> DeleteMerchantAsync(int id);
+}
+public class MerchantService : IMerchantService
+{
+    private readonly IMapper _mapper;
+    private readonly IMerchantRepository _merchantRepo;
+    private readonly ISubCategoryRepository _subCategoryRepo;
+    private readonly IExpenseRepository _expenseRepo;
+
+    public MerchantService(IMapper mapper, IMerchantRepository merchantRepo, ISubCategoryRepository subCategoryRepo, IExpenseRepository expenseRepo)
     {
-        Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
-        Task<MerchantDetail> GetMerchantDetailAsync(int id);
-        Task<Merchants> CreateMerchantAsync(AddEditMerchant request);
-        Task<bool> UpdateMerchantAsync(AddEditMerchant request);
-        Task<bool> DeleteMerchantAsync(int id);
+        _mapper = mapper;
+        _merchantRepo = merchantRepo;
+        _subCategoryRepo = subCategoryRepo;
+        _expenseRepo = expenseRepo;
     }
-    public class MerchantService : IMerchantService
+
+    public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
     {
-        private readonly IMapper _mapper;
-        private readonly IMerchantRepository _merchantRepo;
-        private readonly ISubCategoryRepository _subCategoryRepo;
-        private readonly IExpenseRepository _expenseRepo;
+        Expression<Func<Merchants, bool>> allMerchants = (Merchants m) => true;
+        Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm.ToLower());
 
-        public MerchantService(IMapper mapper, IMerchantRepository merchantRepo, ISubCategoryRepository subCategoryRepo, IExpenseRepository expenseRepo)
+        var predicate = request.SearchTerm == null ? allMerchants : merchantSearch;
+
+        var merchantEntities = await _merchantRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
+
+        var count = await _merchantRepo.GetCountOfMerchants(predicate);
+
+        var merchantViewModels = merchantEntities.Select(m => new MerchantListItem
         {
-            _mapper = mapper;
-            _merchantRepo = merchantRepo;
-            _subCategoryRepo = subCategoryRepo;
-            _expenseRepo = expenseRepo;
-        }
+            Id = m.id,
+            Name = m.name,
+            City = m.city,
+            IsOnline = m.is_online,
+            NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.merchantid == m.id).Result
+        }).ToArray();
 
-        public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
+        var searchTermResponse = new MerchantModels.Response
         {
-            Expression<Func<Merchants, bool>> allMerchants = (Merchants m) => true;
-            Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm.ToLower());
+            TotalPages = (int)Math.Ceiling(count / request.PageSize),
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            TotalMerchants = await _merchantRepo.GetCountOfMerchants(predicate),
+            Merchants = merchantViewModels
+        };
+        return searchTermResponse;
+    }
 
-            var predicate = request.SearchTerm == null ? allMerchants : merchantSearch;
+    public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
+    {
+        var merchantEntity = await _merchantRepo.FindById(id);
 
-            var merchantEntities = await _merchantRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
+        var merchantExpenses = await _expenseRepo.GetExpensesAndCategories(x => x.merchantid == id);
 
-            var count = await _merchantRepo.GetCountOfMerchants(predicate);
-
-            var merchantViewModels = merchantEntities.Select(m => new MerchantListItem
+        var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
+            .Take(10)
+            .Select(x => new ExpenseQuickView()
             {
-                Id = m.id,
-                Name = m.name,
-                City = m.city,
-                IsOnline = m.is_online,
-                NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.merchantid == m.id).Result
-            }).ToArray();
+                Id = x.id,
+                PurchaseDate = x.purchase_date.Date.ToShortDateString(),
+                Amount = x.amount,
+                SubCategory = x.category == null ? "none" : x.category.sub_category_name
+            }).ToList();
 
-            var searchTermResponse = new MerchantModels.Response
-            {
-                TotalPages = (int)Math.Ceiling(count / request.PageSize),
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize,
-                TotalMerchants = await _merchantRepo.GetCountOfMerchants(predicate),
-                Merchants = merchantViewModels
-            };
-            return searchTermResponse;
-        }
+        var expenseTotals = merchantExpenses.Aggregate(new ExpenseTotalsAggregator(),
+                (acc, e) => acc.Accumulate(e),
+                acc => acc.Compute());
 
-        public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
-        {
-            var merchantEntity = await _merchantRepo.FindById(id);
-
-            var merchantExpenses = await _expenseRepo.GetExpensesAndCategories(x => x.merchantid == id);
-
-            var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
-                .Take(10)
-                .Select(x => new ExpenseQuickView()
+        var expenseStatistics = merchantExpenses.GroupBy(e => e.purchase_date.Year)
+                .Select(g =>
                 {
-                    Id = x.id,
-                    PurchaseDate = x.purchase_date.Date.ToShortDateString(),
-                    Amount = x.amount,
-                    SubCategory = x.category == null ? "none" : x.category.sub_category_name
-                }).ToList();
+                    var results = g.Aggregate(new ExpenseStatisticsAggregator(),
+                        (acc, e) => acc.Accumulate(e),
+                        acc => acc.Compute());
 
-            var expenseTotals = merchantExpenses.Aggregate(new ExpenseTotalsAggregator(),
-                    (acc, e) => acc.Accumulate(e),
-                    acc => acc.Compute());
-
-            var expenseStatistics = merchantExpenses.GroupBy(e => e.purchase_date.Year)
-                    .Select(g =>
+                    return new AnnualExpenseStatistics()
                     {
-                        var results = g.Aggregate(new ExpenseStatisticsAggregator(),
-                            (acc, e) => acc.Accumulate(e),
-                            acc => acc.Compute());
+                        Year = g.Key,
+                        Average = results.Average,
+                        Min = results.Min,
+                        Max = results.Max,
+                        Total = results.Total,
+                        Count = results.Count
+                    };
+                }).OrderBy(x => x.Year).ToList();
 
-                        return new AnnualExpenseStatistics()
-                        {
-                            Year = g.Key,
-                            Average = results.Average,
-                            Min = results.Min,
-                            Max = results.Max,
-                            Total = results.Total,
-                            Count = results.Count
-                        };
-                    }).OrderBy(x => x.Year).ToList();
+        var subCategories = await _subCategoryRepo.Find(x => true);
 
-            var subCategories = await _subCategoryRepo.GetAllSubCategoriesAsync();
-
-            var merchantExpenseCategories = subCategories.GroupJoin(merchantExpenses,
-                c => c.id, e => e.category.id, (c, g) => new
-                {
-                    Category = c.sub_category_name,
-                    Expenses = g
-                }).Select(x => new
-                {
-                    Category = x.Category,
-                    Count = x.Expenses.Count()
-                }).Where(x => x.Count > 0).OrderByDescending(x => x.Count).ToDictionary(k => k.Category, v => v.Count);
-
-            var merchantExpenseAmounts = subCategories.GroupJoin(merchantExpenses,
-                c => c.id, e => e.category.id, (c, g) => new
-                {
-                    Category = c.sub_category_name,
-                    Expenses = g
-                }).Select(x => new
-                {
-                    Category = x.Category,
-                    Sum = x.Expenses.Sum(e => e.amount)
-                }).Where(x => x.Sum > 0).OrderByDescending(x => x.Sum).ToDictionary(k => k.Category, v => v.Sum);
-
-            var mostUsedCategory = merchantExpenseCategories.FirstOrDefault().Key;
-
-            var merchantDetail = new MerchantDetail()
+        var merchantExpenseCategories = subCategories.GroupJoin(merchantExpenses,
+            c => c.id, e => e.category.id, (c, g) => new
             {
-                Id = merchantEntity.id,
-                Name = merchantEntity.name,
-                SuggestOnLookup = merchantEntity.suggest_on_lookup,
-                City = merchantEntity.city,
-                State = merchantEntity.state,
-                Notes = merchantEntity.notes,
-                IsOnline = merchantEntity.is_online,
-                ExpenseTotals = expenseTotals,
-                MostUsedCategory = mostUsedCategory,
-                AnnualExpenseStatistics = expenseStatistics,
-                PurchaseCategoryOccurances = merchantExpenseCategories,
-                PurchaseCategoryTotals = merchantExpenseAmounts,
-                RecentExpenses = recentExpenses
-            };
+                Category = c.sub_category_name,
+                Expenses = g
+            }).Select(x => new
+            {
+                Category = x.Category,
+                Count = x.Expenses.Count()
+            }).Where(x => x.Count > 0).OrderByDescending(x => x.Count).ToDictionary(k => k.Category, v => v.Count);
 
-            return merchantDetail;
-        }
+        var merchantExpenseAmounts = subCategories.GroupJoin(merchantExpenses,
+            c => c.id, e => e.category.id, (c, g) => new
+            {
+                Category = c.sub_category_name,
+                Expenses = g
+            }).Select(x => new
+            {
+                Category = x.Category,
+                Sum = x.Expenses.Sum(e => e.amount)
+            }).Where(x => x.Sum > 0).OrderByDescending(x => x.Sum).ToDictionary(k => k.Category, v => v.Sum);
 
-        public async Task<Merchants> CreateMerchantAsync(AddEditMerchant request)
+        var mostUsedCategory = merchantExpenseCategories.FirstOrDefault().Key;
+
+        var merchantDetail = new MerchantDetail()
         {
-            var merchants = await _merchantRepo.Find(x => true);
-            if (merchants.Any(x => x.name == request.Name))
-                throw new DuplicateMerchantNameException(request.Name);
+            Id = merchantEntity.id,
+            Name = merchantEntity.name,
+            SuggestOnLookup = merchantEntity.suggest_on_lookup,
+            City = merchantEntity.city,
+            State = merchantEntity.state,
+            Notes = merchantEntity.notes,
+            IsOnline = merchantEntity.is_online,
+            ExpenseTotals = expenseTotals,
+            MostUsedCategory = mostUsedCategory,
+            AnnualExpenseStatistics = expenseStatistics,
+            PurchaseCategoryOccurances = merchantExpenseCategories,
+            PurchaseCategoryTotals = merchantExpenseAmounts,
+            RecentExpenses = recentExpenses
+        };
 
-            var merchantEntity = _mapper.Map<Merchants>(request);
-
-            //I manually set the id here because when I use the test database it messes with the id autogeneration
-            merchantEntity.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
-
-            if (!await _merchantRepo.Create(merchantEntity))
-                throw new Exception("Couldn't save merchant to the database");
-
-            return merchantEntity;
-        }
-        public async Task<bool> UpdateMerchantAsync(AddEditMerchant request)
-        {
-            var merchant = _mapper.Map<Merchants>(request);
-            return await _merchantRepo.Update(merchant);
-        }
-
-        public async Task<bool> DeleteMerchantAsync(int id)
-        {
-            var merchant = await _merchantRepo.FindById(id);
-
-            return await _merchantRepo.Delete(merchant);
-        }
+        return merchantDetail;
     }
-    public class MerchantMapperProfile : Profile
-    {
-        public MerchantMapperProfile()
-        {
-            CreateMap<Merchants, MerchantListItem>()
-                .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
-                .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
-                .ForMember(m => m.City, o => o.MapFrom(src => src.city))
-                .ForMember(m => m.IsOnline, o => o.MapFrom(src => src.is_online))
-                .ReverseMap();
 
-            CreateMap<AddEditMerchant, Merchants>()
-                .ForMember(m => m.id, o => o.MapFrom(src => src.Id))
-                .ForMember(m => m.name, o => o.MapFrom(src => src.Name))
-                .ForMember(m => m.is_online, o => o.MapFrom(src => src.IsOnline))
-                .ForMember(m => m.city, o => o.MapFrom(src => src.City))
-                .ForMember(m => m.state, o => o.MapFrom(src => src.State))
-                .ForMember(m => m.notes, o => o.MapFrom(src => src.Notes))
-                .ReverseMap();
-        }
+    public async Task<Merchants> CreateMerchantAsync(AddEditMerchant request)
+    {
+        var merchants = await _merchantRepo.Find(x => true);
+        if (merchants.Any(x => x.name == request.Name))
+            throw new DuplicateMerchantNameException(request.Name);
+
+        var merchantEntity = _mapper.Map<Merchants>(request);
+
+        //I manually set the id here because when I use the test database it messes with the id autogeneration
+        merchantEntity.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
+
+        if (!await _merchantRepo.Create(merchantEntity))
+            throw new Exception("Couldn't save merchant to the database");
+
+        return merchantEntity;
+    }
+    public async Task<bool> UpdateMerchantAsync(AddEditMerchant request)
+    {
+        var merchant = _mapper.Map<Merchants>(request);
+        return await _merchantRepo.Update(merchant);
+    }
+
+    public async Task<bool> DeleteMerchantAsync(int id)
+    {
+        var merchant = await _merchantRepo.FindById(id);
+
+        return await _merchantRepo.Delete(merchant);
+    }
+}
+public class MerchantMapperProfile : Profile
+{
+    public MerchantMapperProfile()
+    {
+        CreateMap<Merchants, MerchantListItem>()
+            .ForMember(m => m.Id, o => o.MapFrom(src => src.id))
+            .ForMember(m => m.Name, o => o.MapFrom(src => src.name))
+            .ForMember(m => m.City, o => o.MapFrom(src => src.city))
+            .ForMember(m => m.IsOnline, o => o.MapFrom(src => src.is_online))
+            .ReverseMap();
+
+        CreateMap<AddEditMerchant, Merchants>()
+            .ForMember(m => m.id, o => o.MapFrom(src => src.Id))
+            .ForMember(m => m.name, o => o.MapFrom(src => src.Name))
+            .ForMember(m => m.is_online, o => o.MapFrom(src => src.IsOnline))
+            .ForMember(m => m.city, o => o.MapFrom(src => src.City))
+            .ForMember(m => m.state, o => o.MapFrom(src => src.State))
+            .ForMember(m => m.notes, o => o.MapFrom(src => src.Notes))
+            .ReverseMap();
     }
 }

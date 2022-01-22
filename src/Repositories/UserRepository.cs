@@ -1,83 +1,74 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
-using CashTrack.Repositories;
 using CashTrack.Data;
 using CashTrack.Helpers.Exceptions;
 using System.Linq.Expressions;
 
-namespace CashTrack.Repositories.UserRepository
+namespace CashTrack.Repositories.UserRepository;
+
+public interface IUserRepository : IRepository<Users>
 {
-    public interface IUserRepository : IRepository<Users>
-    {
 
+}
+public class UserRepository : IUserRepository
+{
+    private readonly AppDbContext _context;
+
+    public UserRepository(AppDbContext context)
+    {
+        _context = context;
     }
-    public class UserRepository : IUserRepository
+    public async Task<Users[]> Find(Expression<Func<Users, bool>> predicate)
     {
-        private readonly AppDbContext _context;
+        try
+        {
+            var users = await _context.Users.Where(predicate).ToArrayAsync();
+            return users;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<Users> FindById(int id)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.id == id);
+            if (user == null)
+            {
+                throw new UserNotFoundException(id.ToString());
+            }
 
-        public UserRepository(AppDbContext context)
-        {
-            _context = context;
+            return user;
         }
-        public async Task<Users[]> Find(Expression<Func<Users, bool>> predicate)
+        catch (Exception)
         {
-            try
-            {
-                var users = await _context.Users.Where(predicate).ToArrayAsync();
-                return users;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<Users> FindById(int id)
-        {
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.id == id);
-                if (user == null)
-                {
-                    throw new UserNotFoundException(id.ToString());
-                }
 
-                return user;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            throw;
         }
-        public Task<bool> Create(Users entity)
-        {
-            //not creating users
-            throw new NotImplementedException();
-        }
-        public Task<bool> Delete(Users entity)
-        {
-            //not deleting
-            throw new NotImplementedException();
-        }
-        public Task<Users[]> FindWithPagination(Expression<Func<Users, bool>> predicate, int pageNumber, int pageSize)
-        {
-            //not paginating users
-            throw new NotImplementedException();
-        }
-        public Task<bool> Update(Users entity)
-        {
-            //might add this later, change password, email, etc.
-            throw new NotImplementedException();
-        }
+    }
+    public Task<bool> Create(Users entity)
+    {
+        //not creating users
+        throw new NotImplementedException();
+    }
+    public Task<bool> Delete(Users entity)
+    {
+        //not deleting
+        throw new NotImplementedException();
+    }
+    public Task<Users[]> FindWithPagination(Expression<Func<Users, bool>> predicate, int pageNumber, int pageSize)
+    {
+        //not paginating users
+        throw new NotImplementedException();
+    }
+    public Task<bool> Update(Users entity)
+    {
+        //might add this later, change password, email, etc.
+        throw new NotImplementedException();
     }
 }

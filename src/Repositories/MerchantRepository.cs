@@ -7,111 +7,109 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CashTrack.Repositories.MerchantRepository
+namespace CashTrack.Repositories.MerchantRepository;
+public interface IMerchantRepository : IRepository<Merchants>
 {
-    public interface IMerchantRepository : IRepository<Merchants>
+    Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
+}
+public class MerchantRepository : IMerchantRepository
+{
+    private readonly AppDbContext _context;
+    public MerchantRepository(AppDbContext context)
     {
-        Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
+        _context = context;
     }
-    public class MerchantRepository : IMerchantRepository
+    public async Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate)
     {
-        private readonly AppDbContext _context;
-        public MerchantRepository(AppDbContext context)
+        try
         {
-            _context = context;
+            return (decimal)await _context.Merchants.CountAsync(predicate);
         }
-        public async Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate)
+        catch (Exception)
         {
-            try
-            {
-                return (decimal)await _context.Merchants.CountAsync(predicate);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
-        public async Task<Merchants> FindById(int id)
+    }
+    public async Task<Merchants> FindById(int id)
+    {
+        try
         {
-            try
-            {
-                var merchant = await _context.Merchants.FindAsync(id);
-                if (merchant == null)
-                    throw new MerchantNotFoundException(id.ToString());
+            var merchant = await _context.Merchants.FindAsync(id);
+            if (merchant == null)
+                throw new MerchantNotFoundException(id.ToString());
 
-                return merchant;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return merchant;
         }
-        public async Task<Merchants[]> Find(Expression<Func<Merchants, bool>> predicate)
+        catch (Exception)
         {
-            try
-            {
-                var merchant = await _context.Merchants.Where(predicate).OrderBy(x => x.name).ToArrayAsync();
+            throw;
+        }
+    }
+    public async Task<Merchants[]> Find(Expression<Func<Merchants, bool>> predicate)
+    {
+        try
+        {
+            var merchant = await _context.Merchants.Where(predicate).OrderBy(x => x.name).ToArrayAsync();
 
-                return merchant;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return merchant;
         }
-        public async Task<Merchants[]> FindWithPagination(Expression<Func<Merchants, bool>> predicate, int pageNumber, int pageSize)
+        catch (Exception)
         {
-            try
-            {
-                var merchants = await _context.Merchants
-                    .Where(predicate)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .OrderBy(x => x.name)
-                    .ToArrayAsync();
-                return merchants;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
-        public async Task<bool> Create(Merchants entity)
+    }
+    public async Task<Merchants[]> FindWithPagination(Expression<Func<Merchants, bool>> predicate, int pageNumber, int pageSize)
+    {
+        try
         {
-            try
-            {
-                await _context.Merchants.AddAsync(entity);
-                return await (_context.SaveChangesAsync()) > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var merchants = await _context.Merchants
+                .Where(predicate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .OrderBy(x => x.name)
+                .ToArrayAsync();
+            return merchants;
         }
-        public async Task<bool> Update(Merchants entity)
+        catch (Exception)
         {
-            try
-            {
-                var contextAttachedEntity = _context.Merchants.Attach(entity);
-                contextAttachedEntity.State = EntityState.Modified;
-                return await (_context.SaveChangesAsync()) > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
-        public async Task<bool> Delete(Merchants entity)
+    }
+    public async Task<bool> Create(Merchants entity)
+    {
+        try
         {
-            try
-            {
-                _context.Remove(entity);
-                return await (_context.SaveChangesAsync()) > 0;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await _context.Merchants.AddAsync(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<bool> Update(Merchants entity)
+    {
+        try
+        {
+            var contextAttachedEntity = _context.Merchants.Attach(entity);
+            contextAttachedEntity.State = EntityState.Modified;
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<bool> Delete(Merchants entity)
+    {
+        try
+        {
+            _context.Remove(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
         }
     }
 }

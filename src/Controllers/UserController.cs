@@ -27,12 +27,12 @@ namespace CashTrack.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<User.Response>> GetUserById(int id)
+        public async Task<ActionResult<UserModels.Response>> GetUserById(int id)
         {
             try
             {
                 var user = await _userService.GetUserByIdAsync(id);
-                return Ok(_mapper.Map<User.Response>(user));
+                return Ok(_mapper.Map<UserModels.Response>(user));
             }
             catch (UserNotFoundException ex)
             {
@@ -45,12 +45,12 @@ namespace CashTrack.Controllers
         }
         [HttpGet("all")]
         [Authorize]
-        public async Task<ActionResult<User.Response[]>> GetAllUsers()
+        public async Task<ActionResult<UserModels.Response[]>> GetAllUsers()
         {
             try
             {
                 var users = await _userService.GetAllUsersAsync();
-                return Ok(_mapper.Map<User.Response[]>(users));
+                return Ok(_mapper.Map<UserModels.Response[]>(users));
             }
             catch (Exception ex)
             {

@@ -56,10 +56,10 @@ namespace CashTrack.IntegrationTests
 
         private async Task<string> GetTokenForAuthenticatedRoutes(string user, string password)
         {
-            var request = new Authentication.Request(user, password);
+            var request = new AuthenticationModels.Request(user, password);
             var response = await SendPostRequestAsync("/api/authenticate", request);
             var checkthisout = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync()).Token;
+            return JsonConvert.DeserializeObject<AuthenticationModels.Response>(await response.Content.ReadAsStringAsync()).Token;
 
         }
 

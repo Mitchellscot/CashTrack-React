@@ -50,7 +50,7 @@ namespace CashTrack.Controllers
         //api/expense/{id}
         //returns one expense
         [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseTransaction>> GetAnExpenseById(int id)
+        public async Task<ActionResult<ExpenseListItem>> GetAnExpenseById(int id)
         {
             try
             {

@@ -13,11 +13,10 @@ using Microsoft.AspNetCore.Mvc;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.UserRepository;
 using CashTrack.Repositories.TagRepository;
-using CashTrack.Services.AuthenticationServices;
+using CashTrack.Services.AuthenticationService;
 using Microsoft.Extensions.Logging;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Services.MerchantService;
-using CashTrack.Repositories.SubCategoriesRepository.cs;
 using CashTrack.Services.ExpenseService;
 using CashTrack.Services.UserService;
 
@@ -77,7 +76,7 @@ namespace CashTrack
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+            //services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // In production, the React files will be served from this directory

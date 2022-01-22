@@ -37,7 +37,7 @@ namespace CashTrack.IntegrationTests
             var request = GetAuthenticationRequest();
             var response = await _fixture.SendPostRequestAsync(path, request);
 
-            var responseBody = JsonConvert.DeserializeObject<Authentication.Response>(await response.Content.ReadAsStringAsync());
+            var responseBody = JsonConvert.DeserializeObject<AuthenticationModels.Response>(await response.Content.ReadAsStringAsync());
 
             response.EnsureSuccessStatusCode();
             responseBody.Token.ShouldNotBeEmpty();
@@ -96,9 +96,9 @@ namespace CashTrack.IntegrationTests
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
 
-        private Authentication.Request GetAuthenticationRequest()
+        private AuthenticationModels.Request GetAuthenticationRequest()
         { 
-            return new Authentication.Request(_testSettings.Value.Username, _testSettings.Value.Password);
+            return new AuthenticationModels.Request(_testSettings.Value.Username, _testSettings.Value.Password);
         }
 
         private void PrintRequestAndResponse(object request, object response)
