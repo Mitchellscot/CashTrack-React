@@ -20,7 +20,7 @@ namespace CashTrack.Repositories.ExpenseRepository
         {
             _context = context;
         }
-        public async Task<Expenses> GetExpenseById(int id)
+        public async Task<Expenses> FindById(int id)
         {
             try
             {
@@ -88,10 +88,6 @@ namespace CashTrack.Repositories.ExpenseRepository
             {
                 throw;
             }
-        }
-        public Task<Expenses[]> Find(Expression<Func<Expenses, bool>> predicate)
-        {
-            throw new NotImplementedException();
         }
         public async Task<bool> Create(Expenses entity)
         {

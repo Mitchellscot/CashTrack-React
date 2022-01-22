@@ -5,7 +5,6 @@ using CashTrack.Models.ExpenseModels;
 using CashTrack.Repositories.ExpenseRepository;
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.ExpenseService
@@ -22,8 +21,8 @@ namespace CashTrack.Services.ExpenseService
         }
         public async Task<ExpenseTransaction> GetExpenseByIdAsync(int id)
         {
-            var singleExpense = await _expenseRepo.GetExpenseById(id);
-
+            //This will be changed to offer more detail, it will be a big method
+            var singleExpense = await _expenseRepo.FindById(id);
             return _mapper.Map<ExpenseTransaction>(singleExpense);
         }
         public async Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request)
@@ -51,47 +50,36 @@ namespace CashTrack.Services.ExpenseService
             return BuildResponse(expenses, count, request.PageNumber, request.PageSize);
 
         }
-        public async Task<Expenses> CreateUpdateExpenseAsync(AddEditExpense request)
+        public async Task<Expenses> CreateExpenseAsync(AddEditExpense request)
         {
+            if (request.Id != null)
+                throw new ArgumentException("Request must not contain an id in order to create an expense.");
+
             var expense = _mapper.Map<Expenses>(request);
-
-            var success = false;
-            if (request.Id == null)
-            {
-                //I manually set the id here because when I use the test database it messes with the id autogeneration
-                expense.id = ((int)await _expenseRepo.GetCountOfExpenses(x => true)) + 1;
-                success = await _expenseRepo.Create(expense);
-            }
-            else
-            {
-                success = await _expenseRepo.Update(expense);
-            }
-
+            //I manually set the id here because when I use the test database it messes with the id autogeneration
+            expense.id = ((int)await _expenseRepo.GetCountOfExpenses(x => true)) + 1;
+            var success = await _expenseRepo.Create(expense);
             if (!success)
                 throw new Exception("Couldn't save expense to the database.");
 
             return expense;
         }
+        public async Task<bool> UpdateExpenseAsync(AddEditExpense request)
+        {
+            if (request.Id == null)
+                throw new ArgumentException("Need an id to update an expense");
+
+            var expense = _mapper.Map<Expenses>(request);
+            return await _expenseRepo.Update(expense);
+        }
         public async Task<bool> DeleteExpenseAsync(int id)
         {
-            var expense = await _expenseRepo.GetExpenseById(id);
+            var expense = await _expenseRepo.FindById(id);
 
             return await _expenseRepo.Delete(expense);
         }
 
         /***** HELPERS *****/
-        internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, int pageNumber, int pageSize)
-        {
-            var response = new ExpenseModels.Response
-            {
-                TotalPages = (int)Math.Ceiling(countOfExpenses / (decimal)pageSize),
-                PageSize = pageSize,
-                TotalExpenses = (int)countOfExpenses,
-                PageNumber = pageNumber,
-                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
-            };
-            return response;
-        }
         internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseModels.Request request) => request.DateOptions switch
         {
             //1
@@ -133,6 +121,18 @@ namespace CashTrack.Services.ExpenseService
             _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
         };
+        internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, int pageNumber, int pageSize)
+        {
+            var response = new ExpenseModels.Response
+            {
+                TotalPages = (int)Math.Ceiling(countOfExpenses / (decimal)pageSize),
+                PageSize = pageSize,
+                TotalExpenses = (int)countOfExpenses,
+                PageNumber = pageNumber,
+                Expenses = _mapper.Map<ExpenseTransaction[]>(expenses)
+            };
+            return response;
+        }
         internal (DateTimeOffset startDate, DateTimeOffset endDate) GetMonthDatesFromDate(DateTimeOffset date)
         {
             var beginingOfMonth = new DateTimeOffset(

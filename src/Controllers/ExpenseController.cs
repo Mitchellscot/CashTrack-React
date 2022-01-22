@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
-using CashTrack.Repositories.ExpenseRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;
@@ -113,7 +112,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                var result = await _expenseService.CreateExpenseAsync(request);
                 var expense = _mapper.Map<AddEditExpense>(result);
                 var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{expense.Id.Value}");
                 return Created(location, expense);
@@ -131,7 +130,7 @@ namespace CashTrack.Controllers
 
             try
             {
-                var result = await _expenseService.CreateUpdateExpenseAsync(request);
+                var result = await _expenseService.UpdateExpenseAsync(request);
                 return Ok();
             }
             catch (Exception ex)
