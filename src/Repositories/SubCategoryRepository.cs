@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CashTrack.Repositories.SubCategoriesRepository;
 
-public interface ISubCategoryRepository : IRepository<ExpenseSubCategories>
+public interface ISubCategoryRepository : IRepository<SubCategories>
 {
 }
 public class SubCategoryRepository : ISubCategoryRepository
@@ -19,21 +19,21 @@ public class SubCategoryRepository : ISubCategoryRepository
         _context = context;
     }
 
-    public Task<bool> Create(ExpenseSubCategories entity)
+    public Task<bool> Create(SubCategories entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Delete(ExpenseSubCategories entity)
+    public Task<bool> Delete(SubCategories entity)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ExpenseSubCategories[]> Find(Expression<Func<ExpenseSubCategories, bool>> predicate)
+    public async Task<SubCategories[]> Find(Expression<Func<SubCategories, bool>> predicate)
     {
         try
         {
-            return await _context.ExpenseSubCategories.Where(predicate).ToArrayAsync();
+            return await _context.SubCategories.Where(predicate).ToArrayAsync();
         }
         catch (Exception)
         {
@@ -41,17 +41,17 @@ public class SubCategoryRepository : ISubCategoryRepository
         }
     }
 
-    public Task<ExpenseSubCategories> FindById(int id)
+    public Task<SubCategories> FindById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ExpenseSubCategories[]> FindWithPagination(Expression<Func<ExpenseSubCategories, bool>> predicate, int pageNumber, int pageSize)
+    public Task<SubCategories[]> FindWithPagination(Expression<Func<SubCategories, bool>> predicate, int pageNumber, int pageSize)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> Update(ExpenseSubCategories entity)
+    public Task<bool> Update(SubCategories entity)
     {
         throw new NotImplementedException();
     }

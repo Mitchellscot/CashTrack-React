@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashTrack.Data.Entities
 {
-    [Table("expense_main_categories")]
-    public class ExpenseMainCategories : IEntity
+    [Table("main_categories")]
+    public class MainCategories : IEntity
     {
         public int id { get; set; }
         [StringLength(50)]
         [Required]
         public string main_category_name { get; set; }
-        public ICollection<ExpenseSubCategories> sub_categories { get; set; }
+        public ICollection<SubCategories> sub_categories { get; set; }
     }
 }

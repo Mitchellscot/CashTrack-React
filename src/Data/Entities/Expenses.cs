@@ -25,7 +25,7 @@ namespace CashTrack.Data.Entities
         [StringLength(255)]
         public string? notes { get; set; }
         public int? categoryid { get; set; }
-        public ExpenseSubCategories? category { get; set; }
+        public SubCategories? category { get; set; }
         public bool exclude_from_statistics { get; set; }
         public ICollection<ExpenseTags>? expense_tags { get; set; }
 

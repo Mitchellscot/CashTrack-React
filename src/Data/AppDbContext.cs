@@ -7,12 +7,12 @@ namespace CashTrack.Data
 {
     public class AppDbContext : DbContext
     {
-        
+
         public DbSet<Users> Users { get; set; }
         public DbSet<Expenses> Expenses { get; set; }
         public DbSet<Incomes> Incomes { get; set; }
-        public DbSet<ExpenseMainCategories> ExpenseMainCategories { get; set; }
-        public DbSet<ExpenseSubCategories> ExpenseSubCategories { get; set; }
+        public DbSet<MainCategories> MainCategories { get; set; }
+        public DbSet<SubCategories> SubCategories { get; set; }
         public DbSet<Merchants> Merchants { get; set; }
         public DbSet<Tags> Tags { get; set; }
         public DbSet<IncomeSources> IncomeSources { get; set; }
@@ -42,8 +42,8 @@ namespace CashTrack.Data
                 .WithMany(e => e.expense_tags)
                 .HasForeignKey(et => et.tag_id);
 
-            mb.Entity<ExpenseMainCategories>().HasData(CsvParser.ProcessMainCategoryFile(csvFileDirectory + "expense-main-categories.csv"));
-            mb.Entity<ExpenseSubCategories>().HasData(CsvParser.ProcessSubCategoryFile(csvFileDirectory + "expense-sub-categories.csv"));
+            mb.Entity<MainCategories>().HasData(CsvParser.ProcessMainCategoryFile(csvFileDirectory + "main-categories.csv"));
+            mb.Entity<SubCategories>().HasData(CsvParser.ProcessSubCategoryFile(csvFileDirectory + "sub-categories.csv"));
             mb.Entity<Merchants>().HasData(CsvParser.ProcessMerchantFile(csvFileDirectory + "merchants.csv"));
             mb.Entity<Expenses>().HasData(CsvParser.ProcessExpenseFile(csvFileDirectory + "expenses.csv"));
             mb.Entity<IncomeCategories>().HasData(CsvParser.ProcessIncomeCategoryFile(csvFileDirectory + "income-categories.csv"));

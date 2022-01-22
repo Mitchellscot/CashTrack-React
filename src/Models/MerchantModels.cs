@@ -1,25 +1,8 @@
 ﻿using System.Collections.Generic;
 using CashTrack.Helpers.Aggregators;
 using CashTrack.Models.ExpenseModels;
-using FluentValidation;
 
 namespace CashTrack.Models.MerchantModels;
-
-public class MerchantValidator : AbstractValidator<MerchantModels.Request>
-{
-    public MerchantValidator()
-    {
-        RuleFor(x => x.PageNumber).GreaterThan(0);
-        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
-    }
-}
-public class AddEditMerchantValidator : AbstractValidator<AddEditMerchant>
-{
-    public AddEditMerchantValidator()
-    {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-    }
-}
 
 public record MerchantModels
 {
