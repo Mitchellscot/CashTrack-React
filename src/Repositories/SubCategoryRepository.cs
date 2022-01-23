@@ -38,6 +38,7 @@ public class SubCategoryRepository : ISubCategoryRepository
         try
         {
             var category = await _context.SubCategories
+                .Where(x => x.id == id)
                 .Include(x => x.main_category)
                 .SingleOrDefaultAsync();
             if (category == null)

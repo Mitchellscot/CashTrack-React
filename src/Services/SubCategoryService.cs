@@ -16,7 +16,7 @@ public interface ISubCategoryService
 {
     Task<SubCategoryModels.Response> GetSubCategoriesAsync(SubCategoryModels.Request request);
     Task<SubCategoryDetail> GetSubCategoryDetailsAsync(int id);
-    Task<SubCategories> CreateSubCategoryAsync(AddEditSubCategory request);
+    Task<AddEditSubCategory> CreateSubCategoryAsync(AddEditSubCategory request);
     Task<bool> UpdateSubCategoryAsync(AddEditSubCategory request);
     Task<bool> DeleteSubCategoryAsync(int id);
 }
@@ -56,7 +56,7 @@ public class SubCategoryService : ISubCategoryService
         };
         return response;
     }
-    public async Task<SubCategories> CreateSubCategoryAsync(AddEditSubCategory request)
+    public async Task<AddEditSubCategory> CreateSubCategoryAsync(AddEditSubCategory request)
     {
         var categories = await _subCategoryRepo.Find(x => true);
         if (categories.Any(x => x.sub_category_name == request.Name))
@@ -64,13 +64,22 @@ public class SubCategoryService : ISubCategoryService
 
         var subCategoryEntity = _mapper.Map<SubCategories>(request);
 
+        subCategoryEntity.id = (int)await _subCategoryRepo.GetCountOfSubCategories(x => true) + 1;
+
         if (!await _subCategoryRepo.Create(subCategoryEntity))
             throw new Exception("Couldn't save category to the database");
 
-        return subCategoryEntity;
+        //Here i am setting the id and then returning addedit because I'm lazy and returning the entity causes json circular reference issues.
+        request.Id = subCategoryEntity.id;
+
+        return request;
     }
     public async Task<bool> UpdateSubCategoryAsync(AddEditSubCategory request)
     {
+        var categories = await _subCategoryRepo.Find(x => x.sub_category_name == request.Name);
+        if (categories.Any())
+            throw new DuplicateCategoryNameException(request.Name);
+
         var category = _mapper.Map<SubCategories>(request);
         return await _subCategoryRepo.Update(category);
     }

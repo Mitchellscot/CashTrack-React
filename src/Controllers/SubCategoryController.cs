@@ -1,5 +1,8 @@
-﻿using CashTrack.Models.SubCategoryModels;
+﻿using CashTrack.Data.Entities;
+using CashTrack.Helpers.Exceptions;
+using CashTrack.Models.SubCategoryModels;
 using CashTrack.Services.SubCategoryService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -25,7 +28,67 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message.ToString() + ex.InnerException.ToString() });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult<AddEditSubCategory>> CreateSubCategory(AddEditSubCategory request)
+        {
+            if (request.Id != null)
+                return BadRequest("Cannot have an ID when creating a sub category");
+
+            try
+            {
+                var result = await _subCategoryService.CreateSubCategoryAsync(request);
+                return CreatedAtAction($"detail", new {  id = result.Id }, result);
+            }
+            catch (DuplicateCategoryNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
+
+            }
+        }
+        [HttpPut]
+        public async Task<ActionResult> UpdateSubCategory(AddEditSubCategory request)
+        {
+            try
+            {
+                if (!await _subCategoryService.UpdateSubCategoryAsync(request))
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to update category");
+
+                return Ok();
+            }
+            catch (DuplicateCategoryNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteSubCategory(int id)
+        {
+            try
+            {
+                var result = await _subCategoryService.DeleteSubCategoryAsync(id);
+                if (!result)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Unable to delete category");
+
+                return Ok();
+            }
+            catch (CategoryNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
     }

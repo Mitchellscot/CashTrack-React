@@ -153,14 +153,14 @@ public class MerchantService : IMerchantService
 
     public async Task<Merchants> CreateMerchantAsync(AddEditMerchant request)
     {
-        var merchants = await _merchantRepo.Find(x => true);
-        if (merchants.Any(x => x.name == request.Name))
+        var merchants = await _merchantRepo.Find(x => x.name == request.Name);
+        if (merchants.Any())
             throw new DuplicateMerchantNameException(request.Name);
 
         var merchantEntity = _mapper.Map<Merchants>(request);
 
         //I manually set the id here because when I use the test database it messes with the id autogeneration
-        merchantEntity.id = (merchants.OrderBy(x => x.id).LastOrDefault()).id + 1;
+        merchantEntity.id = (int)await _merchantRepo.GetCountOfMerchants(x => true) + 1;
 
         if (!await _merchantRepo.Create(merchantEntity))
             throw new Exception("Couldn't save merchant to the database");
@@ -169,6 +169,10 @@ public class MerchantService : IMerchantService
     }
     public async Task<bool> UpdateMerchantAsync(AddEditMerchant request)
     {
+        var merchants = await _merchantRepo.Find(x => x.name == request.Name);
+        if (merchants.Any())
+            throw new DuplicateMerchantNameException(request.Name);
+
         var merchant = _mapper.Map<Merchants>(request);
         return await _merchantRepo.Update(merchant);
     }

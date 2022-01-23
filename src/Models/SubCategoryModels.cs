@@ -19,7 +19,7 @@ public record SubCategoryModels
 }
 public record AddEditSubCategory
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public string Name { get; set; }
     public int MainCategoryId { get; set; }
     public string Notes { get; set; }
