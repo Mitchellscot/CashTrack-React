@@ -13,13 +13,13 @@ using System.Net;
 
 namespace CashTrack.IntegrationTests
 {
-    public class ExpenseControllerShould : IClassFixture<TestServerFixture>
+    public class ExpenseEndpointsShould : IClassFixture<TestServerFixture>
     {
         private TestServerFixture _fixture;
         private ITestOutputHelper _output;
         const string path = "/api/expense";
 
-        public ExpenseControllerShould(TestServerFixture fixture, ITestOutputHelper output)
+        public ExpenseEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;

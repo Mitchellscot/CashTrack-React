@@ -20,6 +20,7 @@ using CashTrack.Services.MerchantService;
 using CashTrack.Services.ExpenseService;
 using CashTrack.Services.UserService;
 using CashTrack.Repositories.SubCategoriesRepository;
+using CashTrack.Services.SubCategoryService;
 
 namespace CashTrack
 {
@@ -78,6 +79,7 @@ namespace CashTrack
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+            services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // In production, the React files will be served from this directory

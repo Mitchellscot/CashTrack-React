@@ -2,28 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 using Shouldly;
 using Newtonsoft.Json;
 using System.Net;
-using CashTrack.Data.Entities;
 
 namespace CashTrack.IntegrationTests
 {
-    //all i got for data cleanup right now
-    //select * from merchants where name ilike '%test%';
-    //delete from merchants where name ilike '%test%';
 
-    public class MerchantsControllerShould : IClassFixture<TestServerFixture>
+    public class MerchantsEndpointsShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
         private ITestOutputHelper _output;
         const string path = "api/merchants";
 
-        public MerchantsControllerShould(TestServerFixture fixture, ITestOutputHelper output)
+        public MerchantsEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;

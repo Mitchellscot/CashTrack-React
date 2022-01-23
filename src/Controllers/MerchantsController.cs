@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Services.MerchantService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -15,12 +13,10 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class MerchantsController : ControllerBase
     {
-        private readonly ILogger<MerchantsController> _logger;
         private readonly IMerchantService _merchantService;
 
-        public MerchantsController(ILogger<MerchantsController> logger, IMerchantService merchantService)
+        public MerchantsController(IMerchantService merchantService)
         {
-            _logger = logger;
             _merchantService = merchantService;
         }
         [HttpGet]
@@ -33,7 +29,6 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL MERCHANTS {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
@@ -67,10 +62,6 @@ namespace CashTrack.Controllers
                 return CreatedAtAction("detail", new { id = result.id }, result);
             }
             catch (DuplicateMerchantNameException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
             }
