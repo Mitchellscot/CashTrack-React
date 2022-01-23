@@ -104,3 +104,11 @@ public class SubCategoryValidator : AbstractValidator<SubCategoryModels.Request>
         RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
     }
 }
+
+public class AddEditSubCategoryValidator : AbstractValidator<AddEditSubCategory>
+{
+    public AddEditSubCategoryValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+    }
+}
