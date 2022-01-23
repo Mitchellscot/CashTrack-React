@@ -21,16 +21,6 @@ public class SubCategoryRepository : ISubCategoryRepository
         _context = context;
     }
 
-    public Task<bool> Create(SubCategories entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> Delete(SubCategories entity)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<SubCategories[]> Find(Expression<Func<SubCategories, bool>> predicate)
     {
         try
@@ -92,10 +82,42 @@ public class SubCategoryRepository : ISubCategoryRepository
             throw;
         }
     }
-
-    public Task<bool> Update(SubCategories entity)
+    public async Task<bool> Create(SubCategories entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _context.SubCategories.AddAsync(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<bool> Update(SubCategories entity)
+    {
+        try
+        {
+            var contextAttachedEntity = _context.SubCategories.Attach(entity);
+            contextAttachedEntity.State = EntityState.Modified;
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<bool> Delete(SubCategories entity)
+    {
+        try
+        {
+            _context.Remove(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }
 
