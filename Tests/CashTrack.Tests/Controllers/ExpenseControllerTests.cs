@@ -1,25 +1,24 @@
 ﻿using AutoMapper;
-using CashTrack.Controllers;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Services.ExpenseService;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
-
+using CashTrack.Controllers;
 
 namespace CashTrack.Tests.Controllers
 {
-    public class ExpenseController
+    public class ExpenseControllerTests
     {
         private readonly CashTrack.Controllers.ExpenseController _sut;
         public readonly IMapper _mapper;
         public readonly Mock<IExpenseService> _service;
 
-        public ExpenseController()
+        public ExpenseControllerTests()
         {
             _mapper = Mock.Of<IMapper>();
             _service = new Mock<IExpenseService>();
-            _sut = new CashTrack.Controllers.ExpenseController(_service.Object, _mapper);
+            _sut = new ExpenseController(_service.Object, _mapper);
         }
         [Fact]
         public async void ById()

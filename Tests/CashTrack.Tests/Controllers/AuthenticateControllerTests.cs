@@ -8,11 +8,11 @@ using Xunit;
 
 namespace CashTrack.Tests.Controllers
 {
-    public class AuthenticateController
+    public class AuthenticateControllerTests
     {
         private readonly CashTrack.Controllers.AuthenticateController _sut;
         private readonly Mock<IAuthenticationService> _service;
-        public AuthenticateController()
+        public AuthenticateControllerTests()
         {
             _service = new Mock<IAuthenticationService>();
             _sut = new CashTrack.Controllers.AuthenticateController(_service.Object);

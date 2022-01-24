@@ -9,12 +9,12 @@ using Xunit.Abstractions;
 
 namespace CashTrack.Tests.Controllers
 {
-    public class UserController
+    public class UserControllerTests
     {
         private readonly Mock<IUserService> _service;
         private readonly CashTrack.Controllers.UserController _sut;
 
-        public UserController()
+        public UserControllerTests()
         {
             _service = new Mock<IUserService>();
             _sut = new CashTrack.Controllers.UserController(_service.Object);
