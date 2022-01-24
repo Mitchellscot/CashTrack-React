@@ -9,20 +9,16 @@ using CashTrack.Services.AuthenticationService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using Shouldly;
-using System;
 using System.IO;
 using Xunit;
-using Xunit.Abstractions;
-using BCryptNet = BCrypt.Net.BCrypt;
 
-namespace CashTrack.Tests.Authentication
+namespace CashTrack.Tests.Services
 {
     public class AuthenticationServiceTests
     {
-        private readonly AuthenticationService _authService;
+        private readonly AuthenticationService _sut;
         private readonly TestSettings _userCreds;
 
         public AuthenticationServiceTests()
@@ -39,21 +35,21 @@ namespace CashTrack.Tests.Authentication
             _userCreds = config.GetSection("TestSettings").Get<TestSettings>();
             var dbOptions = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(config.GetConnectionString("TestDb")).Options;
             var context = new AppDbContext(dbOptions, config);
-            _authService = new AuthenticationService(context, mapper, logger, settings);
+            _sut = new AuthenticationService(context, mapper, logger, settings);
         }
         [Fact]
         public async void AuthenticateUser()
         {
             var userRequest = new AuthenticationModels.Request(_userCreds.Username, _userCreds.Password);
-            var result = await _authService.AuthenticateAsync(userRequest);
+            var result = await _sut.AuthenticateAsync(userRequest);
             Assert.NotNull(result);
-            result.FirstName.ShouldBe("Test");
+            result.FirstName.ShouldBe(_userCreds.Username);
         }
         [Fact]
         public async void ReturnNullWithWrongCreds()
         {
             var userRequest = new AuthenticationModels.Request("hacker", "password123");
-            var result = await _authService.AuthenticateAsync(userRequest);
+            var result = await _sut.AuthenticateAsync(userRequest);
             Assert.Null(result);
         }
         [Fact]
@@ -75,9 +71,9 @@ namespace CashTrack.Tests.Authentication
                 email = "Lydia@example.com",
                 password_hash = "blahblahblah"
             };
-            var henryToken = _authService.GenerateJwtToken(henry);
-            var henryTokenAgain = _authService.GenerateJwtToken(henry);
-            var lydiaToken = _authService.GenerateJwtToken(lydia);
+            var henryToken = _sut.GenerateJwtToken(henry);
+            var henryTokenAgain = _sut.GenerateJwtToken(henry);
+            var lydiaToken = _sut.GenerateJwtToken(lydia);
             Assert.NotNull(henryToken);
             Assert.NotNull(henryTokenAgain);
             Assert.NotNull(lydiaToken);

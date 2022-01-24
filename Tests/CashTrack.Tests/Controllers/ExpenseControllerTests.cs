@@ -10,7 +10,7 @@ namespace CashTrack.Tests.Controllers
 {
     public class ExpenseControllerTests
     {
-        private readonly CashTrack.Controllers.ExpenseController _sut;
+        private readonly ExpenseController _sut;
         public readonly IMapper _mapper;
         public readonly Mock<IExpenseService> _service;
 
