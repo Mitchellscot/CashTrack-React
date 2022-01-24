@@ -18,7 +18,7 @@ namespace CashTrack.Tests.Controllers
             _sut = new CashTrack.Controllers.AuthenticateController(_service.Object);
         }
         [Fact]
-        public async Task ReturnAReponse()
+        public async Task GetAuthenticated()
         {
             var request = new AuthenticationModels.Request("mitch", "password");
             var result = await _sut.Authenticate(request);

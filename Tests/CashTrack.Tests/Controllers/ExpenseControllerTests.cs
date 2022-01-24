@@ -21,14 +21,14 @@ namespace CashTrack.Tests.Controllers
             _sut = new ExpenseController(_service.Object, _mapper);
         }
         [Fact]
-        public async void ById()
+        public async void GetById()
         {
             var result = await _sut.GetAnExpenseById(1);
             var viewResult = Assert.IsType<ActionResult<ExpenseListItem>>(result);
             _service.Verify(s => s.GetExpenseByIdAsync(It.IsAny<int>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void AllExpenses()
+        public async void GetAll()
         {
             var request = new ExpenseModels.Request();
             var result = await _sut.GetAllExpenses(request);
@@ -36,7 +36,7 @@ namespace CashTrack.Tests.Controllers
             _service.Verify(s => s.GetExpensesAsync(It.IsAny<ExpenseModels.Request>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void NoteSearch()
+        public async void GetByNotes()
         {
             var request = new ExpenseModels.NotesSearchRequest() { SearchTerm = "test" };
             var result = await _sut.GetExpensesByNotes(request);
@@ -44,7 +44,7 @@ namespace CashTrack.Tests.Controllers
             _service.Verify(s => s.GetExpensesByNotesAsync(It.IsAny<ExpenseModels.NotesSearchRequest>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void AmountSearch()
+        public async void GetByAmount()
         {
             var request = new ExpenseModels.AmountSearchRequest() { Query = 1.00m };
             var result = await _sut.GetExpensesByAmount(request);
@@ -52,7 +52,7 @@ namespace CashTrack.Tests.Controllers
             _service.Verify(s => s.GetExpensesByAmountAsync(It.IsAny<ExpenseModels.AmountSearchRequest>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void CreatingExpense()
+        public async void Create()
         {
             var request = new AddEditExpense();
             var result = await _sut.CreateExpense(request);
@@ -60,7 +60,7 @@ namespace CashTrack.Tests.Controllers
             _service.Verify(s => s.CreateExpenseAsync(It.IsAny<AddEditExpense>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void UpdatingExpense()
+        public async void Update()
         {
             var request = new AddEditExpense() { Id = 99999 };
             var result = await _sut.UpdateExpense(request);
@@ -68,7 +68,7 @@ namespace CashTrack.Tests.Controllers
             _service.Verify(s => s.UpdateExpenseAsync(It.IsAny<AddEditExpense>()), Times.AtLeastOnce());
         }
         [Fact]
-        public async void DeletingExpense()
+        public async void Delete()
         {
             var result = await _sut.DeleteExpense(99999);
             _service.Verify(s => s.DeleteExpenseAsync(It.IsAny<int>()), Times.AtLeastOnce());
