@@ -1,5 +1,4 @@
-﻿using CashTrack.Data.Entities;
-using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.SubCategoryModels;
 using CashTrack.Services.SubCategoryService;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +39,7 @@ namespace CashTrack.Controllers
             try
             {
                 var result = await _subCategoryService.CreateSubCategoryAsync(request);
-                return CreatedAtAction($"detail", new {  id = result.Id }, result);
+                return CreatedAtAction($"detail", new { id = result.Id }, result);
             }
             catch (DuplicateCategoryNameException ex)
             {
