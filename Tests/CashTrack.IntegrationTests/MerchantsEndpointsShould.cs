@@ -16,7 +16,7 @@ namespace CashTrack.IntegrationTests
     {
         private readonly TestServerFixture _fixture;
         private ITestOutputHelper _output;
-        const string path = "api/merchants";
+        const string ENDPOINT = "api/merchants";
 
         public MerchantsEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
@@ -26,7 +26,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllMerchants()
         {
-            var response = await _fixture.Client.GetAsync(path);
+            var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
@@ -37,7 +37,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllMerchantsWithPagination()
         {
-            var response = await _fixture.Client.GetAsync(path + "?pageNumber=2&pageSize=50");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "?pageNumber=2&pageSize=50");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
@@ -52,12 +52,12 @@ namespace CashTrack.IntegrationTests
         [InlineData("Home")]
         public async Task ReturnMerchantsWithMatchingSearchTerm(string searchTerm)
         {
-            var response = await _fixture.Client.GetAsync(path + $"?searchterm={searchTerm}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?searchterm={searchTerm}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.Merchants.Count().ShouldBeGreaterThan(1);
             responseObject.Merchants.First().Name.ShouldContain(searchTerm);
-            PrintRequestAndResponse(path + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
+            PrintRequestAndResponse(ENDPOINT + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
         }
 
         [Theory]
@@ -67,7 +67,7 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnMerchantDetail(int id)
         {
             var expectedMerchantNames = new List<string>() { "Amazon", "Costco", "Walmart" };
-            var response = await _fixture.Client.GetAsync(path + $"/detail/{id}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/detail/{id}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<MerchantDetail>(await response.Content.ReadAsStringAsync());
             responseObject.ShouldNotBeNull();
@@ -81,7 +81,7 @@ namespace CashTrack.IntegrationTests
             responseObject.PurchaseCategoryOccurances.ShouldNotBeEmpty();
             responseObject.PurchaseCategoryTotals.ShouldNotBeEmpty();
             responseObject.RecentExpenses.Count.ShouldBeGreaterThan(0);
-            PrintRequestAndResponse(path + $"/{id}", await response.Content.ReadAsStringAsync());
+            PrintRequestAndResponse(ENDPOINT + $"/{id}", await response.Content.ReadAsStringAsync());
         }
         [Theory]
         [InlineData(0)]
@@ -89,12 +89,12 @@ namespace CashTrack.IntegrationTests
         [InlineData(int.MinValue)]
         public async Task ThrowExceptionWithInvalidId(int id)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/detail/{id}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/detail/{id}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
             Assert.Contains($"No merchant found with an id of {id}", responseString);
-            PrintRequestAndResponse(path + $"/99999999", await response.Content.ReadAsStringAsync());
+            PrintRequestAndResponse(ENDPOINT + $"/99999999", await response.Content.ReadAsStringAsync());
         }
         [Fact]
         public async Task CreateAndDeleteMerchant()
@@ -104,7 +104,7 @@ namespace CashTrack.IntegrationTests
             try
             {
                 //create merchant
-                var response = await _fixture.SendPostRequestAsync(path, model);
+                var response = await _fixture.SendPostRequestAsync(ENDPOINT, model);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
                 testId = responseObject.Id!.Value;
@@ -113,7 +113,7 @@ namespace CashTrack.IntegrationTests
             finally
             {
                 //delete merchant
-                var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+                var response = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
             }
 
@@ -126,7 +126,7 @@ namespace CashTrack.IntegrationTests
             try
             {
                 //create merchant
-                var response = await _fixture.SendPostRequestAsync(path, modelToCreate);
+                var response = await _fixture.SendPostRequestAsync(ENDPOINT, modelToCreate);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var responseObject = JsonConvert.DeserializeObject<AddEditMerchant>(await response.Content.ReadAsStringAsync());
                 testId = responseObject.Id!.Value;
@@ -141,14 +141,14 @@ namespace CashTrack.IntegrationTests
                     IsOnline = true,
                     Notes = "Updated with test method"
                 };
-                var updatedResponse = await _fixture.SendPutRequestAsync(path, updatedObject);
+                var updatedResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updatedObject);
                 var responseString = await updatedResponse.Content.ReadAsStringAsync();
                 updatedResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
             }
             finally
             {
                 //delete merchant
-                var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+                var response = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
             }
         }
@@ -165,7 +165,7 @@ namespace CashTrack.IntegrationTests
                 IsOnline = false,
                 Notes = "Created with test method"
             };
-            var response = await _fixture.SendPostRequestAsync(path, model);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, model);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
 

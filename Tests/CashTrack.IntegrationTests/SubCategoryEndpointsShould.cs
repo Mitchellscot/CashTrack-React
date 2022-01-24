@@ -15,7 +15,7 @@ namespace CashTrack.IntegrationTests
     {
         private readonly TestServerFixture _fixture;
         private readonly ITestOutputHelper _output;
-        const string path = "api/subcategory";
+        const string ENDPOINT = "api/subcategory";
 
         public SubCategoryEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
@@ -25,7 +25,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllCategories()
         {
-            var response = await _fixture.Client.GetAsync(path);
+            var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
@@ -37,7 +37,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllCategoriesWithPagination()
         {
-            var response = await _fixture.Client.GetAsync(path + "?pageNumber=2&pageSize=50");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "?pageNumber=2&pageSize=50");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
@@ -52,7 +52,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("car")]
         public async Task ReturnSubCategoriesWithMatchingSearchTerm(string searchTerm)
         {
-            var response = await _fixture.Client.GetAsync(path + $"?searchterm={searchTerm}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?searchterm={searchTerm}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());

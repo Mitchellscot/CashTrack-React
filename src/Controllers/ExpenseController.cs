@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -16,19 +15,12 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
-        //Install this tool to test:
-        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
-
-        //also, think about how you can reduce the number of controllers here this is rediculous
-
         private readonly IMapper _mapper;
-        private readonly ILogger<ExpenseController> _logger;
         private readonly IExpenseService _expenseService;
 
-        public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(IExpenseService expenseService, IMapper mapper)
         {
             _mapper = mapper;
-            _logger = logger;
             _expenseService = expenseService;
         }
 
@@ -42,13 +34,10 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
 
-        //api/expense/{id}
-        //returns one expense
         [HttpGet("{id}")]
         public async Task<ActionResult<ExpenseListItem>> GetAnExpenseById(int id)
         {
@@ -66,8 +55,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //api/expense/notes/{searchTerm}
-        //returns transactions that contain a specific word in the notes section
+
         [HttpGet("notes")]
         public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByNotes([FromQuery] ExpenseModels.NotesSearchRequest request)
         {
@@ -86,8 +74,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //api/expense/amount?query=25.00
-        //returns transactions that contain a specific amount
+
         [HttpGet("amount")]
         public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByAmount([FromQuery] ExpenseModels.AmountSearchRequest request)
         {
@@ -178,69 +165,6 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/merchant/{merchantId}/total
-        //    //accepts an int indicating the merchant Id
-        //    //returns an int that is the total amount spent at that merchant
-        //    [HttpGet("/merchant/{merchantId}/total")]
-        //    //might need a custom model for this response instead of the standard ExpenseModel
-        //    public async Task<ActionResult<int>> GetExpenseTotalByMerchant(int merchantId)
-        //    {
-        //        try
-        //        {
-        //            //int.TryParse(amount)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/merchant/{merchantId}/total/date-range
-        //    //accepts an object containing an int indicating the merchant Id and a beginDate and endDate
-        //    //returns an int that is the total amount spent at that merchant during a given date range
-        //    [HttpGet("/merchant/{merchantId}/date-range/total")]
-        //    //might need a custom model for this response instead of the standard ExpenseModel
-        //    //create a new model for this request
-        //    public async Task<ActionResult<int>> GetMerchantExpenseTotalByDateRange(MerchantDateRangeRequest merchantId)
-        //    {
-        //        try
-        //        {
-        //            //int.TryParse(amount)...
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/merchant/date-range/{merchantId}
-        //    //accepts an int indicating the merchant Id and a date range object
-        //    //returns all transactions for that merchant within the given date range
-        //    [HttpGet("/merchant/date-range/{merchantId}")]
-        //    //might need a custom request model... merchantId, beginDate, endDate
-        //    //might need a custom model for this response as well
-        //    //CONSIDER doing a query by location as well, though that functionality would require more work...
-        //    public async Task<ActionResult<ExpeseModel[]>> GetMerchantExpensesByDateRange([FromBody] MerchantDateRangeRequest merchantId)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-
-
         //    //api/expense/category
         //    //returns transactions from a given category
         //    [HttpGet("/category/{categoryId}")]
@@ -257,78 +181,6 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/expense/category/date-range
-        //    //Accepts an object that contains a category id and a beginDate and endDate
-        //    //returns all transactions that match that criteria
-        //    [HttpGet("/category/{categoryId}/date-range")]
-        //    //create a category Request model that has a category Id and a date range object
-        //    public async Task<ActionResult<ExpenseModel[]>> GetcategoryExpensesByDateRange([FromBody] categoryRequest categoryRequest)
-        //    {
-        //        //just make one controller and have the client send the date, month, year, daterange, etc...
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/category/stats
-        //    //Accepts an object that contains a category id
-        //    //returns all transactions that match that criteria
-        //    [HttpGet("/category/{categoryId}/stats")]
-        //    //create a category Request model that has a category Id and a date range object
-        //    public async Task<ActionResult<categoryStats>> GetcategoryStats([FromBody] int categoryId)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/main-category/{maincategoryId}
-        //    //Accepts an object that contains a category id and a beginDate and endDate
-        //    //returns all transactions that match that criteria
-        //    [HttpGet("/main-category/{maincategoryId}")]
-        //    //Use the categoryRequest object for this controller as well, as they are both ints and accept the same parameters
-        //    public async Task<ActionResult<ExpenseModel[]>> GetExpensesBycategory([FromBody] categoryRequest categoryRequest)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
-
-        //    //api/expense/main-category/stats
-        //    //Accepts an object that contains a category id
-        //    //returns all transactions that match that criteria
-        //    [HttpGet("/main-category/{maincategoryId}/stats")]
-        //    //create a category Request model that has a category Id and a date range object
-        //    public async Task<ActionResult<categoryStats>> GetMaincategoryStats(int categoryId)
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
 
         //    //api/expense/tags/{tagId}
         //    //Accepts a tag id
@@ -348,26 +200,5 @@ namespace CashTrack.Controllers
         //        }
         //    }
 
-        //    //api/merchant/stats
-        //    //returns a bunch of cool stats about my shopping habbits
-        //    [HttpGet("/merchant/stats")]
-        //    //Most shopped at stores... by category
-        //    //amount spent at the stores
-        //    //Average amount spent at the stores (table broken up by year?)
-        //    //Think this one through, LOW PRIORITY
-        //    //definitely need to create a custom return object for this one
-        //    //might belong in the Merchant Controller??
-        //    public async Task<ActionResult<MerchantStats>> GetMerchantStats()
-        //    {
-        //        try
-        //        {
-        //            //logic goes here
-        //            return Content("This is the data you were looking for.");
-        //        }
-        //        catch (System.Exception ex)
-        //        {
-        //            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //        }
-        //    }
     }
 }

@@ -15,7 +15,7 @@ namespace CashTrack.IntegrationTests
         private TestServerFixture _fixture;
         private readonly TestOptionsSnapshot<TestSettings> _testSettings;
         private ITestOutputHelper _output;
-        private const string path = "/api/authenticate";
+        private const string ENDPOINT = "/api/authenticate";
 
         public AuthorizationEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
@@ -35,7 +35,7 @@ namespace CashTrack.IntegrationTests
         {
 
             var request = GetAuthenticationRequest();
-            var response = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
 
             var responseBody = JsonConvert.DeserializeObject<AuthenticationModels.Response>(await response.Content.ReadAsStringAsync());
 
@@ -52,7 +52,7 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnUnauthorizedWithWrongPassword(string password)
         {
             var request = GetAuthenticationRequest() with { Password = password };
-            var response = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
             PrintRequestAndResponse(request,
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
@@ -66,7 +66,7 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnUnauthorizedWithWrongUserName(string username)
         {
             var request = GetAuthenticationRequest() with { Name = username };
-            var response = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
             PrintRequestAndResponse(request,
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
@@ -77,7 +77,7 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnBadRequestWithEmptyPassword(string password)
         {
             var request = GetAuthenticationRequest() with { Password = password };
-            var response = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             PrintRequestAndResponse(request,
@@ -89,7 +89,7 @@ namespace CashTrack.IntegrationTests
         public async Task ReturnBadRequestWithEmptyUsername(string username)
         {
             var request = GetAuthenticationRequest() with { Name = username };
-            var response = await _fixture.SendPostRequestAsync(path, request);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             PrintRequestAndResponse(request,
