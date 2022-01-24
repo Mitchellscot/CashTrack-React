@@ -4,12 +4,8 @@ using CashTrack.Repositories.UserRepository;
 using CashTrack.Services.UserService;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 using Shouldly;
 using CashTrack.Models.UserModels;
 using System.Linq;
@@ -21,22 +17,33 @@ namespace CashTrack.Tests.Services
         private readonly IMapper _mapper;
         private readonly UserService _sut;
         private readonly Users[] _data;
-        private readonly ITestOutputHelper _output;
         private readonly Mock<IUserRepository> _repo;
 
-        public UserServiceTests(ITestOutputHelper output)
+        public UserServiceTests()
         {
-            _output = output;
             _repo = new Mock<IUserRepository>();
             var mapperConfig = new MapperConfiguration(cfg => cfg.AddProfile(new UserMapperProfile()));
             _mapper = mapperConfig.CreateMapper();
             _sut = new UserService(_repo.Object, _mapper);
-            _data = new Users[] { new Users() { first_name = "Arthur", last_name = "scott", email = "arthur@example.com", id = 1 }, new Users() { first_name = "Edward", last_name = "scott", email = "edward@example.com", id = 2 } };
+            _data = new Users[] {
+                new Users()
+                {
+                    first_name = "Arthur",
+                    last_name = "scott",
+                    email = "arthur@example.com",
+                    id = 1
+                },
+                new Users()
+                {
+                    first_name = "Edward",
+                    last_name = "scott",
+                    email = "edward@example.com",
+                    id = 2 }
+            };
         }
         [Fact]
         public async void GetAllUsers()
         {
-
             _repo.Setup(r => r.Find(x => true)).ReturnsAsync(_data);
 
             var result = await _sut.GetAllUsersAsync();
