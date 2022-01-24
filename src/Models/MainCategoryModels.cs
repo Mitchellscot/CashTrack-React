@@ -16,13 +16,13 @@ public class MainCategoryModels
 }
 public record MainCategoryListItem
 {
-    public int MyProperty { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
     public int NumberOfSubCategories { get; set; }
 }
 public record AddEditMainCategory
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public string Name { get; set; }
 }
 public record MainCategoryDetail

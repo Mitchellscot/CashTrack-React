@@ -3,6 +3,7 @@ using CashTrack.Data.Entities;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.MainCategoryModels;
 using CashTrack.Repositories.MainCategoriesRepository;
+using CashTrack.Repositories.SubCategoriesRepository;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,55 +13,94 @@ namespace CashTrack.Services.MainCategoriesService
     {
         Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request);
         Task<MainCategoryDetail> GetMainCategoryDetailAsync(int id);
-        Task<AddEditMainCategory> CreateMainCategory(AddEditMainCategory request);
-        Task<bool> UpdateMainCategoryAsync(AddEditMainCategory newMainCategory);
+        Task<MainCategories> CreateMainCategory(AddEditMainCategory request);
+        Task<bool> UpdateMainCategoryAsync(AddEditMainCategory request);
         Task<bool> DeleteMainCategoryAsync(int id);
     }
     public class MainCategoriesService : IMainCategoriesService
     {
-        private readonly IMainCategoriesRepository _repo;
+        private readonly IMainCategoriesRepository _mainCategoryRepo;
+        private readonly ISubCategoryRepository _subCategoryRepository;
         private readonly IMapper _mapper;
 
-        public MainCategoriesService(IMainCategoriesRepository mainCategoryRepository, IMapper mapper)
+        public MainCategoriesService(IMainCategoriesRepository mainCategoryRepository, IMapper mapper, ISubCategoryRepository subCategoryRepository)
         {
-            _repo = mainCategoryRepository;
+            _mainCategoryRepo = mainCategoryRepository;
+            _subCategoryRepository = subCategoryRepository;
             _mapper = mapper;
         }
 
         public async Task<MainCategories> CreateMainCategory(AddEditMainCategory request)
         {
-            var categories = await _repo.Find(x => true);
+            var categories = await _mainCategoryRepo.Find(x => true);
             if (categories.Any(x => x.main_category_name == request.Name))
                 throw new DuplicateCategoryNameException(request.Name);
 
             var category = _mapper.Map<MainCategories>(request);
 
-            category.id = (int)await _repo.GetCountOfMainCategories() + 1;
+            category.id = await _mainCategoryRepo.GetCountOfMainCategories() + 1;
 
-            if (!await _repo.Create(category))
+            if (!await _mainCategoryRepo.Create(category))
                 throw new System.Exception("unable to save category to the database");
 
             return category;
         }
 
-        public Task<bool> DeleteMainCategoryAsync(int id)
+        public async Task<bool> DeleteMainCategoryAsync(int id)
         {
-            throw new System.NotImplementedException();
+            var category = await _mainCategoryRepo.FindById(id);
+            if (category == null)
+                throw new CategoryNotFoundException(id.ToString());
+
+            return await _mainCategoryRepo.Delete(category);
         }
 
-        public Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request)
+        public async Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request)
         {
-            throw new System.NotImplementedException();
+            var categories = await _mainCategoryRepo.Find(x => true);
+            var listItems = categories.Select(c => new MainCategoryListItem()
+            {
+                Id = c.id,
+                Name = c.main_category_name,
+                NumberOfSubCategories = _subCategoryRepository.Find(c => c.main_categoryid == c.id).Result.Count()
+            }).ToArray();
+
+            var response = new MainCategoryModels.Response()
+            {
+                TotalMainCategories = categories.Count(),
+                MainCategories = listItems
+            };
+            return response;
         }
+
 
         public Task<MainCategoryDetail> GetMainCategoryDetailAsync(int id)
         {
+            //think on this one
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> UpdateMainCategoryAsync(AddEditMainCategory newMainCategory)
+        public async Task<bool> UpdateMainCategoryAsync(AddEditMainCategory request)
         {
-            throw new System.NotImplementedException();
+            var checkId = await _mainCategoryRepo.FindById(request.Id.Value);
+            if (checkId == null)
+                throw new CategoryNotFoundException(request.Id.Value.ToString());
+
+            var nameCheck = await _mainCategoryRepo.Find(x => x.main_category_name == request.Name);
+            if (nameCheck.Any())
+                throw new DuplicateCategoryNameException(request.Name);
+
+            var category = _mapper.Map<MainCategories>(request);
+            return await _mainCategoryRepo.Update(category);
         }
+    }
+}
+public class MainCategoryProfile : Profile
+{
+    public MainCategoryProfile()
+    {
+        CreateMap<AddEditMainCategory, MainCategories>()
+            .ForMember(c => c.id, o => o.MapFrom(src => src.Id))
+            .ForMember(c => c.main_category_name, o => o.MapFrom(src => src.Name));
     }
 }

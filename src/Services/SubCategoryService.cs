@@ -2,7 +2,6 @@
 using CashTrack.Data.Entities;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.SubCategoryModels;
-using CashTrack.Repositories;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.SubCategoriesRepository;
 using System;
@@ -76,8 +75,12 @@ public class SubCategoryService : ISubCategoryService
     }
     public async Task<bool> UpdateSubCategoryAsync(AddEditSubCategory request)
     {
-        var categories = await _subCategoryRepo.Find(x => x.sub_category_name == request.Name);
-        if (categories.Any())
+        var checkId = await _subCategoryRepo.FindById(request.Id.Value);
+        if (checkId == null)
+            throw new CategoryNotFoundException(request.Id.Value.ToString());
+
+        var nameCheck = await _subCategoryRepo.Find(x => x.sub_category_name == request.Name);
+        if (nameCheck.Any())
             throw new DuplicateCategoryNameException(request.Name);
 
         var category = _mapper.Map<SubCategories>(request);
@@ -86,10 +89,14 @@ public class SubCategoryService : ISubCategoryService
     public async Task<bool> DeleteSubCategoryAsync(int id)
     {
         var category = await _subCategoryRepo.FindById(id);
+        if (category == null)
+            throw new CategoryNotFoundException(id.ToString());
+
         return await _subCategoryRepo.Delete(category);
     }
     public Task<SubCategoryDetail> GetSubCategoryDetailsAsync(int id)
     {
+        //think on this one
         throw new NotImplementedException();
     }
 }
