@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using System;
-using CashTrack.Repositories.UserRepository;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Helpers.Exceptions;
 using CashTrack.Services.UserService;
