@@ -9,17 +9,17 @@ using Xunit;
 
 namespace CashTrack.Tests.Controllers
 {
-    public class ExpenseControllerShould
+    public class ExpenseController
     {
-        private readonly ExpenseController _sut;
+        private readonly CashTrack.Controllers.ExpenseController _sut;
         public readonly IMapper _mapper;
         public readonly Mock<IExpenseService> _service;
 
-        public ExpenseControllerShould()
+        public ExpenseController()
         {
             _mapper = Mock.Of<IMapper>();
             _service = new Mock<IExpenseService>();
-            _sut = new ExpenseController(_service.Object, _mapper);
+            _sut = new CashTrack.Controllers.ExpenseController(_service.Object, _mapper);
         }
         [Fact]
         public async void ById()

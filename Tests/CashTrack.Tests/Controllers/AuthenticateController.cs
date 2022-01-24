@@ -8,14 +8,14 @@ using Xunit;
 
 namespace CashTrack.Tests.Controllers
 {
-    public class AuthenticateControllerShould
+    public class AuthenticateController
     {
-        private readonly AuthenticateController _sut;
+        private readonly CashTrack.Controllers.AuthenticateController _sut;
         private readonly Mock<IAuthenticationService> _service;
-        public AuthenticateControllerShould()
+        public AuthenticateController()
         {
             _service = new Mock<IAuthenticationService>();
-            _sut = new AuthenticateController(_service.Object);
+            _sut = new CashTrack.Controllers.AuthenticateController(_service.Object);
         }
         [Fact]
         public async Task ReturnAReponse()

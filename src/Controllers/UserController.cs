@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CashTrack.Models.UserModels;
-using Microsoft.Extensions.Logging;
-using AutoMapper;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Http;
