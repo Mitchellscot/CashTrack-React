@@ -1,6 +1,9 @@
 ﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
+using CashTrack.Helpers.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -8,42 +11,98 @@ namespace CashTrack.Repositories.MainCategoriesRepository
 {
     public interface IMainCategoriesRepository : IRepository<MainCategories>
     {
-
+        Task<int> GetCountOfMainCategories();
     }
     public class MainCategoriesRepository : IMainCategoriesRepository
     {
         private readonly AppDbContext _context;
         public MainCategoriesRepository(AppDbContext dbContext) => (_context) = (dbContext);
 
-        public Task<bool> Create(MainCategories entity)
+        public async Task<bool> Create(MainCategories entity)
         {
-            //Create a check here, if there are 25 main categories, throw an error. That's too many.
-            throw new NotImplementedException();
+            var count = await GetCountOfMainCategories();
+            if (count >= 25)
+                throw new MainCategoryLimitException(count);
+
+            try
+            {
+                await _context.MainCategories.AddAsync(entity);
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<bool> Delete(MainCategories entity)
+        public async Task<bool> Delete(MainCategories entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Remove(entity);
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<MainCategories[]> Find(Expression<Func<MainCategories, bool>> predicate)
+        public async Task<MainCategories[]> Find(Expression<Func<MainCategories, bool>> predicate)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.MainCategories.Where(predicate).ToArrayAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<MainCategories> FindById(int id)
+        public async Task<MainCategories> FindById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.MainCategories.Where(x => x.id == id).SingleOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public Task<MainCategories[]> FindWithPagination(Expression<Func<MainCategories, bool>> predicate, int pageNumber, int pageSize)
         {
+            //25 categories max, so not implementing
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(MainCategories entity)
+        public async Task<int> GetCountOfMainCategories()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.MainCategories.CountAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> Update(MainCategories entity)
+        {
+            try
+            {
+                var contextAttachedEntity = _context.MainCategories.Attach(entity);
+                contextAttachedEntity.State = EntityState.Modified;
+                return await (_context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
