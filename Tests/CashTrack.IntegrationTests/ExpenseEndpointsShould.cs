@@ -17,7 +17,7 @@ namespace CashTrack.IntegrationTests
     {
         private TestServerFixture _fixture;
         private ITestOutputHelper _output;
-        const string path = "/api/expense";
+        const string ENDPOINT = "/api/expense";
 
         public ExpenseEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
         {
@@ -29,7 +29,7 @@ namespace CashTrack.IntegrationTests
         [ExpenseIdData]
         public async Task ReturnASingleExpense(string id)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + id);
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
 
             response.EnsureSuccessStatusCode();
 
@@ -45,7 +45,7 @@ namespace CashTrack.IntegrationTests
         [InlineData(int.MinValue)]
         public async Task ErrorWithInvalidId(int id)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + id);
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -59,7 +59,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWithInvalidInput(object input)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + input);
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + input);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             PrintRequestAndResponse(input,
                 JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
@@ -70,7 +70,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllExpenses()
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + "?dateoptions=1");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + "?dateoptions=1");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
@@ -84,7 +84,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("2012-01-01")]
         public async Task ReturnsExpensesFromAGivenDate(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=2&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=2&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
@@ -99,7 +99,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("2012-04-24")]
         public async Task ReturnsExpensesForAGivenMonth(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=3&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=3&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
@@ -119,7 +119,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("2013-04-24")]
         public async Task ReturnsExpensesForAGivenQuarter(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=4&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=4&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -139,7 +139,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("2015-04-24")]
         public async Task ReturnsExpensesForAGivenYear(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=5&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=5&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -159,7 +159,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("2015-04-24", "2016-04-24")]
         public async Task ReturnsExpensesForAGivenDateRange(string beginDate, string endDate)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -175,7 +175,7 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnsExpensesFromLast30Days()
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=7");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=7");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -191,7 +191,7 @@ namespace CashTrack.IntegrationTests
         [Fact(Skip = "No expenses entered this month")]
         public async Task ReturnsExpensesForThisMonth()
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=8");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=8");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -208,7 +208,7 @@ namespace CashTrack.IntegrationTests
         [Fact(Skip = "No expenses this quarter")]
         public async Task ReturnsExpensesForThisQuarter()
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=9");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=9");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -225,7 +225,7 @@ namespace CashTrack.IntegrationTests
         [Fact(Skip = "No expenses this Year")]
         public async Task ReturnsExpensesForThisYear()
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=10");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=10");
             response.EnsureSuccessStatusCode();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
@@ -246,7 +246,7 @@ namespace CashTrack.IntegrationTests
 
         public async Task ErrorWhenDateRangeSearchDoesntHaveEndDate(string beginDate, string endDate)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             var responseString = await response.Content.ReadAsStringAsync();
             responseString.ShouldContain("EndDate");
@@ -260,7 +260,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenDateSearchDoesntHaveADate(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=2&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=2&beginDate={date}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             var responseString = await response.Content.ReadAsStringAsync();
             responseString.ShouldContain("BeginDate");
@@ -273,7 +273,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenMonthSearchDoesntHaveADate(string date)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=3&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=3&beginDate={date}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             var responseString = await response.Content.ReadAsStringAsync();
             responseString.ShouldContain("BeginDate");
@@ -286,7 +286,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenDateOptionsIsntValid(string invalidOptions)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions={invalidOptions}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions={invalidOptions}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -302,7 +302,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenPageSizeIsntValid(string invalidPageSize)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=1&pageSize={invalidPageSize}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=1&pageSize={invalidPageSize}");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -317,7 +317,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenPageNumberIsntValid(string invalidPageNumber)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=1&pageNumber={invalidPageNumber}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=1&pageNumber={invalidPageNumber}");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -332,7 +332,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenBeginDateIsntValid(string invalidDate)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=1&beginDate={invalidDate}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=1&beginDate={invalidDate}");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -347,7 +347,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenEndDateIsntValid(string invalidDate)
         {
-            var response = await _fixture.Client.GetAsync(path + "/" + $"?dateoptions=1&endDate={invalidDate}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=1&endDate={invalidDate}");
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -360,7 +360,7 @@ namespace CashTrack.IntegrationTests
         [InlineData("Lydia")]
         public async Task ReturnsExpensesForAGivenSearchTerm(string searchTerm)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/notes?searchTerm={searchTerm}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?searchTerm={searchTerm}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
@@ -373,7 +373,7 @@ namespace CashTrack.IntegrationTests
         [EmptyData]
         public async Task ErrorWhenSearchTermIsntValid(string invalidSearch)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/notes?searchTerm={invalidSearch}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?searchTerm={invalidSearch}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -386,7 +386,7 @@ namespace CashTrack.IntegrationTests
         [InlineData(25.5011111)]
         public async Task ReturnsExpensesForAGivenSearchAmount(decimal query)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/amount?query={query}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/amount?query={query}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
@@ -400,7 +400,7 @@ namespace CashTrack.IntegrationTests
         [InlineData(-25.000000000033)]
         public async Task ErrorWhenSearchAmountIsntValid(decimal query)
         {
-            var response = await _fixture.Client.GetAsync(path + $"/amount?query={query}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/amount?query={query}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -422,7 +422,7 @@ namespace CashTrack.IntegrationTests
                 MerchantId = 85,
                 SubCategoryId = 31
             };
-            var response = await _fixture.SendPostRequestAsync(path, model);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, model);
             response.StatusCode.ShouldBe(HttpStatusCode.Created);
             var responseObject = JsonConvert.DeserializeObject<AddEditExpense>(await response.Content.ReadAsStringAsync());
             response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/{responseObject.Id.ToString()}");
@@ -441,7 +441,7 @@ namespace CashTrack.IntegrationTests
                 MerchantId = 86,
                 SubCategoryId = 29
             };
-            var response = await _fixture.SendPutRequestAsync(path + $"/{testId}", model);
+            var response = await _fixture.SendPutRequestAsync(ENDPOINT + $"/{testId}", model);
             var responseString = await response.Content.ReadAsStringAsync();
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
@@ -449,7 +449,7 @@ namespace CashTrack.IntegrationTests
         public async Task DeleteAnExpense()
         {
             var testId = await CreateNewExpense();
-            var response = await _fixture.Client.DeleteAsync(path + $"/{testId}");
+            var response = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
         }
         [Theory]
@@ -458,7 +458,7 @@ namespace CashTrack.IntegrationTests
         public async Task ErrorWhenAddingExpenseWithInvalidAmount(decimal invalidAmount)
         {
             var expense = GetAddEditExpense() with { Amount = invalidAmount };
-            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, expense);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -472,7 +472,7 @@ namespace CashTrack.IntegrationTests
         public async Task ErrorWhenAddingExpenseWithInvalidMerchantId(int invalidMerchant)
         {
             var expense = GetAddEditExpense() with { MerchantId = invalidMerchant };
-            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, expense);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -484,7 +484,7 @@ namespace CashTrack.IntegrationTests
         public async Task ErrorWhenAddingExpenseWithInvalidPurchaseDate(DateTimeOffset invalidDate)
         {
             var expense = GetAddEditExpense() with { PurchaseDate = invalidDate };
-            var response = await _fixture.SendPostRequestAsync(path, expense);
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, expense);
             var responseString = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);

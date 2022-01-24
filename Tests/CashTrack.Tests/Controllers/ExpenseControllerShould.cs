@@ -3,42 +3,76 @@ using CashTrack.Controllers;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Services.ExpenseService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
-using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
+
 
 namespace CashTrack.Tests.Controllers
 {
     public class ExpenseControllerShould
     {
         private readonly ExpenseController _sut;
-        private readonly ITestOutputHelper _output;
-        public IMapper _mapper { get; }
-        private readonly ILogger<ExpenseController> _logger;
-        public IExpenseService _service { get; }
+        public readonly IMapper _mapper;
+        public readonly Mock<IExpenseService> _service;
 
-        public ExpenseControllerShould(ITestOutputHelper output)
+        public ExpenseControllerShould()
         {
-            _output = output;
             _mapper = Mock.Of<IMapper>();
-            _logger = Mock.Of<ILogger<ExpenseController>>();
-            _service = Mock.Of<IExpenseService>();
-            _sut = new ExpenseController(_logger, _service, _mapper);
+            _service = new Mock<IExpenseService>();
+            _sut = new ExpenseController(_service.Object, _mapper);
         }
         [Fact]
-        public void ReturnASingleExpenseResponse()
+        public async void ById()
         {
-            var result = _sut.GetAnExpenseById(1);
-            var viewResult = Assert.IsType<Task<ActionResult<ExpenseListItem>>>(result);
+            var result = await _sut.GetAnExpenseById(1);
+            var viewResult = Assert.IsType<ActionResult<ExpenseListItem>>(result);
+            _service.Verify(s => s.GetExpenseByIdAsync(It.IsAny<int>()), Times.AtLeastOnce());
         }
         [Fact]
-        public void ReturnsMultipleExpenseResponse()
+        public async void AllExpenses()
         {
             var request = new ExpenseModels.Request();
-            var result = _sut.GetAllExpenses(request);
-            var viewResult = Assert.IsType<Task<ActionResult<ExpenseModels.Response>>>(result);
+            var result = await _sut.GetAllExpenses(request);
+            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
+            _service.Verify(s => s.GetExpensesAsync(It.IsAny<ExpenseModels.Request>()), Times.AtLeastOnce());
+        }
+        [Fact]
+        public async void NoteSearch()
+        {
+            var request = new ExpenseModels.NotesSearchRequest() { SearchTerm = "test" };
+            var result = await _sut.GetExpensesByNotes(request);
+            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
+            _service.Verify(s => s.GetExpensesByNotesAsync(It.IsAny<ExpenseModels.NotesSearchRequest>()), Times.AtLeastOnce());
+        }
+        [Fact]
+        public async void AmountSearch()
+        {
+            var request = new ExpenseModels.AmountSearchRequest() { Query = 1.00m };
+            var result = await _sut.GetExpensesByAmount(request);
+            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
+            _service.Verify(s => s.GetExpensesByAmountAsync(It.IsAny<ExpenseModels.AmountSearchRequest>()), Times.AtLeastOnce());
+        }
+        [Fact]
+        public async void CreatingExpense()
+        {
+            var request = new AddEditExpense();
+            var result = await _sut.CreateExpense(request);
+            var viewResult = Assert.IsType<ActionResult<AddEditExpense>>(result);
+            _service.Verify(s => s.CreateExpenseAsync(It.IsAny<AddEditExpense>()), Times.AtLeastOnce());
+        }
+        [Fact]
+        public async void UpdatingExpense()
+        {
+            var request = new AddEditExpense() { Id = 99999 };
+            var result = await _sut.UpdateExpense(request);
+            var viewResult = Assert.IsType<ActionResult<AddEditExpense>>(result);
+            _service.Verify(s => s.UpdateExpenseAsync(It.IsAny<AddEditExpense>()), Times.AtLeastOnce());
+        }
+        [Fact]
+        public async void DeletingExpense()
+        {
+            var result = await _sut.DeleteExpense(99999);
+            _service.Verify(s => s.DeleteExpenseAsync(It.IsAny<int>()), Times.AtLeastOnce());
         }
     }
 }

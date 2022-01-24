@@ -15,14 +15,10 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class AuthenticateController : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<UserController> _logger;
         private readonly IAuthenticationService _authService;
 
-        public AuthenticateController(ILogger<UserController> logger, IAuthenticationService authService, IMapper mapper)
+        public AuthenticateController(IAuthenticationService authService)
         {
-            _mapper = mapper;
-            _logger = logger;
             _authService = authService;
         }
         [HttpPost]
@@ -43,7 +39,6 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR AUTHENTICATING {ex.Message} {ex.GetType().ToString()} {ex.InnerException} {ex.StackTrace}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

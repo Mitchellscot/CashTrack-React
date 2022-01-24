@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -16,19 +15,12 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
-        //Install this tool to test:
-        //https://docs.microsoft.com/en-us/aspnet/core/tutorials/web-api-help-pages-using-swagger?view=aspnetcore-5.0
-
-        //also, think about how you can reduce the number of controllers here this is rediculous
-
         private readonly IMapper _mapper;
-        private readonly ILogger<ExpenseController> _logger;
         private readonly IExpenseService _expenseService;
 
-        public ExpenseController(ILogger<ExpenseController> logger, IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(IExpenseService expenseService, IMapper mapper)
         {
             _mapper = mapper;
-            _logger = logger;
             _expenseService = expenseService;
         }
 
@@ -42,13 +34,10 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"HEY MITCH - ERROR GETTING ALL EXPENSES {ex.Message}");
                 return BadRequest(new { message = ex.Message.ToString() });
             }
         }
 
-        //api/expense/{id}
-        //returns one expense
         [HttpGet("{id}")]
         public async Task<ActionResult<ExpenseListItem>> GetAnExpenseById(int id)
         {
@@ -66,8 +55,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //api/expense/notes/{searchTerm}
-        //returns transactions that contain a specific word in the notes section
+
         [HttpGet("notes")]
         public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByNotes([FromQuery] ExpenseModels.NotesSearchRequest request)
         {

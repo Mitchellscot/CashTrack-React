@@ -14,14 +14,10 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
 
-        public UserController(ILogger<UserController> logger, IUserService userService, IMapper mapper)
+        public UserController(IUserService userService)
         {
-            this._mapper = mapper;
-            this._logger = logger;
             this._userService = userService;
         }
         [HttpGet]
@@ -31,7 +27,7 @@ namespace CashTrack.Controllers
             try
             {
                 var user = await _userService.GetUserByIdAsync(id);
-                return Ok(_mapper.Map<UserModels.Response>(user));
+                return Ok(user);
             }
             catch (UserNotFoundException ex)
             {
@@ -49,7 +45,7 @@ namespace CashTrack.Controllers
             try
             {
                 var users = await _userService.GetAllUsersAsync();
-                return Ok(_mapper.Map<UserModels.Response[]>(users));
+                return Ok(users);
             }
             catch (Exception ex)
             {

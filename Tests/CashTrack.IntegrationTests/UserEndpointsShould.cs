@@ -1,10 +1,7 @@
 ﻿using CashTrack.Models.UserModels;
 using Newtonsoft.Json;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -47,6 +44,15 @@ namespace CashTrack.IntegrationTests
                 _output.WriteLine(user.ToString());
                 user.FirstName.ShouldNotBeEmpty();
             }
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public async Task ErrorWithInvalidId(int invalidId)
+        {
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?={invalidId}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
     }
 }
