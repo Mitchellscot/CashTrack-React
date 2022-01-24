@@ -35,7 +35,7 @@ namespace CashTrack.Tests.Aggregators
             var result = data.Aggregate(new ExpenseTotalsAggregator(),
                 (acc, e) => acc.Accumulate(e), acc => acc.Compute());
             //test data does not contain current month or year
-            result.TotalSpentAllTime.ShouldBe(56170.69m);
+            result.TotalSpentAllTime.ShouldBe(56160.69m);
         }
         [Fact]
         public async Task CanAggregateExpenseStatistics()

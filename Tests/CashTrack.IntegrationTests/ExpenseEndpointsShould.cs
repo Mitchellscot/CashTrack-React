@@ -411,46 +411,31 @@ namespace CashTrack.IntegrationTests
         #endregion
         #region Create Update Delete
         [Fact]
-        public async Task<int> CreateNewExpense()
+        public async Task CreateUpdateDeleteAnExpense()
         {
-            var model = new AddEditExpense()
+            var testId = 0;
+            try
             {
-                Id = null,
-                PurchaseDate = DateTime.Now,
-                Amount = 1.00m,
-                Notes = $"TEST EXPENSE {Guid.NewGuid()}",
-                MerchantId = 85,
-                SubCategoryId = 31
-            };
-            var response = await _fixture.SendPostRequestAsync(ENDPOINT, model);
-            response.StatusCode.ShouldBe(HttpStatusCode.Created);
-            var responseObject = JsonConvert.DeserializeObject<AddEditExpense>(await response.Content.ReadAsStringAsync());
-            response.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/{responseObject.Id.ToString()}");
-            return responseObject.Id!.Value;
-        }
-        [Fact]
-        public async Task UpdateAnExpense()
-        {
-            var testId = await CreateNewExpense();
-            var model = new AddEditExpense()
+                var model = GetAddEditExpense();
+                //Create
+                var createResponse = await _fixture.SendPostRequestAsync(ENDPOINT, model);
+                createResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
+                var createResponseObject = JsonConvert.DeserializeObject<AddEditExpense>(await createResponse.Content.ReadAsStringAsync());
+                createResponse.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/{createResponseObject.Id.ToString()}");
+                testId = createResponseObject.Id!.Value;
+
+                //Update
+                var updateObject = createResponseObject with { Id = createResponseObject.Id.Value, Notes = "UPDATE", PurchaseDate = DateTimeOffset.UtcNow, Amount = 5.00m, SubCategoryId = 31 };
+                var updateResponse = await _fixture.SendPutRequestAsync(ENDPOINT + $"/{testId}", updateObject);
+                var responseString = await updateResponse.Content.ReadAsStringAsync();
+                updateResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
+            finally
             {
-                Id = testId,
-                PurchaseDate = DateTime.Now,
-                Amount = 2.00m,
-                Notes = $"TEST UPDATE {Guid.NewGuid()}",
-                MerchantId = 86,
-                SubCategoryId = 29
-            };
-            var response = await _fixture.SendPutRequestAsync(ENDPOINT + $"/{testId}", model);
-            var responseString = await response.Content.ReadAsStringAsync();
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        }
-        [Fact]
-        public async Task DeleteAnExpense()
-        {
-            var testId = await CreateNewExpense();
-            var response = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                //delete
+                var deleteResponse = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
+                deleteResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
         }
         [Theory]
         [InlineData(-25.00)]
@@ -492,7 +477,6 @@ namespace CashTrack.IntegrationTests
             _output.WriteLine(responseString);
         }
         #endregion
-
         private void PrintRequestAndResponse(object request, object response)
         {
             _output.WriteLine(request.ToString());
@@ -502,7 +486,7 @@ namespace CashTrack.IntegrationTests
         {
             return new AddEditExpense()
             {
-                PurchaseDate = DateTime.Now,
+                PurchaseDate = DateTimeOffset.UtcNow,
                 Amount = 25.00m,
                 SubCategoryId = 31
             };
