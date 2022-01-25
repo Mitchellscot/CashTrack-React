@@ -21,6 +21,8 @@ using CashTrack.Services.ExpenseService;
 using CashTrack.Services.UserService;
 using CashTrack.Repositories.SubCategoriesRepository;
 using CashTrack.Services.SubCategoryService;
+using CashTrack.Services.MainCategoriesService;
+using CashTrack.Repositories.MainCategoriesRepository;
 
 namespace CashTrack
 {
@@ -80,6 +82,9 @@ namespace CashTrack
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
             services.AddScoped<ISubCategoryService, SubCategoryService>();
+            services.AddScoped<IMainCategoriesService, MainCategoriesService>();
+            services.AddScoped<IMainCategoriesRepository, MainCategoriesRepository>();
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // In production, the React files will be served from this directory
