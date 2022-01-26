@@ -1,19 +1,14 @@
 ﻿using AutoMapper;
-using CashTrack.Data.CsvFiles;
 using CashTrack.Data.Entities;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Services.ExpenseService;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.Common;
-using System.Linq.Expressions;
 using Bogus;
 
 namespace CashTrack.Tests.Services

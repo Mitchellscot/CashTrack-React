@@ -41,7 +41,7 @@ namespace CashTrack.Services.MainCategoriesService
             var category = _mapper.Map<MainCategories>(request);
 
             if (!await _mainCategoryRepo.Create(category))
-                throw new System.Exception("unable to save category to the database");
+                throw new System.Exception("Unable to save category to the database");
 
             return request;
         }
