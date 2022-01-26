@@ -1,14 +1,55 @@
-﻿using CashTrack.Services.MainCategoriesService;
+﻿using CashTrack.Models.MainCategoryModels;
+using CashTrack.Services.MainCategoriesService;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Controllers
 {
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
     public class MainCategoryController : ControllerBase
     {
         private readonly IMainCategoriesService _service;
         public MainCategoryController(IMainCategoriesService mainCategoryService)
         {
             _service = mainCategoryService;
+        }
+        [HttpGet]
+        public async Task<ActionResult<MainCategoryModels.Response>> GetMainCategories([FromQuery] MainCategoryModels.Request request)
+        {
+            try
+            {
+                var result = await _service.GetMainCategoriesAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult<AddEditMainCategory>> CreateMainCategory([FromBody] AddEditMainCategory request)
+        {
+            if (request.Id != null)
+                return BadRequest("Cannot have an id in the request to create a new main category.");
+
+            try
+            {
+                var result = await _service.CreateMainCategoryAsync(request);
+                return CreatedAtAction("detail", new { id = result.Id }, result);
+            }
+            catch (DuplicateCategoryNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

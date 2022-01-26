@@ -28,18 +28,23 @@ namespace CashTrack
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-        public IConfiguration Configuration { get; }
+        public readonly IConfiguration _config;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        {
+            _config = configuration;
+            _env = env;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            //const string devDb = "DefaultConnection";
-            const string testDb = "TestDb";
-            string connectionString = Configuration.GetConnectionString(testDb);
+            string db = "DefaultConnection";
+            if (_env.IsEnvironment("Test"))
+                db = "TestDb";
+
+            string connectionString = _config.GetConnectionString(db);
             Console.WriteLine($"Using connection string: {connectionString}");
 
             services.AddDbContext<AppDbContext>(options =>
@@ -85,7 +90,7 @@ namespace CashTrack
             services.AddScoped<IMainCategoriesService, MainCategoriesService>();
             services.AddScoped<IMainCategoriesRepository, MainCategoriesRepository>();
 
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<AppSettings>(_config.GetSection("AppSettings"));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -94,10 +99,9 @@ namespace CashTrack
            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -132,7 +136,7 @@ namespace CashTrack
            {
                spa.Options.SourcePath = "ClientApp";
 
-               if (env.IsDevelopment() || env.IsEnvironment("Test"))
+               if (_env.IsDevelopment())
                {
                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                    spa.UseReactDevelopmentServer(npmScript: "start");

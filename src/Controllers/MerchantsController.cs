@@ -13,23 +13,23 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class MerchantsController : ControllerBase
     {
-        private readonly IMerchantService _merchantService;
+        private readonly IMerchantService _service;
 
         public MerchantsController(IMerchantService merchantService)
         {
-            _merchantService = merchantService;
+            _service = merchantService;
         }
         [HttpGet]
         public async Task<ActionResult<MerchantModels.Response>> GetAllMerchants([FromQuery] MerchantModels.Request request)
         {
             try
             {
-                var response = await _merchantService.GetMerchantsAsync(request);
-                return response;
+                var response = await _service.GetMerchantsAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message.ToString() });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
         [HttpGet("detail/{id:int}")]
@@ -37,7 +37,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                var result = await _merchantService.GetMerchantDetailAsync(id);
+                var result = await _service.GetMerchantDetailAsync(id);
                 return Ok(result);
             }
             catch (MerchantNotFoundException ex)
@@ -57,7 +57,7 @@ namespace CashTrack.Controllers
 
             try
             {
-                var result = await _merchantService.CreateMerchantAsync(request);
+                var result = await _service.CreateMerchantAsync(request);
                 //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
                 return CreatedAtAction("detail", new { id = result.id }, result);
             }
@@ -77,7 +77,7 @@ namespace CashTrack.Controllers
                 return BadRequest("Need a merchant id to update a merchant.");
             try
             {
-                var result = await _merchantService.UpdateMerchantAsync(request);
+                var result = await _service.UpdateMerchantAsync(request);
                 return Ok();
             }
             catch (DuplicateMerchantNameException ex)
@@ -94,7 +94,7 @@ namespace CashTrack.Controllers
         {
             try
             {
-                if (await _merchantService.DeleteMerchantAsync(id))
+                if (await _service.DeleteMerchantAsync(id))
                     return Ok();
                 else
                     return BadRequest("Error occured while deleting merchant.");

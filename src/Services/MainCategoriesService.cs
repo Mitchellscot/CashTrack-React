@@ -13,7 +13,7 @@ namespace CashTrack.Services.MainCategoriesService
     {
         Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request);
         Task<MainCategoryDetail> GetMainCategoryDetailAsync(int id);
-        Task<MainCategories> CreateMainCategory(AddEditMainCategory request);
+        Task<AddEditMainCategory> CreateMainCategoryAsync(AddEditMainCategory request);
         Task<bool> UpdateMainCategoryAsync(AddEditMainCategory request);
         Task<bool> DeleteMainCategoryAsync(int id);
     }
@@ -30,20 +30,20 @@ namespace CashTrack.Services.MainCategoriesService
             _mapper = mapper;
         }
 
-        public async Task<MainCategories> CreateMainCategory(AddEditMainCategory request)
+        public async Task<AddEditMainCategory> CreateMainCategoryAsync(AddEditMainCategory request)
         {
             var categories = await _mainCategoryRepo.Find(x => true);
             if (categories.Any(x => x.main_category_name == request.Name))
                 throw new DuplicateCategoryNameException(request.Name);
 
-            var category = _mapper.Map<MainCategories>(request);
+            request.Id = await _mainCategoryRepo.GetCountOfMainCategories() + 1;
 
-            category.id = await _mainCategoryRepo.GetCountOfMainCategories() + 1;
+            var category = _mapper.Map<MainCategories>(request);
 
             if (!await _mainCategoryRepo.Create(category))
                 throw new System.Exception("unable to save category to the database");
 
-            return category;
+            return request;
         }
 
         public async Task<bool> DeleteMainCategoryAsync(int id)
@@ -58,11 +58,11 @@ namespace CashTrack.Services.MainCategoriesService
         public async Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request)
         {
             var categories = await _mainCategoryRepo.Find(x => true);
-            var listItems = categories.Select(c => new MainCategoryListItem()
+            var listItems = categories.Select(mc => new MainCategoryListItem()
             {
-                Id = c.id,
-                Name = c.main_category_name,
-                NumberOfSubCategories = _subCategoryRepository.Find(c => c.main_categoryid == c.id).Result.Count()
+                Id = mc.id,
+                Name = mc.main_category_name,
+                NumberOfSubCategories = (int)_subCategoryRepository.GetCountOfSubCategories(c => c.main_categoryid == mc.id).Result
             }).ToArray();
 
             var response = new MainCategoryModels.Response()
