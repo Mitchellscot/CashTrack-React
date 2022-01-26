@@ -2,9 +2,7 @@
 using Newtonsoft.Json;
 using Shouldly;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -59,6 +57,33 @@ namespace CashTrack.IntegrationTests
             responseObject.TotalPages.ShouldBeGreaterThanOrEqualTo(1);
             responseObject.TotalSubCategories.ShouldBeGreaterThan(1);
             responseObject.SubCategories.ShouldNotBeEmpty<SubCategoryListItem>();
+        }
+        [Fact]
+        public async Task CreateUpdateDeleteSubCategories()
+        {
+            var testId = 0;
+            try
+            {
+                //create
+                var uniqueName = Guid.NewGuid().ToString();
+                var request = new AddEditSubCategory() with { Name = uniqueName, InUse = true, MainCategoryId = 12 };
+                var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
+                response.StatusCode.ShouldBe(HttpStatusCode.Created);
+                var responseObject = JsonConvert.DeserializeObject<AddEditSubCategory>(await response.Content.ReadAsStringAsync());
+                testId = responseObject.Id!.Value;
+                response.Headers.Location!.ToString().ShouldContain(responseObject.Id.ToString()!);
+                responseObject.Name.ShouldBe(uniqueName);
+                //update
+                var updatedObject = new AddEditSubCategory() with { Id = testId, Name = Guid.NewGuid().ToString(), MainCategoryId = 12, InUse = false };
+                var updatedResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updatedObject);
+                updatedResponse.EnsureSuccessStatusCode();
+            }
+            finally
+            {
+                //delete
+                var deleteResponse = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
+                deleteResponse.EnsureSuccessStatusCode();
+            }
         }
     }
 }
