@@ -4,7 +4,9 @@ using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.MainCategoryModels;
 using CashTrack.Repositories.MainCategoriesRepository;
 using CashTrack.Repositories.SubCategoriesRepository;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.MainCategoriesService
@@ -57,7 +59,11 @@ namespace CashTrack.Services.MainCategoriesService
 
         public async Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request)
         {
-            var categories = await _mainCategoryRepo.Find(x => true);
+            Expression<Func<MainCategories, bool>> search = (MainCategories x) => x.main_category_name.ToLower().Contains(request.SearchTerm);
+            Expression<Func<MainCategories, bool>> returnAll = (MainCategories x) => true;
+
+            var predicate = request.SearchTerm == null ? returnAll : search;
+            var categories = await _mainCategoryRepo.Find(predicate);
             var listItems = categories.Select(mc => new MainCategoryListItem()
             {
                 Id = mc.id,

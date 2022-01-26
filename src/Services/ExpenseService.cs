@@ -33,7 +33,7 @@ public class ExpenseService : IExpenseService
     }
     public async Task<ExpenseListItem> GetExpenseByIdAsync(int id)
     {
-        //This will be changed to offer more detail, it will be a big method
+        //This would get displayed in a modal... doesn't need to be a lot of info, just enough to edit or whatever.
         var singleExpense = await _expenseRepo.FindById(id);
         return _mapper.Map<ExpenseListItem>(singleExpense);
     }
