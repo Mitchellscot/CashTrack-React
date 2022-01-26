@@ -11,6 +11,8 @@ using Bogus;
 using CashTrack.Repositories.SubCategoriesRepository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System;
 
 namespace CashTrack.Tests.Services
 {
@@ -36,14 +38,15 @@ namespace CashTrack.Tests.Services
         [Fact]
         public async Task GetAll()
         {
+            _subRepo.Setup(s => s.GetCountOfSubCategories(It.IsAny<Expression<Func<SubCategories, bool>>>())).ReturnsAsync(1m);
             _repo.Setup(r => r.Find(x => true)).ReturnsAsync(_data);
             var request = new MainCategoryModels.Request();
             var result = await _sut.GetMainCategoriesAsync(request);
             result.MainCategories.Count().ShouldBe(2);
             result.TotalMainCategories.ShouldBe(2);
             result.MainCategories.FirstOrDefault()!.Name.ShouldBe("FOOD");
+            result.MainCategories.FirstOrDefault()!.NumberOfSubCategories.ShouldBe(1);
             result.MainCategories.LastOrDefault()!.Name.ShouldBe("Housing");
-
         }
         [Fact]
         public async Task Create()
@@ -81,7 +84,12 @@ namespace CashTrack.Tests.Services
                     {
                         id = 1,
                         main_category_name = "FOOD",
-                        sub_categories = new List<SubCategories>()
+                        sub_categories = new List<SubCategories>() { new SubCategories(){
+                            id = 1,
+                            sub_category_name="Groceries",
+                            main_categoryid=1,
+
+                        } }
                     },
                     new MainCategories()
                     {
