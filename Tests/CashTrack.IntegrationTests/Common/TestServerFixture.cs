@@ -37,13 +37,6 @@ namespace CashTrack.IntegrationTests
                 .UseContentRoot(GetContentRootPath())
                 .UseEnvironment("Test")
                 .UseConfiguration(configuration)
-                .ConfigureServices(services =>
-                {
-                    services.AddDbContext<AppDbContext>(options =>
-                    {
-                        options.UseNpgsql(configuration.GetConnectionString("TestDb"));
-                    });
-                })
                 .UseStartup<CashTrack.Startup>();
             _testServer = new TestServer(builder);
             Client = _testServer.CreateClient();

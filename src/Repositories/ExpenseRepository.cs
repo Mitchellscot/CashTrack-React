@@ -95,6 +95,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
+            _context.ChangeTracker.Clear();
             var Entity = _context.Expenses.Attach(entity);
             Entity.State = EntityState.Modified;
             return await (_context.SaveChangesAsync()) > 0;

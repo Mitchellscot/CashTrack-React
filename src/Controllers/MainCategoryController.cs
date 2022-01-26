@@ -51,5 +51,42 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpPut]
+        public async Task<ActionResult> UpdateMainCategory([FromBody] AddEditMainCategory request)
+        {
+            if (request.Id == null)
+                return BadRequest("Main Category ID must not be null");
+
+            try
+            {
+                var result = await _service.UpdateMainCategoryAsync(request);
+                return Ok();
+            }
+            catch (DuplicateCategoryNameException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteMainCategory(int id)
+        {
+            try
+            {
+                var result = await _service.DeleteMainCategoryAsync(id);
+                return Ok();
+            }
+            catch (CategoryNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

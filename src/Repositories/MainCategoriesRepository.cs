@@ -98,6 +98,7 @@ namespace CashTrack.Repositories.MainCategoriesRepository
         {
             try
             {
+                _context.ChangeTracker.Clear();
                 var contextAttachedEntity = _context.MainCategories.Attach(entity);
                 contextAttachedEntity.State = EntityState.Modified;
                 return await (_context.SaveChangesAsync()) > 0;

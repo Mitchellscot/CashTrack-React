@@ -94,10 +94,12 @@ namespace CashTrack.Controllers
         {
             try
             {
-                if (await _service.DeleteMerchantAsync(id))
-                    return Ok();
-                else
-                    return BadRequest("Error occured while deleting merchant.");
+                var result = await _service.DeleteMerchantAsync(id);
+                return Ok();
+            }
+            catch (MerchantNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
