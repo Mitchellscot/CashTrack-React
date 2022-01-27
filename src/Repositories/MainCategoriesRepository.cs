@@ -11,7 +11,6 @@ namespace CashTrack.Repositories.MainCategoriesRepository
 {
     public interface IMainCategoriesRepository : IRepository<MainCategories>
     {
-        Task<int> GetCountOfMainCategories();
     }
     public class MainCategoriesRepository : IMainCategoriesRepository
     {
@@ -20,7 +19,7 @@ namespace CashTrack.Repositories.MainCategoriesRepository
 
         public async Task<bool> Create(MainCategories entity)
         {
-            var count = await GetCountOfMainCategories();
+            var count = await GetCount(x => true);
             if (count >= 25)
                 throw new MainCategoryLimitException(count);
 
@@ -82,12 +81,7 @@ namespace CashTrack.Repositories.MainCategoriesRepository
             throw new NotImplementedException();
         }
 
-        public Task<int> GetCount(Expression<Func<MainCategories, bool>> predicate)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> GetCountOfMainCategories()
+        public async Task<int> GetCount(Expression<Func<MainCategories, bool>> predicate)
         {
             try
             {

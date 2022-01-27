@@ -72,8 +72,16 @@ public class UserRepository : IUserRepository
         throw new NotImplementedException();
     }
 
-    public Task<int> GetCount(Expression<Func<Users, bool>> predicate)
+    public async Task<int> GetCount(Expression<Func<Users, bool>> predicate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var users = await _context.Users.CountAsync(predicate);
+            return users;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

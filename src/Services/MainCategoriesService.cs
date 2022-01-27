@@ -38,7 +38,7 @@ namespace CashTrack.Services.MainCategoriesService
             if (categories.Any(x => x.main_category_name == request.Name))
                 throw new DuplicateCategoryNameException(request.Name);
 
-            request.Id = await _mainCategoryRepo.GetCountOfMainCategories() + 1;
+            request.Id = await _mainCategoryRepo.GetCount(x => true) + 1;
 
             var category = _mapper.Map<MainCategories>(request);
 
