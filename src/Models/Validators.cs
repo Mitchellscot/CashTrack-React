@@ -90,7 +90,7 @@ public class AddEditMerchantValidator : AbstractValidator<AddEditMerchant>
     }
 }
 /* SUB CATEGORIES */
-public class SubCategoryValidator : AbstractValidator<SubCategoryModels.Request>
+public class SubCategoryValidator : AbstractValidator<SubCategoryRequest>
 {
     public SubCategoryValidator()
     {

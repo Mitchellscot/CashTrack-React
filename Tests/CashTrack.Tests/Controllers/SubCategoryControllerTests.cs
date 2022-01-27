@@ -25,10 +25,10 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void GetAll()
         {
-            var request = new SubCategoryModels.Request();
+            var request = new SubCategoryRequest();
             var result = await _sut.GetAllSubCategories(request);
-            var viewResult = Assert.IsType<ActionResult<SubCategoryModels.Response>>(result);
-            _service.Verify(s => s.GetSubCategoriesAsync(It.IsAny<SubCategoryModels.Request>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<SubCategoryResponse>>(result);
+            _service.Verify(s => s.GetSubCategoriesAsync(It.IsAny<SubCategoryRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void Create()

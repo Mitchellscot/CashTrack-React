@@ -15,10 +15,8 @@ namespace CashTrack.Controllers
     {
         private readonly IMerchantService _service;
 
-        public MerchantsController(IMerchantService merchantService)
-        {
-            _service = merchantService;
-        }
+        public MerchantsController(IMerchantService merchantService) => _service = merchantService;
+
         [HttpGet]
         public async Task<ActionResult<MerchantResponse>> GetAllMerchants([FromQuery] MerchantRequest request)
         {

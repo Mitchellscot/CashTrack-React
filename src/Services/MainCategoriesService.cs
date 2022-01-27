@@ -68,7 +68,7 @@ namespace CashTrack.Services.MainCategoriesService
             {
                 Id = mc.id,
                 Name = mc.main_category_name,
-                NumberOfSubCategories = (int)_subCategoryRepository.GetCountOfSubCategories(c => c.main_categoryid == mc.id).Result
+                NumberOfSubCategories = (int)_subCategoryRepository.GetCount(c => c.main_categoryid == mc.id).Result
             }).ToArray();
 
             var response = new MainCategoryResponse()
