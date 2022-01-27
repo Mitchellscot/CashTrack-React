@@ -424,7 +424,7 @@ namespace CashTrack.IntegrationTests
 
                 //Update
                 var updateObject = createResponseObject with { Id = createResponseObject.Id.Value, Notes = "UPDATE", PurchaseDate = DateTimeOffset.UtcNow, Amount = 5.00m, SubCategoryId = 31 };
-                var updateResponse = await _fixture.SendPutRequestAsync(ENDPOINT + $"/{testId}", updateObject);
+                var updateResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updateObject);
                 var responseString = await updateResponse.Content.ReadAsStringAsync();
                 updateResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
             }
