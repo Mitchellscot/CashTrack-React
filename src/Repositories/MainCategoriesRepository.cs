@@ -82,6 +82,11 @@ namespace CashTrack.Repositories.MainCategoriesRepository
             throw new NotImplementedException();
         }
 
+        public Task<int> GetCount(Expression<Func<MainCategories, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> GetCountOfMainCategories()
         {
             try

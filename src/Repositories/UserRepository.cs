@@ -71,4 +71,9 @@ public class UserRepository : IUserRepository
         //might add this later, change password, email, etc.
         throw new NotImplementedException();
     }
+
+    public Task<int> GetCount(Expression<Func<Users, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
 }

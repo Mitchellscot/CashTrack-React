@@ -54,6 +54,11 @@ public class TagRepository : ITagRepository
         throw new NotImplementedException();
     }
 
+    public Task<int> GetCount(Expression<Func<Tags, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<bool> Update(Tags entity)
     {
         throw new NotImplementedException();

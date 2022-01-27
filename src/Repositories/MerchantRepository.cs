@@ -113,4 +113,9 @@ public class MerchantRepository : IMerchantRepository
             throw;
         }
     }
+
+    public Task<int> GetCount(Expression<Func<Merchants, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
 }

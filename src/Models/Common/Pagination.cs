@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CashTrack.Models.Common
 {
@@ -10,10 +11,19 @@ namespace CashTrack.Models.Common
     }
     public abstract class PaginationResponse<T> where T : class
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; } = 25;
-        public int TotalPages { get; set; }
-        public decimal TotalCount { get; set; }
-        public IEnumerable<T> ListItems { get; set; }
+        public int PageNumber { get; private set; }
+        public int PageSize { get; private set; }
+        public int TotalCount { get; private set; }
+        public int TotalPages => (int)Math.Ceiling((decimal)TotalCount / PageSize);
+        public IEnumerable<T> ListItems { get; private set; }
+
+        public PaginationResponse(PaginationRequest request, int count, IEnumerable<T> listItems)
+        {
+            PageNumber = request.PageNumber;
+            PageSize = request.PageSize;
+            TotalCount = count;
+            ListItems = listItems;
+        }
+
     }
 }

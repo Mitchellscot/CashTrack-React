@@ -11,7 +11,6 @@ namespace CashTrack.Repositories.IncomeCategoryRepository;
 
 public interface IIncomeCategoryRepository : IRepository<IncomeCategories>
 {
-    Task<decimal> GetCountOfIncomeCategories(Expression<Func<IncomeCategories, bool>> predicate);
 }
 
 public class IncomeCategoryRepository : IIncomeCategoryRepository
@@ -20,24 +19,59 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
 
     public IncomeCategoryRepository(AppDbContext context) => _context = context;
 
-    public Task<bool> Create(IncomeCategories entity)
+    public async Task<bool> Create(IncomeCategories entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _context.IncomeCategories.AddAsync(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public Task<bool> Delete(IncomeCategories entity)
+    public async Task<bool> Delete(IncomeCategories entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.Remove(entity);
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public Task<IncomeCategories[]> Find(Expression<Func<IncomeCategories, bool>> predicate)
+    public async Task<IncomeCategories[]> Find(Expression<Func<IncomeCategories, bool>> predicate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await _context.IncomeCategories.Where(predicate).ToArrayAsync();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public Task<IncomeCategories> FindById(int id)
+    public async Task<IncomeCategories> FindById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var category = await _context.IncomeCategories
+                .Where(x => x.id == id)
+                .SingleOrDefaultAsync();
+            if (category == null)
+                throw new CategoryNotFoundException(id.ToString());
+            return category;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<IncomeCategories[]> FindWithPagination(Expression<Func<IncomeCategories, bool>> predicate, int pageNumber, int pageSize)
@@ -58,11 +92,11 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<decimal> GetCountOfIncomeCategories(Expression<Func<IncomeCategories, bool>> predicate)
+    public async Task<int> GetCount(Expression<Func<IncomeCategories, bool>> predicate)
     {
         try
         {
-            return (decimal)await _context.IncomeCategories.CountAsync(predicate);
+            return await _context.IncomeCategories.CountAsync(predicate);
         }
         catch (Exception)
         {
@@ -70,9 +104,19 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public Task<bool> Update(IncomeCategories entity)
+    public async Task<bool> Update(IncomeCategories entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _context.ChangeTracker.Clear();
+            var contextAttachedEntity = _context.IncomeCategories.Attach(entity);
+            contextAttachedEntity.State = EntityState.Modified;
+            return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }
 

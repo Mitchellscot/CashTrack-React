@@ -30,16 +30,10 @@ public class IncomeCategoryService : IIncomeCategoryService
         var predicate = request.Query == null ? returnAll : searchCategories;
 
         var categories = await _repo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
-        var count = await _repo.GetCountOfIncomeCategories(predicate);
+        var count = await _repo.GetCount(predicate);
 
-        var response = new IncomeCategoryModels.Response()
-        {
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize,
-            TotalPages = (int)Math.Ceiling(count / request.PageSize),
-            TotalCount = (int)count,
-            ListItems = (IEnumerable<IncomeCategoryListItem>)_mapper.Map<IncomeCategoryListItem[]>(categories),
-        };
+        var response = new IncomeCategoryModels.Response(request, count, _mapper.Map<IncomeCategoryListItem[]>(categories));
+
         return response;
     }
 }

@@ -1,7 +1,7 @@
 ﻿using CashTrack.Models.Common;
 
 namespace CashTrack.Models.IncomeCategoryModels;
-
+//maybe just break these two up instead of being nested classes...
 public class IncomeCategoryModels
 {
     public class Request : PaginationRequest
@@ -9,6 +9,7 @@ public class IncomeCategoryModels
     }
     public class Response : PaginationResponse<IncomeCategoryListItem>
     {
+        public Response(Request r, int i, IncomeCategoryListItem[] l) : base(r, i, l) { }
     }
 }
 public record AddEditIncomeCategory

@@ -121,5 +121,10 @@ public class SubCategoryRepository : ISubCategoryRepository
             throw;
         }
     }
+
+    public Task<int> GetCount(Expression<Func<SubCategories, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
 }
 

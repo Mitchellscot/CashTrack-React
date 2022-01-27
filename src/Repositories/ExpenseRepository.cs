@@ -158,4 +158,9 @@ public class ExpenseRepository : IExpenseRepository
             throw;
         }
     }
+
+    public Task<int> GetCount(Expression<Func<Expenses, bool>> predicate)
+    {
+        throw new NotImplementedException();
+    }
 }
