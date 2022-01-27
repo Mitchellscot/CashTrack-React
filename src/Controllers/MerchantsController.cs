@@ -20,7 +20,7 @@ namespace CashTrack.Controllers
             _service = merchantService;
         }
         [HttpGet]
-        public async Task<ActionResult<MerchantModels.Response>> GetAllMerchants([FromQuery] MerchantModels.Request request)
+        public async Task<ActionResult<MerchantResponse>> GetAllMerchants([FromQuery] MerchantRequest request)
         {
             try
             {

@@ -20,10 +20,10 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void GetAll()
         {
-            var request = new MerchantModels.Request();
+            var request = new MerchantRequest();
             var result = await _sut.GetAllMerchants(request);
-            var viewResult = Assert.IsType<ActionResult<MerchantModels.Response>>(result);
-            _service.Verify(s => s.GetMerchantsAsync(It.IsAny<MerchantModels.Request>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<MerchantResponse>>(result);
+            _service.Verify(s => s.GetMerchantsAsync(It.IsAny<MerchantRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void GetById()

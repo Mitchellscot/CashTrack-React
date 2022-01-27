@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 namespace CashTrack.Repositories.MerchantRepository;
 public interface IMerchantRepository : IRepository<Merchants>
 {
-    Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate);
 }
 public class MerchantRepository : IMerchantRepository
 {
@@ -18,17 +17,6 @@ public class MerchantRepository : IMerchantRepository
     public MerchantRepository(AppDbContext context)
     {
         _context = context;
-    }
-    public async Task<decimal> GetCountOfMerchants(Expression<Func<Merchants, bool>> predicate)
-    {
-        try
-        {
-            return (decimal)await _context.Merchants.CountAsync(predicate);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
     }
     public async Task<Merchants> FindById(int id)
     {
@@ -114,8 +102,15 @@ public class MerchantRepository : IMerchantRepository
         }
     }
 
-    public Task<int> GetCount(Expression<Func<Merchants, bool>> predicate)
+    public async Task<int> GetCount(Expression<Func<Merchants, bool>> predicate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await _context.Merchants.CountAsync(predicate);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

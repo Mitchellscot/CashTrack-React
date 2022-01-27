@@ -41,7 +41,7 @@ public class AddEditExpenseValidators : AbstractValidator<AddEditExpense>
             {
                 RuleFor(x => x.MerchantId).GreaterThan(0).MustAsync(async (model, value, _) =>
                 {
-                    return ((int)await _merchantRepo.GetCountOfMerchants(x => true)) > value;
+                    return ((int)await _merchantRepo.GetCount(x => true)) > value;
                 }).WithMessage("Invalid Merchant Id");
             });
     }
@@ -74,7 +74,7 @@ public class ExpenseSearchAmountValidator : AbstractValidator<AmountSearchReques
 }
 
 /* MERCHANTS */
-public class MerchantValidator : AbstractValidator<MerchantModels.Request>
+public class MerchantValidator : AbstractValidator<MerchantRequest>
 {
     public MerchantValidator()
     {

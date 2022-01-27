@@ -7,7 +7,7 @@ public class IncomeCategoryRequest : PaginationRequest
 }
 public class IncomeCategoryResponse : PaginationResponse<IncomeCategoryListItem>
 {
-    public IncomeCategoryResponse(int n, int r, int i, IncomeCategoryListItem[] l) : base(n, r, i, l) { }
+    public IncomeCategoryResponse(int pageNumber, int pageSize, int totalCount, IncomeCategoryListItem[] listItems) : base(pageNumber, pageSize, totalCount, listItems) { }
 }
 public record AddEditIncomeCategory
 {

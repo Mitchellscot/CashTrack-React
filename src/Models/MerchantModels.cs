@@ -1,26 +1,19 @@
 ﻿using System.Collections.Generic;
 using CashTrack.Helpers.Aggregators;
+using CashTrack.Models.Common;
 using CashTrack.Models.ExpenseModels;
 
 namespace CashTrack.Models.MerchantModels;
 
-public record MerchantModels
+
+public class MerchantRequest : PaginationRequest
 {
-    public class Request
-    {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 25;
-        public string SearchTerm { get; set; } = null;
-    }
-    public class Response
-    {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; } = 25;
-        public int TotalPages { get; set; }
-        public decimal TotalMerchants { get; set; }
-        public MerchantListItem[] Merchants { get; set; }
-    }
 }
+public class MerchantResponse : PaginationResponse<MerchantListItem>
+{
+    public MerchantResponse(int pageNumber, int pageSize, int totalCount, MerchantListItem[] listItems) : base(pageNumber, pageSize, totalCount, listItems) { }
+}
+
 public record AddEditMerchant
 {
     public int? Id { get; set; }
