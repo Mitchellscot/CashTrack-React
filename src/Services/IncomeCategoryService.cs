@@ -4,6 +4,7 @@ using CashTrack.Helpers.Exceptions;
 using CashTrack.Models.IncomeCategoryModels;
 using CashTrack.Repositories.IncomeCategoryRepository;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -16,9 +17,43 @@ public interface IIncomeCategoryService
 }
 public class IncomeCategoryService : IIncomeCategoryService
 {
-    public Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request)
+    private readonly IIncomeCategoryRepository _repo;
+    private readonly IMapper _mapper;
+
+    public IncomeCategoryService(IIncomeCategoryRepository repo, IMapper mapper) => (_repo, _mapper) = (repo, mapper);
+
+    public async Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request)
     {
-        throw new NotImplementedException();
+        Expression<Func<IncomeCategories, bool>> returnAll = (IncomeCategories x) => true;
+        Expression<Func<IncomeCategories, bool>> searchCategories = (IncomeCategories x) => x.category.ToLower().Contains(request.Query);
+
+        var predicate = request.Query == null ? returnAll : searchCategories;
+
+        var categories = await _repo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
+        var count = await _repo.GetCountOfIncomeCategories(predicate);
+
+        var response = new IncomeCategoryModels.Response()
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            TotalPages = (int)Math.Ceiling(count / request.PageSize),
+            TotalCount = (int)count,
+            ListItems = (IEnumerable<IncomeCategoryListItem>)_mapper.Map<IncomeCategoryListItem[]>(categories),
+        };
+        return response;
+    }
+}
+
+public class IncomeCategoryMapperProfile : Profile
+{
+    public IncomeCategoryMapperProfile()
+    {
+        //Maybe add a property on the List Item that associates the item with a number of incomes ???? 
+        //You would have to get rid of this map then.
+        CreateMap<IncomeCategories, IncomeCategoryListItem>()
+            .ForMember(x => x.Id, o => o.MapFrom(src => src.id))
+            .ForMember(x => x.Name, o => o.MapFrom(src => src.category))
+            .ReverseMap();
     }
 }
 
