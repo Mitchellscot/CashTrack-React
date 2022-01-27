@@ -46,13 +46,15 @@ public class AddEditExpenseValidators : AbstractValidator<AddEditExpense>
             });
     }
 }
-public class ExpenseRequestValidators : AbstractValidator<ExpenseModels.Request>
+public class ExpenseRequestValidators : AbstractValidator<ExpenseRequest>
 {
     public ExpenseRequestValidators(IExpenseRepository expenseRepository)
     {
         var earliestExpense = expenseRepository.Find(x => true).Result.OrderBy(x => x.purchase_date).Select(x => x.purchase_date).FirstOrDefault();
-
-        RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
+        When(x => x.DateOptions != 0, () =>
+        {
+            RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
+        });
         RuleFor(x => x.PageNumber).GreaterThan(0);
         RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
         RuleFor(x => x.BeginDate).Must(beginDate => beginDate >= earliestExpense).WithMessage("There are no expenses available before that date.");
@@ -61,20 +63,11 @@ public class ExpenseRequestValidators : AbstractValidator<ExpenseModels.Request>
         RuleFor(x => x.EndDate).Must(endDate => endDate > earliestExpense).WithMessage($"The end date cannot be before {earliestExpense.DateTime.ToShortDateString()}.");
     }
 }
-public class ExpenseSearchAmountValidator : AbstractValidator<ExpenseModels.AmountSearchRequest>
+public class ExpenseSearchAmountValidator : AbstractValidator<AmountSearchRequest>
 {
     public ExpenseSearchAmountValidator()
     {
         RuleFor(x => x.Query).NotEmpty().GreaterThan(0);
-        RuleFor(x => x.PageNumber).GreaterThan(0);
-        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
-    }
-}
-public class ExpenseSearchNotesValidator : AbstractValidator<ExpenseModels.NotesSearchRequest>
-{
-    public ExpenseSearchNotesValidator()
-    {
-        RuleFor(x => x.SearchTerm).NotEmpty();
         RuleFor(x => x.PageNumber).GreaterThan(0);
         RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
     }
@@ -110,7 +103,7 @@ public class AddEditSubCategoryValidator : AbstractValidator<AddEditSubCategory>
 {
     public AddEditSubCategoryValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(25);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(37); //the size of a GUID
     }
 }
 /* MAIN CATEGORY */
@@ -118,6 +111,6 @@ public class AddEditMainCategoryValidator : AbstractValidator<AddEditMainCategor
 {
     public AddEditMainCategoryValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(25);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(37);
     }
 }

@@ -12,7 +12,6 @@ namespace CashTrack.Repositories.ExpenseRepository;
 
 public interface IExpenseRepository : IRepository<Expenses>
 {
-    Task<decimal> GetCountOfExpenses(Expression<Func<Expenses, bool>> predicate);
     Task<decimal> GetAmountOfExpenses(Expression<Func<Expenses, bool>> predicate);
     Task<Expenses[]> GetExpensesAndCategories(Expression<Func<Expenses, bool>> predicate);
 }
@@ -117,19 +116,6 @@ public class ExpenseRepository : IExpenseRepository
             throw;
         }
     }
-    public async Task<decimal> GetCountOfExpenses(Expression<Func<Expenses, bool>> predicate)
-    {
-        try
-        {
-            return (decimal)await _context.Expenses
-            .Where(predicate)
-            .CountAsync();
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
     public async Task<decimal> GetAmountOfExpenses(Expression<Func<Expenses, bool>> predicate)
     {
         try
@@ -159,8 +145,17 @@ public class ExpenseRepository : IExpenseRepository
         }
     }
 
-    public Task<int> GetCount(Expression<Func<Expenses, bool>> predicate)
+    public async Task<int> GetCount(Expression<Func<Expenses, bool>> predicate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await _context.Expenses
+            .Where(predicate)
+            .CountAsync();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

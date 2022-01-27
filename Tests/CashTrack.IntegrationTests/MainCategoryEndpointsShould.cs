@@ -29,7 +29,7 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MainCategoryModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MainCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalMainCategories.ShouldBeGreaterThan(15);
             var categoryNumber = responseObject.TotalMainCategories;
@@ -38,9 +38,9 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task SearchBySearchTerm()
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?searchterm=food");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?query=food");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MainCategoryModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MainCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.MainCategories.Count().ShouldBe(1);
             responseObject.MainCategories.FirstOrDefault()!.Name.ShouldBe("Food");

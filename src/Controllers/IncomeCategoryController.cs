@@ -17,7 +17,7 @@ namespace CashTrack.Controllers
         public IncomeCategoryController(IIncomeCategoryService service) => _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IncomeCategoryModels.Response>> GetIncomeCategories([FromQuery] IncomeCategoryModels.Request request)
+        public async Task<ActionResult<IncomeCategoryResponse>> GetIncomeCategories([FromQuery] IncomeCategoryRequest request)
         {
             try
             {

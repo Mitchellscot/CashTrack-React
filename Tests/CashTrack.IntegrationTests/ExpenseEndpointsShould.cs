@@ -68,13 +68,13 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ReturnAllExpenses()
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + "?dateoptions=1");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "?dateoptions=1");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.TotalPages.ShouldBeGreaterThan(287);
-            responseObject.TotalExpenses.ShouldBeGreaterThan(7000);
+            responseObject.TotalCount.ShouldBeGreaterThan(7000);
         }
         [Theory]
         [InlineData("2016-02-14")]
@@ -85,11 +85,11 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=2&beginDate={date}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
-            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalCount.ShouldBeGreaterThan(1);
         }
         [Theory]
         [InlineData("2016-02-16")]
@@ -99,11 +99,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=3&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var testMonth = DateTime.Parse(date).Month;
             foreach (var exp in expenseList)
             {
@@ -117,13 +117,13 @@ namespace CashTrack.IntegrationTests
         [InlineData("2013-04-24")]
         public async Task ReturnsExpensesForAGivenQuarter(string date)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=4&beginDate={date}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?dateoptions=4&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(1);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var testYear = DateTime.Parse(date).Year;
             foreach (var exp in expenseList)
             {
@@ -139,11 +139,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=5&beginDate={date}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThanOrEqualTo(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThanOrEqualTo(1);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var testYear = DateTime.Parse(date).Year;
             foreach (var exp in expenseList)
             {
@@ -159,11 +159,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=6&beginDate={beginDate}&endDate={endDate}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(1);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             foreach (var exp in expenseList)
             {
                 exp.PurchaseDate.ShouldBeInRange(DateTimeOffset.Parse(beginDate), DateTimeOffset.Parse(endDate));
@@ -175,11 +175,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=7");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThanOrEqualTo(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThanOrEqualTo(1);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             foreach (var exp in expenseList)
             {
                 exp.PurchaseDate.ShouldBeGreaterThan(DateTimeOffset.Now.AddDays(-31));
@@ -191,11 +191,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=8");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var thisMonth = DateTimeOffset.Now.Month;
             foreach (var exp in expenseList)
             {
@@ -208,11 +208,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=9");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var thisYear = DateTimeOffset.Now.Year;
             foreach (var exp in expenseList)
             {
@@ -225,11 +225,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + $"?dateoptions=10");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             responseObject.PageNumber.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
 
-            var expenseList = responseObject.Expenses.ToList();
+            var expenseList = responseObject.ListItems.ToList();
             var thisYear = DateTimeOffset.Now.Year;
             foreach (var exp in expenseList)
             {
@@ -356,26 +356,26 @@ namespace CashTrack.IntegrationTests
         [InlineData("Henry")]
         [InlineData("Sarah")]
         [InlineData("Lydia")]
-        public async Task ReturnsExpensesForAGivenSearchTerm(string searchTerm)
+        public async Task ReturnsExpensesForAGivenSearchTerm(string query)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?searchTerm={searchTerm}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?query={query}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
-            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalCount.ShouldBeGreaterThan(1);
         }
         [Theory]
         [EmptyData]
         public async Task ErrorWhenSearchTermIsntValid(string invalidSearch)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?searchTerm={invalidSearch}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"/notes?query={invalidSearch}");
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
-            responseString.ShouldContain("searchTerm");
+            responseString.ShouldContain("search term");
             _output.WriteLine(responseString);
         }
         [Theory]
@@ -387,11 +387,11 @@ namespace CashTrack.IntegrationTests
             var response = await _fixture.Client.GetAsync(ENDPOINT + $"/amount?query={query}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<ExpenseModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<ExpenseResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(responseObject.ToString());
             responseObject.PageNumber.ShouldBeGreaterThan(0);
-            responseObject.Expenses.Count().ShouldBeGreaterThan(0);
-            responseObject.TotalExpenses.ShouldBeGreaterThan(1);
+            responseObject.ListItems.Count().ShouldBeGreaterThan(0);
+            responseObject.TotalCount.ShouldBeGreaterThan(1);
         }
         [Theory]
         [InlineData(0.00)]

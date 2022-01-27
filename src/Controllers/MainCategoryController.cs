@@ -19,7 +19,7 @@ namespace CashTrack.Controllers
             _service = mainCategoryService;
         }
         [HttpGet]
-        public async Task<ActionResult<MainCategoryModels.Response>> GetMainCategories([FromQuery] MainCategoryModels.Request request)
+        public async Task<ActionResult<MainCategoryResponse>> GetMainCategories([FromQuery] MainCategoryRequest request)
         {
             try
             {

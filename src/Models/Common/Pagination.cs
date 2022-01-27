@@ -17,10 +17,10 @@ namespace CashTrack.Models.Common
         public int TotalPages => (int)Math.Ceiling((decimal)TotalCount / PageSize);
         public IEnumerable<T> ListItems { get; private set; }
 
-        public PaginationResponse(PaginationRequest request, int count, IEnumerable<T> listItems)
+        public PaginationResponse(int pageNumber, int pageSize, int count, IEnumerable<T> listItems)
         {
-            PageNumber = request.PageNumber;
-            PageSize = request.PageSize;
+            PageNumber = pageNumber;
+            PageSize = pageSize;
             TotalCount = count;
             ListItems = listItems;
         }

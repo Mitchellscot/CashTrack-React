@@ -13,7 +13,7 @@ namespace CashTrack.Services.IncomeCategoryService;
 
 public interface IIncomeCategoryService
 {
-    Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request);
+    Task<IncomeCategoryResponse> GetIncomeCategoriesAsync(IncomeCategoryRequest request);
 }
 public class IncomeCategoryService : IIncomeCategoryService
 {
@@ -22,7 +22,7 @@ public class IncomeCategoryService : IIncomeCategoryService
 
     public IncomeCategoryService(IIncomeCategoryRepository repo, IMapper mapper) => (_repo, _mapper) = (repo, mapper);
 
-    public async Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request)
+    public async Task<IncomeCategoryResponse> GetIncomeCategoriesAsync(IncomeCategoryRequest request)
     {
         Expression<Func<IncomeCategories, bool>> returnAll = (IncomeCategories x) => true;
         Expression<Func<IncomeCategories, bool>> searchCategories = (IncomeCategories x) => x.category.ToLower().Contains(request.Query);
@@ -32,7 +32,7 @@ public class IncomeCategoryService : IIncomeCategoryService
         var categories = await _repo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
         var count = await _repo.GetCount(predicate);
 
-        var response = new IncomeCategoryModels.Response(request, count, _mapper.Map<IncomeCategoryListItem[]>(categories));
+        var response = new IncomeCategoryResponse(request.PageNumber, request.PageSize, count, _mapper.Map<IncomeCategoryListItem[]>(categories));
 
         return response;
     }

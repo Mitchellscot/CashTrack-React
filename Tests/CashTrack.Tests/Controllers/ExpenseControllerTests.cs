@@ -30,26 +30,26 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void GetAll()
         {
-            var request = new ExpenseModels.Request();
+            var request = new ExpenseRequest();
             var result = await _sut.GetAllExpenses(request);
-            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
-            _service.Verify(s => s.GetExpensesAsync(It.IsAny<ExpenseModels.Request>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<ExpenseResponse>>(result);
+            _service.Verify(s => s.GetExpensesAsync(It.IsAny<ExpenseRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void GetByNotes()
         {
-            var request = new ExpenseModels.NotesSearchRequest() { SearchTerm = "test" };
+            var request = new ExpenseRequest() { Query = "test" };
             var result = await _sut.GetExpensesByNotes(request);
-            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
-            _service.Verify(s => s.GetExpensesByNotesAsync(It.IsAny<ExpenseModels.NotesSearchRequest>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<ExpenseResponse>>(result);
+            _service.Verify(s => s.GetExpensesByNotesAsync(It.IsAny<ExpenseRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void GetByAmount()
         {
-            var request = new ExpenseModels.AmountSearchRequest() { Query = 1.00m };
+            var request = new AmountSearchRequest() { Query = 1.00m };
             var result = await _sut.GetExpensesByAmount(request);
-            var viewResult = Assert.IsType<ActionResult<ExpenseModels.Response>>(result);
-            _service.Verify(s => s.GetExpensesByAmountAsync(It.IsAny<ExpenseModels.AmountSearchRequest>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<ExpenseResponse>>(result);
+            _service.Verify(s => s.GetExpensesByAmountAsync(It.IsAny<AmountSearchRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void Create()

@@ -53,7 +53,7 @@ public class MerchantService : IMerchantService
             Name = m.name,
             City = m.city,
             IsOnline = m.is_online,
-            NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.merchantid == m.id).Result
+            NumberOfExpenses = (int)_expenseRepo.GetCount(x => x.merchantid == m.id).Result
         }).ToArray();
 
         var searchTermResponse = new MerchantModels.Response

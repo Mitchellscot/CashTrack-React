@@ -40,7 +40,7 @@ namespace CashTrack.Tests.Services
         {
             _subRepo.Setup(s => s.GetCountOfSubCategories(It.IsAny<Expression<Func<SubCategories, bool>>>())).ReturnsAsync(1m);
             _repo.Setup(r => r.Find(x => true)).ReturnsAsync(_data);
-            var request = new MainCategoryModels.Request();
+            var request = new MainCategoryRequest();
             var result = await _sut.GetMainCategoriesAsync(request);
             result.MainCategories.Count().ShouldBe(2);
             result.TotalMainCategories.ShouldBe(2);

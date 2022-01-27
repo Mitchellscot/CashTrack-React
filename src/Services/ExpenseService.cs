@@ -14,9 +14,9 @@ namespace CashTrack.Services.ExpenseService;
 public interface IExpenseService
 {
     Task<ExpenseListItem> GetExpenseByIdAsync(int id);
-    Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request);
-    Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request);
-    Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request);
+    Task<ExpenseResponse> GetExpensesAsync(ExpenseRequest request);
+    Task<ExpenseResponse> GetExpensesByNotesAsync(ExpenseRequest request);
+    Task<ExpenseResponse> GetExpensesByAmountAsync(AmountSearchRequest request);
     Task<Expenses> CreateExpenseAsync(AddEditExpense request);
     Task<bool> UpdateExpenseAsync(AddEditExpense request);
     Task<bool> DeleteExpenseAsync(int id);
@@ -37,34 +37,31 @@ public class ExpenseService : IExpenseService
         var singleExpense = await _expenseRepo.FindById(id);
         return _mapper.Map<ExpenseListItem>(singleExpense);
     }
-    public async Task<ExpenseModels.Response> GetExpensesAsync(ExpenseModels.Request request)
+    public async Task<ExpenseResponse> GetExpensesAsync(ExpenseRequest request)
     {
         var predicate = GetPredicate(request);
         var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
-        var count = await _expenseRepo.GetCountOfExpenses(predicate);
+        var count = await _expenseRepo.GetCount(predicate);
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
 
-        return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
+        return new ExpenseResponse(request.PageNumber, request.PageSize, count, _mapper.Map<ExpenseListItem[]>(expenses), amount);
     }
-    public async Task<ExpenseModels.Response> GetExpensesByNotesAsync(ExpenseModels.NotesSearchRequest request)
+    public async Task<ExpenseResponse> GetExpensesByNotesAsync(ExpenseRequest request)
     {
-        Expression<Func<Expenses, bool>> predicate = x => x.notes.ToLower().Contains(request.SearchTerm.ToLower());
+        Expression<Func<Expenses, bool>> predicate = x => x.notes.ToLower().Contains(request.Query.ToLower());
         var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
-        var count = await _expenseRepo.GetCountOfExpenses(predicate);
+        var count = await _expenseRepo.GetCount(predicate);
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
 
-
-        return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
+        return new ExpenseResponse(request.PageNumber, request.PageSize, count, _mapper.Map<ExpenseListItem[]>(expenses), amount);
     }
-    public async Task<ExpenseModels.Response> GetExpensesByAmountAsync(ExpenseModels.AmountSearchRequest request)
+    public async Task<ExpenseResponse> GetExpensesByAmountAsync(AmountSearchRequest request)
     {
         Expression<Func<Expenses, bool>> predicate = x => x.amount == request.Query;
         var expenses = await _expenseRepo.FindWithPagination(x => x.amount == request.Query, request.PageNumber, request.PageSize);
-        var count = await _expenseRepo.GetCountOfExpenses(predicate);
+        var count = await _expenseRepo.GetCount(predicate);
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
-
-        return BuildResponse(expenses, count, amount, request.PageNumber, request.PageSize);
-
+        return new ExpenseResponse(request.PageNumber, request.PageSize, count, _mapper.Map<ExpenseListItem[]>(expenses), amount);
     }
     public async Task<Expenses> CreateExpenseAsync(AddEditExpense request)
     {
@@ -73,7 +70,7 @@ public class ExpenseService : IExpenseService
 
         var expense = _mapper.Map<Expenses>(request);
         //I manually set the id here because when I use the test database it messes with the id autogeneration
-        expense.id = ((int)await _expenseRepo.GetCountOfExpenses(x => true)) + 1;
+        expense.id = ((int)await _expenseRepo.GetCount(x => true)) + 1;
         var success = await _expenseRepo.Create(expense);
         if (!success)
             throw new Exception("Couldn't save expense to the database.");
@@ -95,7 +92,7 @@ public class ExpenseService : IExpenseService
         return await _expenseRepo.Delete(expense);
     }
     /***** HELPERS *****/
-    internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseModels.Request request) => request.DateOptions switch
+    internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseRequest request) => request.DateOptions switch
     {
         //1
         DateOptions.All => (Expenses x) => true,
@@ -136,32 +133,12 @@ public class ExpenseService : IExpenseService
         _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
     };
-    internal ExpenseModels.Response BuildResponse(Expenses[] expenses, decimal countOfExpenses, decimal amount, int pageNumber, int pageSize)
-    {
-        var response = new ExpenseModels.Response
-        {
-            TotalPages = (int)Math.Ceiling(countOfExpenses / (decimal)pageSize),
-            PageSize = pageSize,
-            TotalExpenses = (int)countOfExpenses,
-            PageNumber = pageNumber,
-            TotalAmount = amount,
-            Expenses = _mapper.Map<ExpenseListItem[]>(expenses)
-        };
-        return response;
-    }
-    internal DateTimeOffset GetCurrentMonth()
-    {
-        return new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
-    }
-    internal DateTimeOffset GetCurrentQuarter()
-    {
-        //Expression doesn't understand it if I just punch this in so I am making a sub method and it works...
-        return GetQuarterDatesFromDate(DateTime.UtcNow).startDate;
-    }
-    internal DateTimeOffset GetCurrentYear()
-    {
-        return new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
-    }
+    internal DateTimeOffset GetCurrentMonth() => new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+
+    internal DateTimeOffset GetCurrentQuarter() => GetQuarterDatesFromDate(DateTime.UtcNow).startDate;
+
+    internal DateTimeOffset GetCurrentYear() => new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+
     internal (DateTimeOffset startDate, DateTimeOffset endDate) GetMonthDatesFromDate(DateTimeOffset date)
     {
         var beginingOfMonth = new DateTimeOffset(

@@ -6,47 +6,34 @@ using System.Collections.Generic;
 
 namespace CashTrack.Models.ExpenseModels;
 
-public class ExpenseModels
+
+public class ExpenseRequest : PaginationRequest
 {
-    public record Request
+    public DateOptions DateOptions { get; set; }
+    public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
+}
+public class ExpenseResponse : PaginationResponse<ExpenseListItem>
+{
+    public decimal TotalAmount { get; private set; }
+    public ExpenseResponse(int pageNumber, int pageSize, int totalCount, ExpenseListItem[] listItems, decimal amount) : base(pageNumber, pageSize, totalCount, listItems)
     {
-        public DateOptions DateOptions { get; set; }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 25;
-        public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
-        public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
-        public string SearchTerm { get; set; } = null;
-    }
-    public record Response
-    {
-        public int PageNumber { get; set; }
-        public int TotalPages { get; set; }
-        public int PageSize { get; set; }
-        public int TotalExpenses { get; set; }
-        public decimal TotalAmount { get; set; }
-        public ExpenseListItem[] Expenses { get; set; }
-    }
-    public record NotesSearchRequest
-    {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 25;
-        public string SearchTerm { get; set; } = null;
-    }
-    public record AmountSearchRequest
-    {
-        private decimal _query;
-        public decimal Query
-        {
-            get { return _query; }
-            set
-            {
-                _query = Decimal.Round(value, 2);
-            }
-        }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 25;
+        TotalAmount = Math.Round(amount, 2);
     }
 }
+public class AmountSearchRequest : PaginationRequest
+{
+    private decimal _query;
+    new public decimal Query
+    {
+        get { return _query; }
+        set
+        {
+            _query = Decimal.Round(value, 2);
+        }
+    }
+}
+
 public record AddEditExpense
 {
     public int? Id { get; set; }

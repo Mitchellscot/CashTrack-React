@@ -13,7 +13,7 @@ namespace CashTrack.Services.MainCategoriesService
 {
     public interface IMainCategoriesService
     {
-        Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request);
+        Task<MainCategoryResponse> GetMainCategoriesAsync(MainCategoryRequest request);
         Task<MainCategoryDetail> GetMainCategoryDetailAsync(int id);
         Task<AddEditMainCategory> CreateMainCategoryAsync(AddEditMainCategory request);
         Task<bool> UpdateMainCategoryAsync(AddEditMainCategory request);
@@ -57,12 +57,12 @@ namespace CashTrack.Services.MainCategoriesService
             return await _mainCategoryRepo.Delete(category);
         }
 
-        public async Task<MainCategoryModels.Response> GetMainCategoriesAsync(MainCategoryModels.Request request)
+        public async Task<MainCategoryResponse> GetMainCategoriesAsync(MainCategoryRequest request)
         {
-            Expression<Func<MainCategories, bool>> search = (MainCategories x) => x.main_category_name.ToLower().Contains(request.SearchTerm);
+            Expression<Func<MainCategories, bool>> search = (MainCategories x) => x.main_category_name.ToLower().Contains(request.Query);
             Expression<Func<MainCategories, bool>> returnAll = (MainCategories x) => true;
 
-            var predicate = request.SearchTerm == null ? returnAll : search;
+            var predicate = request.Query == null ? returnAll : search;
             var categories = await _mainCategoryRepo.Find(predicate);
             var listItems = categories.Select(mc => new MainCategoryListItem()
             {
@@ -71,7 +71,7 @@ namespace CashTrack.Services.MainCategoriesService
                 NumberOfSubCategories = (int)_subCategoryRepository.GetCountOfSubCategories(c => c.main_categoryid == mc.id).Result
             }).ToArray();
 
-            var response = new MainCategoryModels.Response()
+            var response = new MainCategoryResponse()
             {
                 TotalMainCategories = categories.Count(),
                 MainCategories = listItems

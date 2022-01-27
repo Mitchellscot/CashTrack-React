@@ -42,7 +42,7 @@ public class SubCategoryService : ISubCategoryService
             Id = c.id,
             Name = c.sub_category_name,
             MainCategoryName = c.main_category.main_category_name,
-            NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.categoryid == c.id).Result
+            NumberOfExpenses = (int)_expenseRepo.GetCount(x => x.categoryid == c.id).Result
         }).ToArray();
 
         var response = new SubCategoryModels.Response()

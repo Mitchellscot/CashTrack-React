@@ -42,13 +42,13 @@ namespace CashTrack.Tests.Services
         {
             _repo.Setup(r => r.FindWithPagination(x => true, 1, 25)).ReturnsAsync(_data);
             _repo.Setup(r => r.GetAmountOfExpenses(x => true)).ReturnsAsync(_data.Sum(x => x.amount));
-            _repo.Setup(r => r.GetCountOfExpenses(x => true)).ReturnsAsync(_data.Count());
-            var request = new ExpenseModels.Request()
+            _repo.Setup(r => r.GetCount(x => true)).ReturnsAsync(_data.Count());
+            var request = new ExpenseRequest()
             {
                 DateOptions = DateOptions.All
             };
             var result = await _sut.GetExpensesAsync(request);
-            result.Expenses.Count().ShouldBe(3);
+            result.ListItems.Count().ShouldBe(3);
             result.TotalPages.ShouldBe(1);
             result.TotalAmount.ShouldBe(45.00m);
         }
@@ -57,12 +57,12 @@ namespace CashTrack.Tests.Services
         {
             var testword = "test";
             _repo.Setup(r => r.FindWithPagination(x => x.notes.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
-            var request = new ExpenseModels.NotesSearchRequest()
+            var request = new ExpenseRequest()
             {
-                SearchTerm = "test"
+                Query = "test"
             };
             var result = await _sut.GetExpensesByNotesAsync(request);
-            result.Expenses.Count().ShouldBe(3);
+            result.ListItems.Count().ShouldBe(3);
         }
         [Theory]
         [InlineData(DateOptions.All)]
@@ -77,7 +77,7 @@ namespace CashTrack.Tests.Services
         [InlineData(DateOptions.CurrentYear)]
         public void GetPredicateWorks(DateOptions option)
         {
-            var request = new ExpenseModels.Request() with { DateOptions = option };
+            var request = new ExpenseRequest() { DateOptions = option };
             var result = _sut.GetPredicate(request);
             result.NodeType.ShouldBe(System.Linq.Expressions.ExpressionType.Lambda);
             result.ShouldNotBeNull();

@@ -25,7 +25,7 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ExpenseModels.Response>> GetAllExpenses([FromQuery] ExpenseModels.Request request)
+        public async Task<ActionResult<ExpenseResponse>> GetAllExpenses([FromQuery] ExpenseRequest request)
         {
             try
             {
@@ -57,9 +57,9 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet("notes")]
-        public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByNotes([FromQuery] ExpenseModels.NotesSearchRequest request)
+        public async Task<ActionResult<ExpenseResponse>> GetExpensesByNotes([FromQuery] ExpenseRequest request)
         {
-            if (string.IsNullOrEmpty(request.SearchTerm))
+            if (string.IsNullOrEmpty(request.Query))
             {
                 return BadRequest("This endpoint requres a search term");
             }
@@ -76,7 +76,7 @@ namespace CashTrack.Controllers
         }
 
         [HttpGet("amount")]
-        public async Task<ActionResult<ExpenseModels.Response>> GetExpensesByAmount([FromQuery] ExpenseModels.AmountSearchRequest request)
+        public async Task<ActionResult<ExpenseResponse>> GetExpensesByAmount([FromQuery] AmountSearchRequest request)
         {
             if (string.IsNullOrEmpty(request.Query.ToString()))
             {
