@@ -14,6 +14,9 @@ namespace CashTrack.Services.IncomeCategoryService;
 public interface IIncomeCategoryService
 {
     Task<IncomeCategoryResponse> GetIncomeCategoriesAsync(IncomeCategoryRequest request);
+    Task<AddEditIncomeCategory> CreateIncomeCategoryAsync(AddEditIncomeCategory request);
+    Task<bool> UpdateIncomeCategoryAsync(AddEditIncomeCategory request);
+    Task<bool> DeleteIncomeCategoryAsync(int id);
 }
 public class IncomeCategoryService : IIncomeCategoryService
 {
@@ -21,6 +24,31 @@ public class IncomeCategoryService : IIncomeCategoryService
     private readonly IMapper _mapper;
 
     public IncomeCategoryService(IIncomeCategoryRepository repo, IMapper mapper) => (_repo, _mapper) = (repo, mapper);
+
+    public async Task<AddEditIncomeCategory> CreateIncomeCategoryAsync(AddEditIncomeCategory request)
+    {
+        var categories = await _repo.Find(x => true);
+        if (categories.Any(x => x.category == request.Name))
+            throw new DuplicateCategoryNameException(request.Name);
+
+        var incomeCategoryEntity = _mapper.Map<IncomeCategories>(request);
+        incomeCategoryEntity.id = await _repo.GetCount(x => true) + 1;
+
+        if (!await _repo.Create(incomeCategoryEntity))
+            throw new Exception("Couldn't save income category to the database.");
+
+        request.Id = incomeCategoryEntity.id;
+        return request;
+    }
+
+    public async Task<bool> DeleteIncomeCategoryAsync(int id)
+    {
+        var category = await _repo.FindById(id);
+        if (category != null)
+            throw new CategoryNotFoundException(id.ToString());
+
+        return await _repo.Delete(category);
+    }
 
     public async Task<IncomeCategoryResponse> GetIncomeCategoriesAsync(IncomeCategoryRequest request)
     {
@@ -36,6 +64,20 @@ public class IncomeCategoryService : IIncomeCategoryService
 
         return response;
     }
+
+    public async Task<bool> UpdateIncomeCategoryAsync(AddEditIncomeCategory request)
+    {
+        var checkId = await _repo.FindById(request.Id.Value);
+        if (checkId == null)
+            throw new CategoryNotFoundException(request.Id.Value.ToString());
+
+        var nameCheck = await _repo.Find(x => x.category == request.Name);
+        if (nameCheck.Any())
+            throw new DuplicateCategoryNameException(request.Name);
+
+        var category = _mapper.Map<IncomeCategories>(request);
+        return await _repo.Update(category);
+    }
 }
 
 public class IncomeCategoryMapperProfile : Profile
@@ -47,6 +89,13 @@ public class IncomeCategoryMapperProfile : Profile
         CreateMap<IncomeCategories, IncomeCategoryListItem>()
             .ForMember(x => x.Id, o => o.MapFrom(src => src.id))
             .ForMember(x => x.Name, o => o.MapFrom(src => src.category))
+            .ReverseMap();
+
+        CreateMap<AddEditIncomeCategory, IncomeCategories>()
+            .ForMember(dest => dest.id, o => o.MapFrom(src => src.Id))
+            .ForMember(dest => dest.category, o => o.MapFrom(src => src.Name))
+            .ForMember(dest => dest.description, o => o.MapFrom(src => src.Description))
+            .ForMember(dest => dest.in_use, o => o.MapFrom(src => src.InUse))
             .ReverseMap();
     }
 }

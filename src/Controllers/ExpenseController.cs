@@ -109,7 +109,7 @@ namespace CashTrack.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message + ex.InnerException);
             }
         }
-        [HttpPut("{id:int}")]
+        [HttpPut]
         public async Task<ActionResult<AddEditExpense>> UpdateExpense([FromBody] AddEditExpense request)
         {
             if (request.Id == null)

@@ -55,7 +55,7 @@ public class SubCategoryService : ISubCategoryService
 
         var subCategoryEntity = _mapper.Map<SubCategories>(request);
 
-        subCategoryEntity.id = (int)await _subCategoryRepo.GetCount(x => true) + 1;
+        subCategoryEntity.id = await _subCategoryRepo.GetCount(x => true) + 1;
 
         if (!await _subCategoryRepo.Create(subCategoryEntity))
             throw new Exception("Couldn't save category to the database");
