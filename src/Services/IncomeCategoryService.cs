@@ -80,9 +80,9 @@ public class IncomeCategoryService : IIncomeCategoryService
     }
 }
 
-public class IncomeCategoryMapperProfile : Profile
+public class IncomeCategoryProfile : Profile
 {
-    public IncomeCategoryMapperProfile()
+    public IncomeCategoryProfile()
     {
         //Maybe add a property on the List Item that associates the item with a number of incomes ???? 
         //You would have to get rid of this map then.
