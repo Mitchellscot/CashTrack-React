@@ -44,7 +44,7 @@ public class IncomeCategoryService : IIncomeCategoryService
     public async Task<bool> DeleteIncomeCategoryAsync(int id)
     {
         var category = await _repo.FindById(id);
-        if (category != null)
+        if (category == null)
             throw new CategoryNotFoundException(id.ToString());
 
         return await _repo.Delete(category);

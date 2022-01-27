@@ -1,5 +1,6 @@
 ﻿using CashTrack.Models.AuthenticationModels;
 using CashTrack.Models.ExpenseModels;
+using CashTrack.Models.IncomeCategoryModels;
 using CashTrack.Models.MainCategoryModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Models.SubCategoryModels;
@@ -112,5 +113,21 @@ public class AddEditMainCategoryValidator : AbstractValidator<AddEditMainCategor
     public AddEditMainCategoryValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(37);
+    }
+}
+/* INCOME CATEGORY */
+public class AddEditIncomeCategoryValidator : AbstractValidator<AddEditIncomeCategory>
+{
+    public AddEditIncomeCategoryValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(37);
+    }
+}
+public class IncomeCategoryValidator : AbstractValidator<IncomeCategoryRequest>
+{
+    public IncomeCategoryValidator()
+    {
+        RuleFor(x => x.PageNumber).GreaterThan(0);
+        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
     }
 }
