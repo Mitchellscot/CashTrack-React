@@ -11,5 +11,8 @@ namespace CashTrack.Data.Entities
         [StringLength(50)]
         [Required]
         public string category { get; set; }
+        public string description { get; set; }
+        public bool in_use { get; set; }
+
     }
 }

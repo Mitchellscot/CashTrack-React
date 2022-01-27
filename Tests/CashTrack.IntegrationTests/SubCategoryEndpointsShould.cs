@@ -9,6 +9,9 @@ using Xunit.Abstractions;
 
 namespace CashTrack.IntegrationTests
 {
+    //need
+    //tests for detail
+    //test for sad path, exceptions (duplicate name, category not found)
     public class SubCategoryEndpointsShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
@@ -25,24 +28,24 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<SubCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalPages.ShouldBeGreaterThan(1);
-            responseObject.TotalSubCategories.ShouldBe(73);
+            responseObject.TotalCount.ShouldBe(73);
             responseObject.PageNumber.ShouldBe(1);
-            responseObject.SubCategories.ShouldNotBeEmpty<SubCategoryListItem>();
+            responseObject.ListItems.ShouldNotBeEmpty<SubCategoryListItem>();
         }
         [Fact]
         public async Task ReturnAllCategoriesWithPagination()
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "?pageNumber=2&pageSize=50");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<SubCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalPages.ShouldBeGreaterThan(1);
-            responseObject.TotalSubCategories.ShouldBe(73);
+            responseObject.TotalCount.ShouldBe(73);
             responseObject.PageNumber.ShouldBe(2);
-            responseObject.SubCategories.ShouldNotBeEmpty<SubCategoryListItem>();
+            responseObject.ListItems.ShouldNotBeEmpty<SubCategoryListItem>();
         }
         [Theory]
         [InlineData("doc")]
@@ -52,11 +55,11 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + $"?searchterm={searchTerm}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<SubCategoryModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<SubCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalPages.ShouldBeGreaterThanOrEqualTo(1);
-            responseObject.TotalSubCategories.ShouldBeGreaterThan(1);
-            responseObject.SubCategories.ShouldNotBeEmpty<SubCategoryListItem>();
+            responseObject.TotalCount.ShouldBeGreaterThan(1);
+            responseObject.ListItems.ShouldNotBeEmpty<SubCategoryListItem>();
         }
         [Fact]
         public async Task CreateUpdateDeleteSubCategories()

@@ -20,10 +20,10 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void GetAll()
         {
-            var request = new MainCategoryModels.Request();
+            var request = new MainCategoryRequest();
             var result = await _sut.GetMainCategories(request);
-            var viewResult = Assert.IsType<ActionResult<MainCategoryModels.Response>>(result);
-            _service.Verify(x => x.GetMainCategoriesAsync(It.IsAny<MainCategoryModels.Request>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<MainCategoryResponse>>(result);
+            _service.Verify(x => x.GetMainCategoriesAsync(It.IsAny<MainCategoryRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void Create()

@@ -28,10 +28,10 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MerchantResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalPages.ShouldBeGreaterThan(19);
-            responseObject.Merchants.Count().ShouldBe(25);
+            responseObject.ListItems.Count().ShouldBe(25);
             responseObject.PageNumber.ShouldBe(1);
         }
         [Fact]
@@ -39,10 +39,10 @@ namespace CashTrack.IntegrationTests
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT + "?pageNumber=2&pageSize=50");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MerchantResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
             responseObject.TotalPages.ShouldBeGreaterThan(9);
-            responseObject.Merchants.Count().ShouldBe(50);
+            responseObject.ListItems.Count().ShouldBe(50);
             responseObject.PageNumber.ShouldBe(2);
         }
         [Theory]
@@ -50,14 +50,14 @@ namespace CashTrack.IntegrationTests
         [InlineData("costco")]
         [InlineData("John")]
         [InlineData("Home")]
-        public async Task ReturnMerchantsWithMatchingSearchTerm(string searchTerm)
+        public async Task ReturnMerchantsWithMatchingSearchTerm(string query)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?searchterm={searchTerm}");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?query={query}");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MerchantModels.Response>(await response.Content.ReadAsStringAsync());
-            responseObject.Merchants.Count().ShouldBeGreaterThan(1);
-            responseObject.Merchants.First().Name.ShouldContain(searchTerm);
-            PrintRequestAndResponse(ENDPOINT + $"?searchterm={searchTerm}", await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<MerchantResponse>(await response.Content.ReadAsStringAsync());
+            responseObject.ListItems.Count().ShouldBeGreaterThan(1);
+            responseObject.ListItems.First().Name.ShouldContain(query);
+            PrintRequestAndResponse(ENDPOINT + $"?query={query}", await response.Content.ReadAsStringAsync());
         }
 
         [Theory]

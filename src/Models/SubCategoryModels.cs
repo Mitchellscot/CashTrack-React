@@ -1,22 +1,16 @@
-﻿namespace CashTrack.Models.SubCategoryModels;
+﻿using CashTrack.Models.Common;
 
-public record SubCategoryModels
+namespace CashTrack.Models.SubCategoryModels;
+
+public class SubCategoryRequest : PaginationRequest
 {
-    public record Request
-    {
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 25;
-        public string SearchTerm { get; set; } = null;
-    }
-    public record Response
-    {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; } = 25;
-        public int TotalPages { get; set; }
-        public decimal TotalSubCategories { get; set; }
-        public SubCategoryListItem[] SubCategories { get; set; }
-    }
 }
+
+public class SubCategoryResponse : PaginationResponse<SubCategoryListItem>
+{
+    public SubCategoryResponse(int pageNumber, int pageSize, int totalCount, SubCategoryListItem[] listItems) : base(pageNumber, pageSize, totalCount, listItems) { }
+}
+
 public record AddEditSubCategory
 {
     public int? Id { get; set; }

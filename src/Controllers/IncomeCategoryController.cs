@@ -1,29 +1,27 @@
-﻿using CashTrack.Models.MainCategoryModels;
-using CashTrack.Services.MainCategoriesService;
+﻿using CashTrack.Helpers.Exceptions;
+using CashTrack.Models.IncomeCategoryModels;
+using CashTrack.Services.IncomeCategoryService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class MainCategoryController : ControllerBase
+    public class IncomeCategoryController : ControllerBase
     {
-        private readonly IMainCategoriesService _service;
-        public MainCategoryController(IMainCategoriesService mainCategoryService)
-        {
-            _service = mainCategoryService;
-        }
+        private readonly IIncomeCategoryService _service;
+        public IncomeCategoryController(IIncomeCategoryService service) => _service = service;
+
         [HttpGet]
-        public async Task<ActionResult<MainCategoryResponse>> GetMainCategories([FromQuery] MainCategoryRequest request)
+        public async Task<ActionResult<IncomeCategoryResponse>> GetIncomeCategories([FromQuery] IncomeCategoryRequest request)
         {
             try
             {
-                var result = await _service.GetMainCategoriesAsync(request);
+                var result = await _service.GetIncomeCategoriesAsync(request);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -32,14 +30,14 @@ namespace CashTrack.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<AddEditMainCategory>> CreateMainCategory([FromBody] AddEditMainCategory request)
+        public async Task<ActionResult<AddEditIncomeCategory>> CreateIncomeCategory([FromBody] AddEditIncomeCategory request)
         {
             if (request.Id != null)
-                return BadRequest("Cannot have an id in the request to create a new main category.");
+                return BadRequest("You cannot include an id when creating an income category");
 
             try
             {
-                var result = await _service.CreateMainCategoryAsync(request);
+                var result = await _service.CreateIncomeCategoryAsync(request);
                 return CreatedAtAction("detail", new { id = result.Id }, result);
             }
             catch (DuplicateCategoryNameException ex)
@@ -52,15 +50,19 @@ namespace CashTrack.Controllers
             }
         }
         [HttpPut]
-        public async Task<ActionResult> UpdateMainCategory([FromBody] AddEditMainCategory request)
+        public async Task<ActionResult> UpdateIncomeCategory([FromBody] AddEditIncomeCategory request)
         {
             if (request.Id == null)
-                return BadRequest("Main Category ID must not be null");
+                return BadRequest("Id is required to update an income category");
 
             try
             {
-                var result = await _service.UpdateMainCategoryAsync(request);
+                var result = await _service.UpdateIncomeCategoryAsync(request);
                 return Ok();
+            }
+            catch (CategoryNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (DuplicateCategoryNameException ex)
             {
@@ -72,11 +74,11 @@ namespace CashTrack.Controllers
             }
         }
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteMainCategory(int id)
+        public async Task<ActionResult> DeleteIncomeCategory(int id)
         {
             try
             {
-                var result = await _service.DeleteMainCategoryAsync(id);
+                var result = await _service.DeleteIncomeCategoryAsync(id);
                 return Ok();
             }
             catch (CategoryNotFoundException ex)

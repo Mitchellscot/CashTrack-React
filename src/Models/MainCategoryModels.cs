@@ -2,17 +2,14 @@
 
 namespace CashTrack.Models.MainCategoryModels;
 
-public class MainCategoryModels
+public record MainCategoryRequest
 {
-    public record Request()
-    {
-        public string SearchTerm { get; set; }
-    }
-    public record Response()
-    {
-        public int TotalMainCategories { get; set; }
-        public MainCategoryListItem[] MainCategories { get; set; }
-    }
+    public string Query { get; set; }
+}
+public record MainCategoryResponse
+{
+    public int TotalMainCategories { get; set; }
+    public MainCategoryListItem[] MainCategories { get; set; }
 }
 public record MainCategoryListItem
 {

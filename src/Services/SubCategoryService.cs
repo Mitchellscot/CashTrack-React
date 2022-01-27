@@ -13,7 +13,7 @@ namespace CashTrack.Services.SubCategoryService;
 
 public interface ISubCategoryService
 {
-    Task<SubCategoryModels.Response> GetSubCategoriesAsync(SubCategoryModels.Request request);
+    Task<SubCategoryResponse> GetSubCategoriesAsync(SubCategoryRequest request);
     Task<SubCategoryDetail> GetSubCategoryDetailsAsync(int id);
     Task<AddEditSubCategory> CreateSubCategoryAsync(AddEditSubCategory request);
     Task<bool> UpdateSubCategoryAsync(AddEditSubCategory request);
@@ -27,33 +27,25 @@ public class SubCategoryService : ISubCategoryService
 
     public SubCategoryService(IExpenseRepository expenseRepo, ISubCategoryRepository subCategoryRepo, IMapper mapper) => (_subCategoryRepo, _mapper, _expenseRepo) = (subCategoryRepo, mapper, expenseRepo);
 
-    public async Task<SubCategoryModels.Response> GetSubCategoriesAsync(SubCategoryModels.Request request)
+    public async Task<SubCategoryResponse> GetSubCategoriesAsync(SubCategoryRequest request)
     {
         Expression<Func<SubCategories, bool>> returnAll = (SubCategories s) => true;
-        Expression<Func<SubCategories, bool>> searchCategories = (SubCategories s) => s.sub_category_name.ToLower().Contains(request.SearchTerm.ToLower());
+        Expression<Func<SubCategories, bool>> searchCategories = (SubCategories s) => s.sub_category_name.ToLower().Contains(request.Query.ToLower());
 
-        var predicate = request.SearchTerm == null ? returnAll : searchCategories;
+        var predicate = request.Query == null ? returnAll : searchCategories;
 
         var categories = await _subCategoryRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
-        var count = await _subCategoryRepo.GetCountOfSubCategories(predicate);
+        var count = await _subCategoryRepo.GetCount(predicate);
 
         var categoryViewModels = categories.Select(c => new SubCategoryListItem
         {
             Id = c.id,
             Name = c.sub_category_name,
             MainCategoryName = c.main_category.main_category_name,
-            NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.categoryid == c.id).Result
+            NumberOfExpenses = (int)_expenseRepo.GetCount(x => x.categoryid == c.id).Result
         }).ToArray();
 
-        var response = new SubCategoryModels.Response()
-        {
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize,
-            TotalPages = (int)Math.Ceiling(count / request.PageSize),
-            TotalSubCategories = (int)count,
-            SubCategories = categoryViewModels
-        };
-        return response;
+        return new SubCategoryResponse(request.PageNumber, request.PageSize, count, categoryViewModels);
     }
     public async Task<AddEditSubCategory> CreateSubCategoryAsync(AddEditSubCategory request)
     {
@@ -63,7 +55,7 @@ public class SubCategoryService : ISubCategoryService
 
         var subCategoryEntity = _mapper.Map<SubCategories>(request);
 
-        subCategoryEntity.id = (int)await _subCategoryRepo.GetCountOfSubCategories(x => true) + 1;
+        subCategoryEntity.id = await _subCategoryRepo.GetCount(x => true) + 1;
 
         if (!await _subCategoryRepo.Create(subCategoryEntity))
             throw new Exception("Couldn't save category to the database");

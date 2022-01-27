@@ -23,6 +23,8 @@ using CashTrack.Repositories.SubCategoriesRepository;
 using CashTrack.Services.SubCategoryService;
 using CashTrack.Services.MainCategoriesService;
 using CashTrack.Repositories.MainCategoriesRepository;
+using CashTrack.Services.IncomeCategoryService;
+using CashTrack.Repositories.IncomeCategoryRepository;
 
 namespace CashTrack
 {
@@ -89,6 +91,8 @@ namespace CashTrack
             services.AddScoped<ISubCategoryService, SubCategoryService>();
             services.AddScoped<IMainCategoriesService, MainCategoriesService>();
             services.AddScoped<IMainCategoriesRepository, MainCategoriesRepository>();
+            services.AddScoped<IIncomeCategoryService, IncomeCategoryService>();
+            services.AddScoped<IIncomeCategoryRepository, IncomeCategoryRepository>();
 
             services.Configure<AppSettings>(_config.GetSection("AppSettings"));
 

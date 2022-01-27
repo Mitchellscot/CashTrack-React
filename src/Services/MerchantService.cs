@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace CashTrack.Services.MerchantService;
 public interface IMerchantService
 {
-    Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request);
+    Task<MerchantResponse> GetMerchantsAsync(MerchantRequest request);
     Task<MerchantDetail> GetMerchantDetailAsync(int id);
     Task<Merchants> CreateMerchantAsync(AddEditMerchant request);
     Task<bool> UpdateMerchantAsync(AddEditMerchant request);
@@ -36,16 +36,16 @@ public class MerchantService : IMerchantService
         _expenseRepo = expenseRepo;
     }
 
-    public async Task<MerchantModels.Response> GetMerchantsAsync(MerchantModels.Request request)
+    public async Task<MerchantResponse> GetMerchantsAsync(MerchantRequest request)
     {
         Expression<Func<Merchants, bool>> allMerchants = (Merchants m) => true;
-        Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.SearchTerm.ToLower());
+        Expression<Func<Merchants, bool>> merchantSearch = (Merchants m) => m.name.ToLower().Contains(request.Query.ToLower());
 
-        var predicate = request.SearchTerm == null ? allMerchants : merchantSearch;
+        var predicate = request.Query == null ? allMerchants : merchantSearch;
 
         var merchantEntities = await _merchantRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
 
-        var count = await _merchantRepo.GetCountOfMerchants(predicate);
+        var count = await _merchantRepo.GetCount(predicate);
 
         var merchantViewModels = merchantEntities.Select(m => new MerchantListItem
         {
@@ -53,18 +53,10 @@ public class MerchantService : IMerchantService
             Name = m.name,
             City = m.city,
             IsOnline = m.is_online,
-            NumberOfExpenses = (int)_expenseRepo.GetCountOfExpenses(x => x.merchantid == m.id).Result
+            NumberOfExpenses = _expenseRepo.GetCount(x => x.merchantid == m.id).Result
         }).ToArray();
 
-        var searchTermResponse = new MerchantModels.Response
-        {
-            TotalPages = (int)Math.Ceiling(count / request.PageSize),
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize,
-            TotalMerchants = await _merchantRepo.GetCountOfMerchants(predicate),
-            Merchants = merchantViewModels
-        };
-        return searchTermResponse;
+        return new MerchantResponse(request.PageNumber, request.PageSize, count, merchantViewModels);
     }
 
     public async Task<MerchantDetail> GetMerchantDetailAsync(int id)
@@ -160,7 +152,7 @@ public class MerchantService : IMerchantService
         var merchantEntity = _mapper.Map<Merchants>(request);
 
         //I manually set the id here because when I use the test database it messes with the id autogeneration
-        merchantEntity.id = (int)await _merchantRepo.GetCountOfMerchants(x => true) + 1;
+        merchantEntity.id = await _merchantRepo.GetCount(x => true) + 1;
 
         if (!await _merchantRepo.Create(merchantEntity))
             throw new Exception("Couldn't save merchant to the database");

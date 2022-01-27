@@ -18,7 +18,7 @@ namespace CashTrack.Controllers
         public SubCategoryController(ISubCategoryService subCategoryService) => _subCategoryService = subCategoryService;
 
         [HttpGet]
-        public async Task<ActionResult<SubCategoryModels.Response>> GetAllSubCategories([FromQuery] SubCategoryModels.Request request)
+        public async Task<ActionResult<SubCategoryResponse>> GetAllSubCategories([FromQuery] SubCategoryRequest request)
         {
             try
             {

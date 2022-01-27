@@ -1,5 +1,4 @@
 ﻿using CashTrack.Data.Entities;
-using CashTrack.Models.ExpenseModels;
 using System;
 
 namespace CashTrack.Helpers.Aggregators

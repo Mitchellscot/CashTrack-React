@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CashTrack.Models.AuthenticationModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using AutoMapper;
 using System.Threading.Tasks;
 using System;
 using CashTrack.Services.AuthenticationService;

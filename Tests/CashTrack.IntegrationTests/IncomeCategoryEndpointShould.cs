@@ -1,4 +1,4 @@
-﻿using CashTrack.Models.MainCategoryModels;
+﻿using CashTrack.Models.IncomeCategoryModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,43 +10,40 @@ using System.Net;
 
 namespace CashTrack.IntegrationTests
 {
-    //need
-    //tests for detail
-    //test for sad path, exceptions (duplicate name, category not found)
-    public class MainCategoryEndpointsShould : IClassFixture<TestServerFixture>
+    public class IncomeCategoryEndpointShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
         private readonly ITestOutputHelper _output;
-        const string ENDPOINT = "api/maincategory";
-
-        public MainCategoryEndpointsShould(TestServerFixture fixture, ITestOutputHelper output)
+        const string ENDPOINT = "api/incomecategory";
+        public IncomeCategoryEndpointShould(TestServerFixture fixture, ITestOutputHelper output)
         {
             _fixture = fixture;
             _output = output;
         }
         [Fact]
-        public async Task ReturnAllMainCategories()
+        public async Task ReturnAllIncomeCategories()
         {
             var response = await _fixture.Client.GetAsync(ENDPOINT);
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MainCategoryResponse>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<IncomeCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
-            responseObject.TotalMainCategories.ShouldBeGreaterThan(15);
-            var categoryNumber = responseObject.TotalMainCategories;
-            responseObject.MainCategories.Count().ShouldBe(categoryNumber);
+            responseObject.TotalCount.ShouldBe(14);
+            var categoryNumber = responseObject.ListItems.Count();
+            responseObject.ListItems.Count().ShouldBe(categoryNumber);
+            responseObject.PageNumber.ShouldBe(1);
         }
         [Fact]
         public async Task SearchBySearchTerm()
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?query=food");
+            var response = await _fixture.Client.GetAsync(ENDPOINT + $"?query=bonus");
             response.EnsureSuccessStatusCode();
-            var responseObject = JsonConvert.DeserializeObject<MainCategoryResponse>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<IncomeCategoryResponse>(await response.Content.ReadAsStringAsync());
             _output.WriteLine(await response.Content.ReadAsStringAsync());
-            responseObject.MainCategories.Count().ShouldBe(1);
-            responseObject.MainCategories.FirstOrDefault()!.Name.ShouldBe("Food");
+            responseObject.ListItems.Count().ShouldBe(1);
+            responseObject.ListItems.FirstOrDefault()!.Name.ShouldBe("Bonus");
         }
         [Fact]
-        public async Task CreateUpdateDeleteMainCategory()
+        public async Task CreateUpdateDeleteIncomeCategory()
         {
             //refactor if you use an in memory database in the future
             var testId = 0;
@@ -54,16 +51,16 @@ namespace CashTrack.IntegrationTests
             {
                 //create
                 var uniqueName = Guid.NewGuid().ToString();
-                var request = new AddEditMainCategory() with { Name = uniqueName };
+                var request = new AddEditIncomeCategory() with { Name = uniqueName };
                 var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
-                var responseObject = JsonConvert.DeserializeObject<AddEditMainCategory>(await response.Content.ReadAsStringAsync());
+                var responseObject = JsonConvert.DeserializeObject<AddEditIncomeCategory>(await response.Content.ReadAsStringAsync());
                 testId = responseObject.Id!.Value;
                 response.Headers.Location!.ToString().ShouldContain(responseObject.Id.ToString()!);
                 responseObject.Name.ShouldBe(uniqueName);
                 responseObject.Id.ShouldNotBeNull();
                 //update
-                var updateObject = new AddEditMainCategory() with
+                var updateObject = new AddEditIncomeCategory() with
                 {
                     Id = testId,
                     Name = Guid.NewGuid().ToString()
@@ -78,6 +75,5 @@ namespace CashTrack.IntegrationTests
                 deleteResponse.EnsureSuccessStatusCode();
             }
         }
-
     }
 }

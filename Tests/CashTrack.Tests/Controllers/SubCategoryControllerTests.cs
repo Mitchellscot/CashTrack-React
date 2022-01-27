@@ -3,11 +3,6 @@ using CashTrack.Models.SubCategoryModels;
 using CashTrack.Services.SubCategoryService;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace CashTrack.Tests.Controllers
@@ -25,10 +20,10 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void GetAll()
         {
-            var request = new SubCategoryModels.Request();
+            var request = new SubCategoryRequest();
             var result = await _sut.GetAllSubCategories(request);
-            var viewResult = Assert.IsType<ActionResult<SubCategoryModels.Response>>(result);
-            _service.Verify(s => s.GetSubCategoriesAsync(It.IsAny<SubCategoryModels.Request>()), Times.AtLeastOnce());
+            var viewResult = Assert.IsType<ActionResult<SubCategoryResponse>>(result);
+            _service.Verify(s => s.GetSubCategoriesAsync(It.IsAny<SubCategoryRequest>()), Times.AtLeastOnce());
         }
         [Fact]
         public async void Create()

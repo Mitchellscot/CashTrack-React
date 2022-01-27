@@ -71,4 +71,17 @@ public class UserRepository : IUserRepository
         //might add this later, change password, email, etc.
         throw new NotImplementedException();
     }
+
+    public async Task<int> GetCount(Expression<Func<Users, bool>> predicate)
+    {
+        try
+        {
+            var users = await _context.Users.CountAsync(predicate);
+            return users;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 }

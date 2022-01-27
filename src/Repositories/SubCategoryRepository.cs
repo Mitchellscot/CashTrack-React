@@ -11,7 +11,6 @@ namespace CashTrack.Repositories.SubCategoriesRepository;
 
 public interface ISubCategoryRepository : IRepository<SubCategories>
 {
-    Task<decimal> GetCountOfSubCategories(Expression<Func<SubCategories, bool>> predicate);
 }
 public class SubCategoryRepository : ISubCategoryRepository
 {
@@ -70,19 +69,6 @@ public class SubCategoryRepository : ISubCategoryRepository
         }
     }
 
-    public async Task<decimal> GetCountOfSubCategories(Expression<Func<SubCategories, bool>> predicate)
-    {
-        try
-        {
-            var categories = (decimal)await _context.SubCategories
-                .CountAsync(predicate);
-            return categories;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
     public async Task<bool> Create(SubCategories entity)
     {
         try
@@ -115,6 +101,20 @@ public class SubCategoryRepository : ISubCategoryRepository
         {
             _context.Remove(entity);
             return await (_context.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<int> GetCount(Expression<Func<SubCategories, bool>> predicate)
+    {
+        try
+        {
+            var categories = await _context.SubCategories
+                .CountAsync(predicate);
+            return categories;
         }
         catch (Exception)
         {
