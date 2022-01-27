@@ -12,10 +12,13 @@ namespace CashTrack.Services.IncomeCategoryService;
 
 public interface IIncomeCategoryService
 {
-
+    Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request);
 }
 public class IncomeCategoryService : IIncomeCategoryService
 {
-
+    public Task<IncomeCategoryModels.Response> GetIncomeCategoriesAsync(IncomeCategoryModels.Request request)
+    {
+        throw new NotImplementedException();
+    }
 }
 
