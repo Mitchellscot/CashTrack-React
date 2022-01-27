@@ -10,6 +10,9 @@ using System.Net;
 
 namespace CashTrack.IntegrationTests
 {
+    //need
+    //tests for detail
+    //test for sad path, exceptions (duplicate name, category not found)
     public class MainCategoryEndpointsShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
@@ -74,7 +77,7 @@ namespace CashTrack.IntegrationTests
                 var deleteResponse = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
                 deleteResponse.EnsureSuccessStatusCode();
             }
-
         }
+
     }
 }

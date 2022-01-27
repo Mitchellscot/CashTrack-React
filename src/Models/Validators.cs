@@ -1,5 +1,6 @@
 ﻿using CashTrack.Models.AuthenticationModels;
 using CashTrack.Models.ExpenseModels;
+using CashTrack.Models.MainCategoryModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Models.SubCategoryModels;
 using CashTrack.Repositories.ExpenseRepository;
@@ -95,7 +96,7 @@ public class AddEditMerchantValidator : AbstractValidator<AddEditMerchant>
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
     }
 }
-
+/* SUB CATEGORIES */
 public class SubCategoryValidator : AbstractValidator<SubCategoryModels.Request>
 {
     public SubCategoryValidator()
@@ -109,6 +110,14 @@ public class AddEditSubCategoryValidator : AbstractValidator<AddEditSubCategory>
 {
     public AddEditSubCategoryValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(25);
+    }
+}
+/* MAIN CATEGORY */
+public class AddEditMainCategoryValidator : AbstractValidator<AddEditMainCategory>
+{
+    public AddEditMainCategoryValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(25);
     }
 }

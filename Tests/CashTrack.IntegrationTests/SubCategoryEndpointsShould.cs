@@ -9,6 +9,9 @@ using Xunit.Abstractions;
 
 namespace CashTrack.IntegrationTests
 {
+    //need
+    //tests for detail
+    //test for sad path, exceptions (duplicate name, category not found)
     public class SubCategoryEndpointsShould : IClassFixture<TestServerFixture>
     {
         private readonly TestServerFixture _fixture;
