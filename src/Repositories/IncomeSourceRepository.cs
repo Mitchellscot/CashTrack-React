@@ -7,23 +7,22 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CashTrack.Repositories.IncomeCategoryRepository;
+namespace CashTrack.Repositories.IncomeSourceRepository;
 
-public interface IIncomeCategoryRepository : IRepository<IncomeCategories>
+public interface IIncomeSourceRepository : IRepository<IncomeSources>
 {
 }
-
-public class IncomeCategoryRepository : IIncomeCategoryRepository
+public class IncomeSourceRepository : IIncomeSourceRepository
 {
     private readonly AppDbContext _ctx;
 
-    public IncomeCategoryRepository(AppDbContext context) => _ctx = context;
+    public IncomeSourceRepository(AppDbContext ctx) => _ctx = ctx;
 
-    public async Task<bool> Create(IncomeCategories entity)
+    public async Task<bool> Create(IncomeSources entity)
     {
         try
         {
-            await _ctx.IncomeCategories.AddAsync(entity);
+            await _ctx.IncomeSources.AddAsync(entity);
             return await (_ctx.SaveChangesAsync()) > 0;
         }
         catch (Exception)
@@ -32,7 +31,7 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<bool> Delete(IncomeCategories entity)
+    public async Task<bool> Delete(IncomeSources entity)
     {
         try
         {
@@ -45,11 +44,11 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<IncomeCategories[]> Find(Expression<Func<IncomeCategories, bool>> predicate)
+    public async Task<IncomeSources[]> Find(Expression<Func<IncomeSources, bool>> predicate)
     {
         try
         {
-            return await _ctx.IncomeCategories.Where(predicate).ToArrayAsync();
+            return await _ctx.IncomeSources.Where(predicate).ToArrayAsync();
         }
         catch (Exception)
         {
@@ -57,15 +56,15 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<IncomeCategories> FindById(int id)
+    public async Task<IncomeSources> FindById(int id)
     {
         try
         {
-            var category = await _ctx.IncomeCategories
+            var category = await _ctx.IncomeSources
                 .Where(x => x.id == id)
                 .SingleOrDefaultAsync();
             if (category == null)
-                throw new CategoryNotFoundException(id.ToString());
+                throw new IncomeSourceNotFoundException(id.ToString());
             return category;
         }
         catch (Exception)
@@ -74,17 +73,17 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<IncomeCategories[]> FindWithPagination(Expression<Func<IncomeCategories, bool>> predicate, int pageNumber, int pageSize)
+    public async Task<IncomeSources[]> FindWithPagination(Expression<Func<IncomeSources, bool>> predicate, int pageNumber, int pageSize)
     {
         try
         {
-            var categories = await _ctx.IncomeCategories
+            var sources = await _ctx.IncomeSources
                 .Where(predicate)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .OrderBy(x => x.category)
+                .OrderBy(x => x.source)
                 .ToArrayAsync();
-            return categories;
+            return sources;
         }
         catch (Exception)
         {
@@ -92,11 +91,11 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<int> GetCount(Expression<Func<IncomeCategories, bool>> predicate)
+    public async Task<int> GetCount(Expression<Func<IncomeSources, bool>> predicate)
     {
         try
         {
-            return await _ctx.IncomeCategories.CountAsync(predicate);
+            return await _ctx.IncomeSources.CountAsync(predicate);
         }
         catch (Exception)
         {
@@ -104,12 +103,12 @@ public class IncomeCategoryRepository : IIncomeCategoryRepository
         }
     }
 
-    public async Task<bool> Update(IncomeCategories entity)
+    public async Task<bool> Update(IncomeSources entity)
     {
         try
         {
             _ctx.ChangeTracker.Clear();
-            var contextAttachedEntity = _ctx.IncomeCategories.Attach(entity);
+            var contextAttachedEntity = _ctx.IncomeSources.Attach(entity);
             contextAttachedEntity.State = EntityState.Modified;
             return await (_ctx.SaveChangesAsync()) > 0;
         }

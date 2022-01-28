@@ -1,7 +1,6 @@
-﻿
-using CashTrack.Models.Common;
+﻿using CashTrack.Models.Common;
 
-namespace CashTrack.Models.IncomeSource;
+namespace CashTrack.Models.IncomeSourceModels;
 
 public class IncomeSourceRequest : PaginationRequest
 {
