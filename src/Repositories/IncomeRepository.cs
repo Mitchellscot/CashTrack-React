@@ -26,9 +26,17 @@ public class IncomeRepository : IIncomeRepository
         throw new NotImplementedException();
     }
 
-    public Task<Incomes[]> Find(Expression<Func<Incomes, bool>> predicate)
+    public async Task<Incomes[]> Find(Expression<Func<Incomes, bool>> predicate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return await _ctx.Incomes.Where(predicate).ToArrayAsync();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     public Task<Incomes> FindById(int id)

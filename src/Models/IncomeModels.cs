@@ -16,7 +16,7 @@ public class IncomeResponse : PaginationResponse<IncomeListItem>
     }
 }
 
-public class AddEditIncome
+public record AddEditIncome
 {
     public int? Id { get; set; }
     public DateTimeOffset IncomeDate { get; set; }

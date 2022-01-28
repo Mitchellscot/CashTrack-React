@@ -106,11 +106,12 @@ public class ExpenseService : IExpenseService
            x.purchase_date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
         //4
         DateOptions.SpecificQuarter => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate,
+            x.purchase_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
+            x.purchase_date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
         //5
         DateOptions.SpecificYear => (Expenses x) =>
             x.purchase_date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
-            x.purchase_date <= DateHelpers.GetYearDatesFromDate(request.EndDate).endDate,
+            x.purchase_date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
         //6
         DateOptions.DateRange => (Expenses x) =>
             x.purchase_date >= request.BeginDate.ToUniversalTime() &&

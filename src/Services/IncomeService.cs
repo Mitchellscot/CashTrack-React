@@ -19,9 +19,8 @@ public class IncomeService : IIncomeService
 {
     private readonly IMapper _mapper;
     private readonly IIncomeRepository _repo;
-    private readonly IExpenseRepository _expenseRepo;
 
-    public IncomeService(IIncomeRepository repo, IMapper mapper, IExpenseRepository expenseRepo) => (_repo, _mapper, _expenseRepo) = (repo, mapper, expenseRepo);
+    public IncomeService(IIncomeRepository repo, IMapper mapper) => (_repo, _mapper) = (repo, mapper);
 
     public async Task<IncomeResponse> GetIncomeAsync(IncomeRequest request)
     {
@@ -46,11 +45,12 @@ public class IncomeService : IIncomeService
            x.income_date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
         //4
         DateOptions.SpecificQuarter => (Incomes x) =>
-            x.income_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate,
+            x.income_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
+            x.income_date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
         //5
         DateOptions.SpecificYear => (Incomes x) =>
             x.income_date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
-            x.income_date <= DateHelpers.GetYearDatesFromDate(request.EndDate).endDate,
+            x.income_date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
         //6
         DateOptions.DateRange => (Incomes x) =>
             x.income_date >= request.BeginDate.ToUniversalTime() &&

@@ -1,10 +1,12 @@
 ﻿using CashTrack.Models.AuthenticationModels;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.IncomeCategoryModels;
+using CashTrack.Models.IncomeModels;
 using CashTrack.Models.MainCategoryModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Models.SubCategoryModels;
 using CashTrack.Repositories.ExpenseRepository;
+using CashTrack.Repositories.IncomeRepository;
 using CashTrack.Repositories.MerchantRepository;
 using CashTrack.Repositories.SubCategoriesRepository;
 using FluentValidation;
@@ -129,5 +131,24 @@ public class IncomeCategoryValidator : AbstractValidator<IncomeCategoryRequest>
     {
         RuleFor(x => x.PageNumber).GreaterThan(0);
         RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
+    }
+}
+
+/* INCOME */
+public class IncomeRequestValidators : AbstractValidator<IncomeRequest>
+{
+    public IncomeRequestValidators(IIncomeRepository incomeRepository)
+    {
+        var earliestIncome = incomeRepository.Find(x => true).Result.OrderBy(x => x.income_date).Select(x => x.income_date).FirstOrDefault();
+        When(x => x.DateOptions != 0, () =>
+        {
+            RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
+        });
+        RuleFor(x => x.PageNumber).GreaterThan(0);
+        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
+        RuleFor(x => x.BeginDate).Must(beginDate => beginDate >= earliestIncome).WithMessage("There is no income available before that date.");
+        RuleFor(x => x.BeginDate).Must(beginDate => beginDate < DateTime.Today.AddDays(1)).WithMessage("The Begin Date cannot be in the future.");
+        RuleFor(x => x.EndDate).Must(endDate => endDate < DateTime.Today.AddDays(1)).WithMessage("You can't search future dates");
+        RuleFor(x => x.EndDate).Must(endDate => endDate > earliestIncome).WithMessage($"The end date cannot be before {earliestIncome.DateTime.ToShortDateString()}.");
     }
 }
