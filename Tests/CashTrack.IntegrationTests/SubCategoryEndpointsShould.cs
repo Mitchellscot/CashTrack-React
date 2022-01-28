@@ -88,5 +88,32 @@ namespace CashTrack.IntegrationTests
                 deleteResponse.EnsureSuccessStatusCode();
             }
         }
+        [Fact]
+        public async Task ErrorWithDuplicateNameOnCreate()
+        {
+            var request = new AddEditSubCategory() with { Name = "AAA" };
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+        [Fact]
+        public async Task ErrorWithDuplicateNameOnUpdate()
+        {
+            var request = new AddEditSubCategory() with { Id = 1, Name = "AAA" };
+            var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+        [Fact]
+        public async Task ErrorWithWrongIdOnUpdate()
+        {
+            var request = new AddEditSubCategory() with { Id = int.MaxValue, Name = "z" };
+            var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+        [Fact]
+        public async Task ErrorWithWrongIdOnDelete()
+        {
+            var response = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{int.MaxValue}");
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
     }
 }

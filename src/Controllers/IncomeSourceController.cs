@@ -1,29 +1,28 @@
-﻿using CashTrack.Models.MainCategoryModels;
-using CashTrack.Services.MainCategoriesService;
+﻿using CashTrack.Helpers.Exceptions;
+using CashTrack.Models.IncomeSourceModels;
+using CashTrack.Services.IncomeSourceService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using CashTrack.Helpers.Exceptions;
 
 namespace CashTrack.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class MainCategoryController : ControllerBase
+    public class IncomeSourceController : ControllerBase
     {
-        private readonly IMainCategoriesService _service;
-        public MainCategoryController(IMainCategoriesService mainCategoryService)
-        {
-            _service = mainCategoryService;
-        }
+        private readonly IIncomeSourceService _service;
+
+        public IncomeSourceController(IIncomeSourceService service) => _service = service;
+
         [HttpGet]
-        public async Task<ActionResult<MainCategoryResponse>> GetMainCategories([FromQuery] MainCategoryRequest request)
+        public async Task<ActionResult<IncomeSourceResponse>> GetIncomeSources([FromQuery] IncomeSourceRequest request)
         {
             try
             {
-                var result = await _service.GetMainCategoriesAsync(request);
+                var result = await _service.GetIncomeSourcesAsync(request);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -32,14 +31,14 @@ namespace CashTrack.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<AddEditMainCategory>> CreateMainCategory([FromBody] AddEditMainCategory request)
+        public async Task<ActionResult<AddEditIncomeSource>> CreateIncomeSource([FromBody] AddEditIncomeSource request)
         {
             if (request.Id != null)
-                return BadRequest("Cannot have an id in the request to create a new main category.");
+                return BadRequest("You cannot include an id when creating an income source");
 
             try
             {
-                var result = await _service.CreateMainCategoryAsync(request);
+                var result = await _service.CreateIncomeSourceAsync(request);
                 return CreatedAtAction("detail", new { id = result.Id }, result);
             }
             catch (DuplicateNameException ex)
@@ -52,21 +51,21 @@ namespace CashTrack.Controllers
             }
         }
         [HttpPut]
-        public async Task<ActionResult> UpdateMainCategory([FromBody] AddEditMainCategory request)
+        public async Task<ActionResult> UpdateIncomeSource([FromBody] AddEditIncomeSource request)
         {
             if (request.Id == null)
-                return BadRequest("Main Category ID must not be null");
+                return BadRequest("Id is required to update an income category");
 
             try
             {
-                var result = await _service.UpdateMainCategoryAsync(request);
+                var result = await _service.UpdateIncomeSourceAsync(request);
                 return Ok();
             }
-            catch (DuplicateNameException ex)
+            catch (IncomeSourceNotFoundException ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch (CategoryNotFoundException ex)
+            catch (DuplicateNameException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -76,14 +75,14 @@ namespace CashTrack.Controllers
             }
         }
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteMainCategory(int id)
+        public async Task<ActionResult> DeleteIncomeSource(int id)
         {
             try
             {
-                var result = await _service.DeleteMainCategoryAsync(id);
+                var result = await _service.DeleteIncomeSourceAsync(id);
                 return Ok();
             }
-            catch (CategoryNotFoundException ex)
+            catch (IncomeSourceNotFoundException ex)
             {
                 return BadRequest(ex.Message);
             }
