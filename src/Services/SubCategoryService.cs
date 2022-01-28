@@ -51,7 +51,7 @@ public class SubCategoryService : ISubCategoryService
     {
         var categories = await _subCategoryRepo.Find(x => true);
         if (categories.Any(x => x.sub_category_name == request.Name))
-            throw new DuplicateCategoryNameException(request.Name);
+            throw new DuplicateNameException(nameof(SubCategories), request.Name);
 
         var subCategoryEntity = _mapper.Map<SubCategories>(request);
 
@@ -73,7 +73,7 @@ public class SubCategoryService : ISubCategoryService
 
         var nameCheck = await _subCategoryRepo.Find(x => x.sub_category_name == request.Name);
         if (nameCheck.Any())
-            throw new DuplicateCategoryNameException(request.Name);
+            throw new DuplicateNameException(nameof(SubCategories), request.Name);
 
         var category = _mapper.Map<SubCategories>(request);
         return await _subCategoryRepo.Update(category);

@@ -11,6 +11,6 @@ namespace CashTrack.Data.Entities
         [Required]
         public string source { get; set; }
         public string description { get; set; }
-        public string in_use { get; set; }
+        public bool in_use { get; set; }
     }
 }

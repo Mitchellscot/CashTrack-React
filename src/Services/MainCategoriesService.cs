@@ -36,7 +36,7 @@ namespace CashTrack.Services.MainCategoriesService
         {
             var categories = await _mainCategoryRepo.Find(x => true);
             if (categories.Any(x => x.main_category_name == request.Name))
-                throw new DuplicateCategoryNameException(request.Name);
+                throw new DuplicateNameException(nameof(MainCategories), request.Name);
 
             request.Id = await _mainCategoryRepo.GetCount(x => true) + 1;
 
@@ -94,7 +94,7 @@ namespace CashTrack.Services.MainCategoriesService
 
             var nameCheck = await _mainCategoryRepo.Find(x => x.main_category_name == request.Name);
             if (nameCheck.Any())
-                throw new DuplicateCategoryNameException(request.Name);
+                throw new DuplicateNameException(nameof(MainCategories), request.Name);
 
             var category = _mapper.Map<MainCategories>(request);
             return await _mainCategoryRepo.Update(category);

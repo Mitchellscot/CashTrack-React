@@ -41,7 +41,7 @@ namespace CashTrack.Controllers
                 var result = await _subCategoryService.CreateSubCategoryAsync(request);
                 return CreatedAtAction($"detail", new { id = result.Id }, result);
             }
-            catch (DuplicateCategoryNameException ex)
+            catch (DuplicateNameException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -61,7 +61,7 @@ namespace CashTrack.Controllers
 
                 return Ok();
             }
-            catch (DuplicateCategoryNameException ex)
+            catch (DuplicateNameException ex)
             {
                 return BadRequest(ex.Message);
             }

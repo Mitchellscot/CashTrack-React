@@ -59,7 +59,7 @@ namespace CashTrack.Controllers
                 //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
                 return CreatedAtAction("detail", new { id = result.id }, result);
             }
-            catch (DuplicateMerchantNameException ex)
+            catch (DuplicateNameException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -78,7 +78,7 @@ namespace CashTrack.Controllers
                 var result = await _service.UpdateMerchantAsync(request);
                 return Ok();
             }
-            catch (DuplicateMerchantNameException ex)
+            catch (DuplicateNameException ex)
             {
                 return BadRequest(ex.Message);
             }

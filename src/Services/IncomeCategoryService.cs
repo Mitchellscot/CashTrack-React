@@ -29,7 +29,7 @@ public class IncomeCategoryService : IIncomeCategoryService
     {
         var categories = await _repo.Find(x => true);
         if (categories.Any(x => x.category == request.Name))
-            throw new DuplicateCategoryNameException(request.Name);
+            throw new DuplicateNameException(nameof(IncomeCategories), request.Name);
 
         var incomeCategoryEntity = _mapper.Map<IncomeCategories>(request);
         incomeCategoryEntity.id = await _repo.GetCount(x => true) + 1;
@@ -73,7 +73,7 @@ public class IncomeCategoryService : IIncomeCategoryService
 
         var nameCheck = await _repo.Find(x => x.category == request.Name);
         if (nameCheck.Any())
-            throw new DuplicateCategoryNameException(request.Name);
+            throw new DuplicateNameException(nameof(IncomeCategories), request.Name);
 
         var category = _mapper.Map<IncomeCategories>(request);
         return await _repo.Update(category);

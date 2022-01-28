@@ -147,7 +147,7 @@ public class MerchantService : IMerchantService
     {
         var merchants = await _merchantRepo.Find(x => x.name == request.Name);
         if (merchants.Any())
-            throw new DuplicateMerchantNameException(request.Name);
+            throw new DuplicateNameException(nameof(Merchants), request.Name);
 
         var merchantEntity = _mapper.Map<Merchants>(request);
 
@@ -163,7 +163,7 @@ public class MerchantService : IMerchantService
     {
         var merchants = await _merchantRepo.Find(x => x.name == request.Name);
         if (merchants.Any())
-            throw new DuplicateMerchantNameException(request.Name);
+            throw new DuplicateNameException(nameof(Merchants), request.Name);
 
         var merchant = _mapper.Map<Merchants>(request);
         return await _merchantRepo.Update(merchant);
