@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using CashTrack.Common;
 using CashTrack.Data;
 using CashTrack.Data.Entities;
-using CashTrack.Helpers;
 using CashTrack.IntegrationTests;
 using CashTrack.IntegrationTests.Common;
 using CashTrack.Models.AuthenticationModels;

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CashTrack.Repositories.UserRepository;
 
-namespace CashTrack.Helpers
+namespace CashTrack.Common
 {
     public class JwtMiddleware
     {
