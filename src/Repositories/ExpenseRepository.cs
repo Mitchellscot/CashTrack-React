@@ -61,15 +61,15 @@ public class ExpenseRepository : IExpenseRepository
         {
             var expenses = await _context.Expenses
                     .Where(predicate)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .OrderBy(x => x.purchase_date)
-                    .ThenBy(x => x.id)
                     .Include(x => x.expense_tags)
                     .ThenInclude(x => x.tag)
                     .Include(x => x.merchant)
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
                     .ToArrayAsync();
             return expenses;
         }

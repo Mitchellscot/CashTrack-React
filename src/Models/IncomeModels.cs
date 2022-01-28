@@ -3,11 +3,8 @@ using System;
 
 namespace CashTrack.Models.IncomeModels;
 
-public class IncomeRequest : PaginationRequest
+public class IncomeRequest : TransactionRequest
 {
-    public DateOptions DateOptions { get; set; }
-    public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
 }
 public class IncomeResponse : PaginationResponse<IncomeListItem>
 {

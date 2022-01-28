@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace CashTrack.Models.ExpenseModels;
 
 
-public class ExpenseRequest : PaginationRequest
+public class ExpenseRequest : TransactionRequest
 {
-    public DateOptions DateOptions { get; set; }
-    public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
+
 }
 public class ExpenseResponse : PaginationResponse<ExpenseListItem>
 {
