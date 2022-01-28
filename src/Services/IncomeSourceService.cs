@@ -83,9 +83,12 @@ public class IncomeSourcesProfile : Profile
 {
     public IncomeSourcesProfile()
     {
+        //todo: make this more interesting by putting some more data on it.
+        //What would be cool to see when looking at a table of income soures?
         CreateMap<IncomeSources, IncomeSourceListItem>()
             .ForMember(x => x.Id, o => o.MapFrom(src => src.id))
-            .ForMember(x => x.Name, o => o.MapFrom(src => src.source));
+            .ForMember(x => x.Name, o => o.MapFrom(src => src.source))
+            .ReverseMap();
 
         CreateMap<AddEditIncomeSource, IncomeSources>()
             .ForMember(x => x.id, o => o.MapFrom(src => src.Id))
