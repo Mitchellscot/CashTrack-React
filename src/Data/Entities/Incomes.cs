@@ -18,7 +18,9 @@ namespace CashTrack.Data.Entities
 
         [StringLength(255)]
         public string notes { get; set; }
+        public int? categoryid { get; set; }
         public IncomeCategories category { get; set; }
+        public int? sourceid { get; set; }
         public IncomeSources source { get; set; }
     }
 }

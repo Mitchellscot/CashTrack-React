@@ -50,6 +50,7 @@ public record ExpenseListItem
     public int Id { get; set; }
     public DateTimeOffset PurchaseDate { get; set; }
     public decimal Amount { get; set; }
+    //I will probably remove Notes and add that to a detail view to be viewed in a modal
     public string Notes { get; set; }
     public string Merchant { get; set; }
     public ICollection<TagModel> Tags { get; set; }
