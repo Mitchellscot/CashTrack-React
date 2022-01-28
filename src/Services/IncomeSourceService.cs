@@ -52,7 +52,7 @@ public class IncomeSourceService : IIncomeSourceService
     public async Task<IncomeSourceResponse> GetIncomeSourcesAsync(IncomeSourceRequest request)
     {
         Expression<Func<IncomeSources, bool>> returnAll = (IncomeSources x) => true;
-        Expression<Func<IncomeSources, bool>> searchSources = (IncomeSources x) => x.source.ToLower().Contains(request.Query);
+        Expression<Func<IncomeSources, bool>> searchSources = (IncomeSources x) => x.source.ToLower().Contains(request.Query.ToLower());
 
         var predicate = request.Query == null ? returnAll : searchSources;
 

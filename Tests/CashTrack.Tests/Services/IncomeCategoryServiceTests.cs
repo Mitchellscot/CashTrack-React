@@ -7,12 +7,7 @@ using System.Linq;
 using Xunit;
 using Shouldly;
 using CashTrack.Models.IncomeSourceModels;
-using Bogus;
-using CashTrack.Repositories.SubCategoriesRepository;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq.Expressions;
-using System;
 
 namespace CashTrack.Tests.Services
 {

@@ -65,6 +65,10 @@ namespace CashTrack.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (CategoryNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);

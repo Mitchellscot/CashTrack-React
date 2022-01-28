@@ -53,7 +53,7 @@ public class IncomeCategoryService : IIncomeCategoryService
     public async Task<IncomeCategoryResponse> GetIncomeCategoriesAsync(IncomeCategoryRequest request)
     {
         Expression<Func<IncomeCategories, bool>> returnAll = (IncomeCategories x) => true;
-        Expression<Func<IncomeCategories, bool>> searchCategories = (IncomeCategories x) => x.category.ToLower().Contains(request.Query);
+        Expression<Func<IncomeCategories, bool>> searchCategories = (IncomeCategories x) => x.category.ToLower().Contains(request.Query.ToLower());
 
         var predicate = request.Query == null ? returnAll : searchCategories;
 
