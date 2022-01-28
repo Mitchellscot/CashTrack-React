@@ -90,7 +90,9 @@ namespace CashTrack.Data.CsvFiles
                 yield return new CsvModels.CsvIncomeSource()
                 {
                     id = Convert.ToInt32(columns[0]),
-                    source = columns[1]
+                    source = columns[1],
+                    description = columns[2],
+                    in_use = true
                 };
             }
         }
