@@ -412,72 +412,72 @@ namespace CashTrack.IntegrationTests
 
         #endregion
         #region Create Update Delete
-        //[Fact]
-        //public async Task CreateUpdateDeleteAnIncome()
-        //{
-        //    var testId = 0;
-        //    try
-        //    {
-        //        var model = GetAddEditIncome();
-        //        //Create
-        //        var createResponse = await _fixture.SendPostRequestAsync(ENDPOINT, model);
-        //        createResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
-        //        var createResponseObject = JsonConvert.DeserializeObject<AddEditIncome>(await createResponse.Content.ReadAsStringAsync());
-        //        createResponse.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/Income/{createResponseObject.Id.ToString()}");
-        //        testId = createResponseObject.Id!.Value;
+        [Fact]
+        public async Task CreateUpdateDeleteAnIncome()
+        {
+            var testId = 0;
+            try
+            {
+                var model = GetAddEditIncome();
+                //Create
+                var createResponse = await _fixture.SendPostRequestAsync(ENDPOINT, model);
+                createResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
+                var createResponseObject = JsonConvert.DeserializeObject<AddEditIncome>(await createResponse.Content.ReadAsStringAsync());
+                createResponse.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/income/detail/{createResponseObject.Id.ToString()}");
+                testId = createResponseObject.Id!.Value;
 
-        //        //Update
-        //        var updateObject = createResponseObject with { Id = createResponseObject.Id.Value, Notes = "UPDATE", IncomeDate = DateTimeOffset.UtcNow, Amount = 5.00m };
-        //        var updateResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updateObject);
-        //        var responseString = await updateResponse.Content.ReadAsStringAsync();
-        //        updateResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-        //    }
-        //    finally
-        //    {
-        //        //delete
-        //        var deleteResponse = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
-        //        deleteResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
-        //    }
-        //}
-        //[Theory]
-        //[InlineData(-25.00)]
-        //[InlineData(0)]
-        //public async Task ErrorWhenAddingIncomeWithInvalidAmount(decimal invalidAmount)
-        //{
-        //    var Income = GetAddEditIncome() with { Amount = invalidAmount };
-        //    var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
-        //    var responseString = await response.Content.ReadAsStringAsync();
+                //Update
+                var updateObject = createResponseObject with { Id = createResponseObject.Id.Value, Notes = "UPDATE", IncomeDate = DateTimeOffset.UtcNow, Amount = 5.00m };
+                var updateResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updateObject);
+                var responseString = await updateResponse.Content.ReadAsStringAsync();
+                updateResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
+            finally
+            {
+                //delete
+                var deleteResponse = await _fixture.Client.DeleteAsync(ENDPOINT + $"/{testId}");
+                deleteResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            }
+        }
+        [Theory]
+        [InlineData(-25.00)]
+        [InlineData(0)]
+        public async Task ErrorWhenAddingIncomeWithInvalidAmount(decimal invalidAmount)
+        {
+            var Income = GetAddEditIncome() with { Amount = invalidAmount };
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
+            var responseString = await response.Content.ReadAsStringAsync();
 
-        //    response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        //    responseString.ShouldContain(nameof(AddEditIncome.Amount));
-        //    _output.WriteLine(responseString);
-        //}
-        //[Theory]
-        //[InlineData(-25)]
-        //[InlineData(0)]
-        //[InlineData(int.MaxValue)]
-        //public async Task ErrorWhenAddingIncomeWithInvalidMerchantId(int invalidMerchant)
-        //{
-        //    var Income = GetAddEditIncome() with { MerchantId = invalidMerchant };
-        //    var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
-        //    var responseString = await response.Content.ReadAsStringAsync();
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditIncome.Amount));
+            _output.WriteLine(responseString);
+        }
+        [Theory]
+        [InlineData(-25)]
+        [InlineData(0)]
+        [InlineData(int.MaxValue)]
+        public async Task ErrorWhenAddingIncomeWithInvalidSourceId(int invalidSource)
+        {
+            var Income = GetAddEditIncome() with { SourceId = invalidSource };
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
+            var responseString = await response.Content.ReadAsStringAsync();
 
-        //    response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        //    responseString.ShouldContain(nameof(AddEditIncome.MerchantId));
-        //    _output.WriteLine(responseString);
-        //}
-        //[Theory]
-        //[InlineData("2984-04-24")]
-        //public async Task ErrorWhenAddingIncomeWithInvalidIncomeDate(DateTimeOffset invalidDate)
-        //{
-        //    var Income = GetAddEditIncome() with { IncomeDate = invalidDate };
-        //    var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
-        //    var responseString = await response.Content.ReadAsStringAsync();
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditIncome.SourceId));
+            _output.WriteLine(responseString);
+        }
+        [Theory]
+        [InlineData("2984-04-24")]
+        public async Task ErrorWhenAddingIncomeWithInvalidIncomeDate(DateTimeOffset invalidDate)
+        {
+            var Income = GetAddEditIncome() with { IncomeDate = invalidDate };
+            var response = await _fixture.SendPostRequestAsync(ENDPOINT, Income);
+            var responseString = await response.Content.ReadAsStringAsync();
 
-        //    response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        //    responseString.ShouldContain(nameof(AddEditIncome.IncomeDate));
-        //    _output.WriteLine(responseString);
-        //}
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            responseString.ShouldContain(nameof(AddEditIncome.IncomeDate));
+            _output.WriteLine(responseString);
+        }
         #endregion
         private void PrintRequestAndResponse(object request, object response)
         {
@@ -489,7 +489,9 @@ namespace CashTrack.IntegrationTests
             return new AddEditIncome()
             {
                 IncomeDate = DateTimeOffset.UtcNow,
-                Amount = 25.00m
+                Amount = 25.00m,
+                CategoryId = 1,
+                SourceId = 1
             };
         }
     }

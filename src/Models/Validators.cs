@@ -152,3 +152,26 @@ public class IncomeRequestValidators : AbstractValidator<IncomeRequest>
         RuleFor(x => x.EndDate).Must(endDate => endDate > earliestIncome).WithMessage($"The end date cannot be before {earliestIncome.DateTime.ToShortDateString()}.");
     }
 }
+public class AddEditIncomeValidators : AbstractValidator<AddEditIncome>
+{
+    public AddEditIncomeValidators(ISubCategoryRepository _categoryRepo, IMerchantRepository _merchantRepo)
+    {
+        RuleFor(x => x.Amount).NotEmpty().GreaterThan(0);
+        RuleFor(x => x.IncomeDate).NotEmpty();
+        RuleFor(x => x.IncomeDate).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Income Date cannot be in the future.");
+        RuleFor(x => x.CategoryId).NotEmpty().GreaterThan(0).WithMessage("Must provide a category ID");
+        RuleFor(x => x.CategoryId).MustAsync(async (model, value, _) =>
+        {
+            return (await _categoryRepo.Find(x => true)).Any(x => x.id == value);
+        }).WithMessage("Invalid Category Id");
+
+        When(x => x.SourceId != null,
+            () =>
+            {
+                RuleFor(x => x.SourceId).GreaterThan(0).MustAsync(async (model, value, _) =>
+                {
+                    return ((int)await _merchantRepo.GetCount(x => true)) > value;
+                }).WithMessage("Invalid Income Source Id");
+            });
+    }
+}

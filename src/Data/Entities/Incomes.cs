@@ -20,7 +20,7 @@ namespace CashTrack.Data.Entities
         public decimal amount { get; set; }
 
         [StringLength(255)]
-        public string notes { get; set; }
+        public string? notes { get; set; }
         public int? categoryid { get; set; }
         public IncomeCategories? category { get; set; }
         public int? sourceid { get; set; }
