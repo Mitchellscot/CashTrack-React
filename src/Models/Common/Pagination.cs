@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Transactions;
 
 namespace CashTrack.Models.Common
 {
@@ -28,6 +29,11 @@ namespace CashTrack.Models.Common
             TotalCount = count;
             ListItems = listItems;
         }
-
+    }
+    public abstract class TransactionRequest : PaginationRequest
+    {
+        public DateOptions DateOptions { get; set; }
+        public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
     }
 }

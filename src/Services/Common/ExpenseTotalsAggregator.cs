@@ -1,7 +1,7 @@
 ﻿using CashTrack.Data.Entities;
 using System;
 
-namespace CashTrack.Helpers.Aggregators
+namespace CashTrack.Services.Common
 {
     public record ExpenseTotalsAggregator
     {

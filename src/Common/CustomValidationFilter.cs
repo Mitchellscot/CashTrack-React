@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 
-namespace CashTrack.Helpers
+namespace CashTrack.Common
 {
     public class CustomValidationFilter : IActionFilter
     {

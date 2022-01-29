@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace CashTrack.Models.ExpenseModels;
 
 
-public class ExpenseRequest : PaginationRequest
+public class ExpenseRequest : TransactionRequest
 {
-    public DateOptions DateOptions { get; set; }
-    public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
+
 }
 public class ExpenseResponse : PaginationResponse<ExpenseListItem>
 {
@@ -50,6 +48,7 @@ public record ExpenseListItem
     public int Id { get; set; }
     public DateTimeOffset PurchaseDate { get; set; }
     public decimal Amount { get; set; }
+    //I will probably remove Notes and add that to a detail view to be viewed in a modal
     public string Notes { get; set; }
     public string Merchant { get; set; }
     public ICollection<TagModel> Tags { get; set; }

@@ -10,6 +10,7 @@ using Shouldly;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.Common;
 using Bogus;
+using System.Threading.Tasks;
 
 namespace CashTrack.Tests.Services
 {
@@ -19,7 +20,6 @@ namespace CashTrack.Tests.Services
         private readonly IMapper _mapper;
         private ExpenseService _sut;
         private readonly Expenses[] _data;
-        private readonly Faker _faker;
 
         public ExpenseServiceTests()
         {
@@ -28,17 +28,43 @@ namespace CashTrack.Tests.Services
             _mapper = mapperConfig.CreateMapper();
             _sut = new ExpenseService(_repo.Object, _mapper);
             _data = GetData();
-            _faker = new Faker();
         }
         [Fact]
-        public async void GetById()
+        public async Task Create()
+        {
+            _repo.Setup(x => x.Create(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var request = new AddEditExpense() { Amount = 1m, PurchaseDate = DateTimeOffset.UtcNow, SubCategoryId = 12 };
+            var result = await _sut.CreateExpenseAsync(request);
+            result.Amount.ShouldBe(1m);
+        }
+        [Fact]
+        public async Task Update()
+        {
+            _repo.Setup(x => x.Update(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var objectToUpdate = new Expenses { id = 1, amount = 1m, purchase_date = DateTimeOffset.UtcNow, categoryid = 12 };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var request = new AddEditExpense() { Id = 1, Amount = 2m };
+            var result = await _sut.UpdateExpenseAsync(request);
+            result.ShouldBe(true);
+        }
+        [Fact]
+        public async Task Delete()
+        {
+            _repo.Setup(x => x.Delete(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var objectToUpdate = new Expenses() { id = 1, amount = 5m, categoryid = 12, purchase_date = DateTimeOffset.UtcNow };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var result = await _sut.DeleteExpenseAsync(1);
+            result.ShouldBe(true);
+        }
+        [Fact]
+        public async Task GetById()
         {
             _repo.Setup(r => r.FindById(3)).ReturnsAsync(_data.Last());
             var result = await _sut.GetExpenseByIdAsync(3);
             result.Id.ShouldBe(3);
         }
         [Fact]
-        public async void GetAll()
+        public async Task GetAll()
         {
             _repo.Setup(r => r.FindWithPagination(x => true, 1, 25)).ReturnsAsync(_data);
             _repo.Setup(r => r.GetAmountOfExpenses(x => true)).ReturnsAsync(_data.Sum(x => x.amount));
@@ -53,10 +79,10 @@ namespace CashTrack.Tests.Services
             result.TotalAmount.ShouldBe(45.00m);
         }
         [Fact(Skip = "i don't know whats up here this should work.")]
-        public async void GetByNotes()
+        public async Task GetByNotes()
         {
             var testword = "test";
-            _repo.Setup(r => r.FindWithPagination(x => x.notes.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
+            _repo.Setup(r => r.FindWithPagination(x => x.notes!.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
             var request = new ExpenseRequest()
             {
                 Query = "test"
@@ -81,77 +107,6 @@ namespace CashTrack.Tests.Services
             var result = _sut.GetPredicate(request);
             result.NodeType.ShouldBe(System.Linq.Expressions.ExpressionType.Lambda);
             result.ShouldNotBeNull();
-        }
-        [Theory]
-        [InlineData("2021-01-05")]
-        [InlineData("2011-02-05")]
-        [InlineData("2012-03-05")]
-        [InlineData("2023-04-05")]
-        [InlineData("2024-05-05")]
-        [InlineData("2015-06-05")]
-        [InlineData("2016-07-05")]
-        [InlineData("2017-08-05")]
-        [InlineData("2019-09-05")]
-        [InlineData("2003-10-05")]
-        [InlineData("2009-11-05")]
-        [InlineData("2005-12-03")]
-        public void GetMonthDatesWorks(string month)
-        {
-            var parsedMonth = DateTimeOffset.Parse(month);
-            var result = _sut.GetMonthDatesFromDate(parsedMonth);
-            var beginingOfMonth = new DateTimeOffset(parsedMonth.Year, parsedMonth.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
-
-            result.startDate.ShouldBe(beginingOfMonth);
-            result.endDate.Day.ShouldBeOneOf(28, 29, 30, 31);
-            result.endDate.Year.ShouldBe(parsedMonth.Year);
-        }
-        [Fact]
-        public void GetYearDatesWorks()
-        {
-            var date = _faker.Date.PastOffset(2021);
-            var result = _sut.GetYearDatesFromDate(date);
-            result.startDate.Year.ShouldBe(date.Year);
-            result.startDate.Day.ShouldBe(1);
-            result.endDate.Day.ShouldBe(31);
-        }
-        [Fact]
-        public void GetQuarterDatesWorks()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                var date = _faker.Date.PastOffset(i);
-                var result = _sut.GetQuarterDatesFromDate(date);
-                result.startDate.Month.ShouldBeOneOf(1, 4, 7, 10);
-            }
-        }
-        [Fact]
-        public void GetCurrentYearWorks()
-        {
-            var result = _sut.GetCurrentYear();
-            result.Year.ShouldBe(DateTimeOffset.UtcNow.Year);
-        }
-        [Fact]
-        public void GetCurrentMonthWorks()
-        {
-            var result = _sut.GetCurrentMonth();
-            result.Month.ShouldBe(DateTimeOffset.UtcNow.Month);
-        }
-        [Fact]
-        public void GetCurrentQuarterWorks()
-        {
-            var result = _sut.GetCurrentQuarter();
-            result.Month.ShouldBeOneOf(1, 4, 7, 10);
-        }
-        [Fact]
-        public void GetLastDayOfMonthWorks()
-        {
-            var rand = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                var date = _faker.Date.PastOffset(rand.Next(1, 2020));
-                var result = _sut.GetLastDayOfMonth(date);
-                result.ShouldBeOneOf(28, 29, 30, 31);
-            }
         }
         private static Expenses[] GetData()
         {

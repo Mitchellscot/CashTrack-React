@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CashTrack.Data.Entities;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using CashTrack.Models.SubCategoryModels;
 using CashTrack.Repositories.ExpenseRepository;
 using CashTrack.Repositories.SubCategoriesRepository;

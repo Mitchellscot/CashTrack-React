@@ -4,6 +4,7 @@ using CashTrack.Models.Common;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.TagModels;
 using CashTrack.Repositories.ExpenseRepository;
+using CashTrack.Services.Common;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,7 +18,7 @@ public interface IExpenseService
     Task<ExpenseResponse> GetExpensesAsync(ExpenseRequest request);
     Task<ExpenseResponse> GetExpensesByNotesAsync(ExpenseRequest request);
     Task<ExpenseResponse> GetExpensesByAmountAsync(AmountSearchRequest request);
-    Task<Expenses> CreateExpenseAsync(AddEditExpense request);
+    Task<AddEditExpense> CreateExpenseAsync(AddEditExpense request);
     Task<bool> UpdateExpenseAsync(AddEditExpense request);
     Task<bool> DeleteExpenseAsync(int id);
 }
@@ -63,7 +64,7 @@ public class ExpenseService : IExpenseService
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
         return new ExpenseResponse(request.PageNumber, request.PageSize, count, _mapper.Map<ExpenseListItem[]>(expenses), amount);
     }
-    public async Task<Expenses> CreateExpenseAsync(AddEditExpense request)
+    public async Task<AddEditExpense> CreateExpenseAsync(AddEditExpense request)
     {
         if (request.Id != null)
             throw new ArgumentException("Request must not contain an id in order to create an expense.");
@@ -75,7 +76,9 @@ public class ExpenseService : IExpenseService
         if (!success)
             throw new Exception("Couldn't save expense to the database.");
 
-        return expense;
+        request.Id = expense.id;
+
+        return request;
     }
     public async Task<bool> UpdateExpenseAsync(AddEditExpense request)
     {
@@ -101,15 +104,16 @@ public class ExpenseService : IExpenseService
             x.purchase_date == request.BeginDate.ToUniversalTime(),
         //3
         DateOptions.SpecificMonthAndYear => (Expenses x) =>
-           x.purchase_date >= GetMonthDatesFromDate(request.BeginDate).startDate &&
-           x.purchase_date <= GetMonthDatesFromDate(request.BeginDate).endDate,
+           x.purchase_date >= DateHelpers.GetMonthDatesFromDate(request.BeginDate).startDate &&
+           x.purchase_date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
         //4
         DateOptions.SpecificQuarter => (Expenses x) =>
-            x.purchase_date >= GetQuarterDatesFromDate(request.BeginDate).startDate,
+            x.purchase_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
+            x.purchase_date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
         //5
         DateOptions.SpecificYear => (Expenses x) =>
-            x.purchase_date >= GetYearDatesFromDate(request.BeginDate).startDate &&
-            x.purchase_date <= GetYearDatesFromDate(request.EndDate).endDate,
+            x.purchase_date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
+            x.purchase_date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
         //6
         DateOptions.DateRange => (Expenses x) =>
             x.purchase_date >= request.BeginDate.ToUniversalTime() &&
@@ -119,56 +123,20 @@ public class ExpenseService : IExpenseService
             x.purchase_date >= DateTimeOffset.UtcNow.AddDays(-30),
         //8
         DateOptions.CurrentMonth => (Expenses x) =>
-            x.purchase_date >= GetCurrentMonth() &&
+            x.purchase_date >= DateHelpers.GetCurrentMonth() &&
             x.purchase_date <= DateTimeOffset.UtcNow,
         //9
         DateOptions.CurrentQuarter => (Expenses x) =>
-            x.purchase_date >= GetCurrentQuarter() &&
+            x.purchase_date >= DateHelpers.GetCurrentQuarter() &&
             x.purchase_date <= DateTimeOffset.UtcNow,
         //10
         DateOptions.CurrentYear => (Expenses x) =>
-            x.purchase_date >= GetCurrentYear() &&
+            x.purchase_date >= DateHelpers.GetCurrentYear() &&
             x.purchase_date <= DateTimeOffset.UtcNow,
 
         _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
 
     };
-    internal DateTimeOffset GetCurrentMonth() => new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
-
-    internal DateTimeOffset GetCurrentQuarter() => GetQuarterDatesFromDate(DateTime.UtcNow).startDate;
-
-    internal DateTimeOffset GetCurrentYear() => new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
-
-    internal (DateTimeOffset startDate, DateTimeOffset endDate) GetMonthDatesFromDate(DateTimeOffset date)
-    {
-        var beginingOfMonth = new DateTimeOffset(
-            date.Year, date.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0)
-            );
-        var monthEndDate = GetLastDayOfMonth(date);
-        var endingOfMonth = new DateTimeOffset(
-            date.Year, date.Month, monthEndDate, 0, 0, 0, new TimeSpan(0, 0, 0)
-            );
-        return (beginingOfMonth.ToUniversalTime(), endingOfMonth.ToUniversalTime());
-    }
-    internal int GetLastDayOfMonth(DateTimeOffset date) => date.Month switch
-    {
-        4 or 6 or 9 or 11 => 30,
-        1 or 3 or 5 or 7 or 8 or 10 or 12 => 31,
-        2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
-        _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
-    };
-    internal (DateTimeOffset startDate, DateTimeOffset endDate) GetQuarterDatesFromDate(DateTimeOffset date) => date.Month switch
-    {
-        1 or 2 or 3 => (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 3, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
-        4 or 5 or 6 => (startDate: new DateTimeOffset(date.Year, 4, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 6, 30, 0, 0, 0, new TimeSpan(0, 0, 0))),
-        7 or 8 or 9 => (startDate: new DateTimeOffset(date.Year, 7, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 9, 30, 0, 0, 0, new TimeSpan(0, 0, 0))),
-        10 or 11 or 12 => (startDate: new DateTimeOffset(date.Year, 10, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
-        _ => throw new ArgumentException($"Unable to determine quarter from given date {date}", nameof(date))
-    };
-    internal (DateTimeOffset startDate, DateTimeOffset endDate) GetYearDatesFromDate(DateTimeOffset date)
-    {
-        return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
-    }
 }
 public class ExpenseMapperProfile : Profile
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CashTrack.Helpers;
+using CashTrack.Common;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
 using FluentValidation.AspNetCore;
@@ -27,6 +27,9 @@ using CashTrack.Services.IncomeCategoryService;
 using CashTrack.Repositories.IncomeCategoryRepository;
 using CashTrack.Repositories.IncomeSourceRepository;
 using CashTrack.Services.IncomeSourceService;
+using CashTrack.Repositories.IncomeRepository;
+using CashTrack.Services.IncomeService;
+using CashTrack.Common;
 
 namespace CashTrack
 {
@@ -97,7 +100,8 @@ namespace CashTrack
             services.AddScoped<IIncomeCategoryRepository, IncomeCategoryRepository>();
             services.AddScoped<IIncomeSourceRepository, IncomeSourceRepository>();
             services.AddScoped<IIncomeSourceService, IncomeSourceService>();
-
+            services.AddScoped<IIncomeRepository, IncomeRepository>();
+            services.AddScoped<IIncomeService, IncomeService>();
 
             services.Configure<AppSettings>(_config.GetSection("AppSettings"));
 

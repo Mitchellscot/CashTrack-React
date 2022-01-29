@@ -1,4 +1,4 @@
-﻿using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Common.Exceptions;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Services.MerchantService;
 using Microsoft.AspNetCore.Http;
@@ -57,7 +57,7 @@ namespace CashTrack.Controllers
             {
                 var result = await _service.CreateMerchantAsync(request);
                 //this is location on the UI, it's missing /api from the url, which is fine the user doesn't need the api address.
-                return CreatedAtAction("detail", new { id = result.id }, result);
+                return CreatedAtAction("detail", new { id = result.Id }, result);
             }
             catch (DuplicateNameException ex)
             {

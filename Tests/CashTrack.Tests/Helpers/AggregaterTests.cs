@@ -1,6 +1,6 @@
 ﻿using CashTrack.Data;
-using CashTrack.Helpers.Aggregators;
 using CashTrack.Repositories.ExpenseRepository;
+using CashTrack.Services.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace CashTrack.Tests.Aggregators
+namespace CashTrack.Tests.Helpers
 {
     public class AggregaterTests
     {

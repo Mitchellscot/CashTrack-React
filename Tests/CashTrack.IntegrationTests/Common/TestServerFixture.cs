@@ -51,7 +51,9 @@ namespace CashTrack.IntegrationTests
         {
             var request = new AuthenticationModels.Request(user, password);
             var response = await SendPostRequestAsync("/api/authenticate", request);
-            var checkthisout = await response.Content.ReadAsStringAsync();
+            #if DEBUG
+            var READTHISIFYOUAREGETTINGBUGS = await response.Content.ReadAsStringAsync();
+            #endif
             return JsonConvert.DeserializeObject<AuthenticationModels.Response>(await response.Content.ReadAsStringAsync()).Token;
 
         }

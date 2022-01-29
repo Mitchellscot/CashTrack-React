@@ -12,10 +12,10 @@ using System.Text;
 using CashTrack.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
-using CashTrack.Helpers;
 using System.Security.Claims;
 using FluentValidation;
 using CashTrack.Models.UserModels;
+using CashTrack.Common;
 
 namespace CashTrack.Services.AuthenticationService;
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 
 namespace CashTrack.Controllers
 {
@@ -14,10 +14,8 @@ namespace CashTrack.Controllers
     public class MainCategoryController : ControllerBase
     {
         private readonly IMainCategoriesService _service;
-        public MainCategoryController(IMainCategoriesService mainCategoryService)
-        {
-            _service = mainCategoryService;
-        }
+        public MainCategoryController(IMainCategoriesService mainCategoryService) => _service = mainCategoryService;
+
         [HttpGet]
         public async Task<ActionResult<MainCategoryResponse>> GetMainCategories([FromQuery] MainCategoryRequest request)
         {

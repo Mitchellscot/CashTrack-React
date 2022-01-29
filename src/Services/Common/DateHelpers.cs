@@ -1,0 +1,44 @@
+﻿using System;
+
+namespace CashTrack.Services.Common
+{
+    public static class DateHelpers
+    {
+        public static DateTimeOffset GetCurrentMonth() => new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+
+        public static DateTimeOffset GetCurrentQuarter() => GetQuarterDatesFromDate(DateTime.UtcNow).startDate;
+
+        public static DateTimeOffset GetCurrentYear() => new DateTimeOffset(DateTime.Now.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0));
+
+        public static (DateTimeOffset startDate, DateTimeOffset endDate) GetMonthDatesFromDate(DateTimeOffset date)
+        {
+            var beginingOfMonth = new DateTimeOffset(
+                date.Year, date.Month, 1, 0, 0, 0, new TimeSpan(0, 0, 0)
+                );
+            var monthEndDate = GetLastDayOfMonth(date);
+            var endingOfMonth = new DateTimeOffset(
+                date.Year, date.Month, monthEndDate, 0, 0, 0, new TimeSpan(0, 0, 0)
+                );
+            return (beginingOfMonth.ToUniversalTime(), endingOfMonth.ToUniversalTime());
+        }
+        internal static int GetLastDayOfMonth(DateTimeOffset date) => date.Month switch
+        {
+            4 or 6 or 9 or 11 => 30,
+            1 or 3 or 5 or 7 or 8 or 10 or 12 => 31,
+            2 => DateTime.IsLeapYear(date.Year) ? 29 : 28,
+            _ => throw new ArgumentException($"Unable to determine the end of the month {date}", nameof(date.Month))
+        };
+        public static (DateTimeOffset startDate, DateTimeOffset endDate) GetQuarterDatesFromDate(DateTimeOffset date) => date.Month switch
+        {
+            1 or 2 or 3 => (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 3, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
+            4 or 5 or 6 => (startDate: new DateTimeOffset(date.Year, 4, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 6, 30, 0, 0, 0, new TimeSpan(0, 0, 0))),
+            7 or 8 or 9 => (startDate: new DateTimeOffset(date.Year, 7, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 9, 30, 0, 0, 0, new TimeSpan(0, 0, 0))),
+            10 or 11 or 12 => (startDate: new DateTimeOffset(date.Year, 10, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0))),
+            _ => throw new ArgumentException($"Unable to determine quarter from given date {date}", nameof(date))
+        };
+        public static (DateTimeOffset startDate, DateTimeOffset endDate) GetYearDatesFromDate(DateTimeOffset date)
+        {
+            return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
+        }
+    }
+}

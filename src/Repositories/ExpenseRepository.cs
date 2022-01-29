@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using CashTrack.Data.Entities;
 using System.Linq.Expressions;
 
@@ -17,16 +17,16 @@ public interface IExpenseRepository : IRepository<Expenses>
 }
 public class ExpenseRepository : IExpenseRepository
 {
-    private readonly AppDbContext _context;
+    private readonly AppDbContext _ctx;
     public ExpenseRepository(AppDbContext context)
     {
-        _context = context;
+        _ctx = context;
     }
     public async Task<Expenses[]> Find(Expression<Func<Expenses, bool>> predicate)
     {
         try
         {
-            return await _context.Expenses.Where(predicate).ToArrayAsync();
+            return await _ctx.Expenses.Where(predicate).ToArrayAsync();
         }
         catch (Exception)
         {
@@ -38,7 +38,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            var expense = await _context.Expenses
+            var expense = await _ctx.Expenses
                 .Include(x => x.expense_tags)
                 .ThenInclude(x => x.tag)
                 .Include(x => x.merchant)
@@ -59,17 +59,17 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            var expenses = await _context.Expenses
+            var expenses = await _ctx.Expenses
                     .Where(predicate)
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .OrderBy(x => x.purchase_date)
-                    .ThenBy(x => x.id)
                     .Include(x => x.expense_tags)
                     .ThenInclude(x => x.tag)
                     .Include(x => x.merchant)
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
+                    .OrderByDescending(x => x.purchase_date)
+                    .ThenByDescending(x => x.id)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
                     .ToArrayAsync();
             return expenses;
         }
@@ -82,8 +82,8 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            await _context.Expenses.AddAsync(entity);
-            return await (_context.SaveChangesAsync()) > 0;
+            await _ctx.Expenses.AddAsync(entity);
+            return await (_ctx.SaveChangesAsync()) > 0;
         }
         catch (Exception)
         {
@@ -94,10 +94,10 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            _context.ChangeTracker.Clear();
-            var Entity = _context.Expenses.Attach(entity);
+            _ctx.ChangeTracker.Clear();
+            var Entity = _ctx.Expenses.Attach(entity);
             Entity.State = EntityState.Modified;
-            return await (_context.SaveChangesAsync()) > 0;
+            return await (_ctx.SaveChangesAsync()) > 0;
         }
         catch (Exception)
         {
@@ -108,8 +108,8 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            _context.Expenses.Remove(entity);
-            return await (_context.SaveChangesAsync()) > 0;
+            _ctx.Expenses.Remove(entity);
+            return await (_ctx.SaveChangesAsync()) > 0;
         }
         catch (Exception)
         {
@@ -120,7 +120,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            return (decimal)await _context.Expenses
+            return (decimal)await _ctx.Expenses
             .Where(predicate)
             .SumAsync(x => x.amount);
         }
@@ -133,7 +133,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            var expenses = await _context.Expenses
+            var expenses = await _ctx.Expenses
                 .Where(predicate)
                 .Include(x => x.category)
                 .ToArrayAsync();
@@ -149,7 +149,7 @@ public class ExpenseRepository : IExpenseRepository
     {
         try
         {
-            return await _context.Expenses
+            return await _ctx.Expenses
             .Where(predicate)
             .CountAsync();
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CashTrack.Helpers.Exceptions
+namespace CashTrack.Common.Exceptions
 {
     public class ExpenseNotFoundException : Exception
     {
