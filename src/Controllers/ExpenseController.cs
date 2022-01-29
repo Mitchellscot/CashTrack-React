@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
@@ -15,12 +14,10 @@ namespace CashTrack.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IExpenseService _expenseService;
 
-        public ExpenseController(IExpenseService expenseService, IMapper mapper)
+        public ExpenseController(IExpenseService expenseService)
         {
-            _mapper = mapper;
             _expenseService = expenseService;
         }
 
@@ -100,8 +97,7 @@ namespace CashTrack.Controllers
             try
             {
                 var result = await _expenseService.CreateExpenseAsync(request);
-                var expense = _mapper.Map<AddEditExpense>(result);
-                return CreatedAtAction("detail", new { id = result.id }, expense);
+                return CreatedAtAction("detail", new { id = result.Id.Value }, result);
             }
             catch (Exception ex)
             {
@@ -118,6 +114,10 @@ namespace CashTrack.Controllers
             {
                 var result = await _expenseService.UpdateExpenseAsync(request);
                 return Ok();
+            }
+            catch (ExpenseNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

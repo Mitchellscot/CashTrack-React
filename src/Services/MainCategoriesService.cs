@@ -43,7 +43,9 @@ namespace CashTrack.Services.MainCategoriesService
             var category = _mapper.Map<MainCategories>(request);
 
             if (!await _mainCategoryRepo.Create(category))
-                throw new System.Exception("Unable to save category to the database");
+                throw new Exception("Unable to save category to the database");
+
+            request.Id = category.id;
 
             return request;
         }
@@ -83,7 +85,7 @@ namespace CashTrack.Services.MainCategoriesService
         public Task<MainCategoryDetail> GetMainCategoryDetailAsync(int id)
         {
             //think on this one
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<bool> UpdateMainCategoryAsync(AddEditMainCategory request)

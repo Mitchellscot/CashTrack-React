@@ -17,14 +17,30 @@ public class IncomeRepository : IIncomeRepository
     private readonly AppDbContext _ctx;
     public IncomeRepository(AppDbContext ctx) => _ctx = ctx;
 
-    public Task<bool> Create(Incomes entity)
+    public async Task<bool> Create(Incomes entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _ctx.Incomes.AddAsync(entity);
+            return await (_ctx.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
-    public Task<bool> Delete(Incomes entity)
+    public async Task<bool> Delete(Incomes entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _ctx.Incomes.Remove(entity);
+            return await (_ctx.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<Incomes[]> Find(Expression<Func<Incomes, bool>> predicate)
@@ -106,9 +122,19 @@ public class IncomeRepository : IIncomeRepository
         }
     }
 
-    public Task<bool> Update(Incomes entity)
+    public async Task<bool> Update(Incomes entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _ctx.ChangeTracker.Clear();
+            var Entity = _ctx.Incomes.Attach(entity);
+            Entity.State = EntityState.Modified;
+            return await (_ctx.SaveChangesAsync()) > 0;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }
 

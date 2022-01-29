@@ -18,7 +18,7 @@ public interface IExpenseService
     Task<ExpenseResponse> GetExpensesAsync(ExpenseRequest request);
     Task<ExpenseResponse> GetExpensesByNotesAsync(ExpenseRequest request);
     Task<ExpenseResponse> GetExpensesByAmountAsync(AmountSearchRequest request);
-    Task<Expenses> CreateExpenseAsync(AddEditExpense request);
+    Task<AddEditExpense> CreateExpenseAsync(AddEditExpense request);
     Task<bool> UpdateExpenseAsync(AddEditExpense request);
     Task<bool> DeleteExpenseAsync(int id);
 }
@@ -64,7 +64,7 @@ public class ExpenseService : IExpenseService
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
         return new ExpenseResponse(request.PageNumber, request.PageSize, count, _mapper.Map<ExpenseListItem[]>(expenses), amount);
     }
-    public async Task<Expenses> CreateExpenseAsync(AddEditExpense request)
+    public async Task<AddEditExpense> CreateExpenseAsync(AddEditExpense request)
     {
         if (request.Id != null)
             throw new ArgumentException("Request must not contain an id in order to create an expense.");
@@ -76,7 +76,9 @@ public class ExpenseService : IExpenseService
         if (!success)
             throw new Exception("Couldn't save expense to the database.");
 
-        return expense;
+        request.Id = expense.id;
+
+        return request;
     }
     public async Task<bool> UpdateExpenseAsync(AddEditExpense request)
     {

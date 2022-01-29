@@ -14,10 +14,8 @@ namespace CashTrack.Controllers
     public class MainCategoryController : ControllerBase
     {
         private readonly IMainCategoriesService _service;
-        public MainCategoryController(IMainCategoriesService mainCategoryService)
-        {
-            _service = mainCategoryService;
-        }
+        public MainCategoryController(IMainCategoriesService mainCategoryService) => _service = mainCategoryService;
+
         [HttpGet]
         public async Task<ActionResult<MainCategoryResponse>> GetMainCategories([FromQuery] MainCategoryRequest request)
         {

@@ -11,14 +11,12 @@ namespace CashTrack.Tests.Controllers
     public class ExpenseControllerTests
     {
         private readonly ExpenseController _sut;
-        public readonly IMapper _mapper;
         public readonly Mock<IExpenseService> _service;
 
         public ExpenseControllerTests()
         {
-            _mapper = Mock.Of<IMapper>();
             _service = new Mock<IExpenseService>();
-            _sut = new ExpenseController(_service.Object, _mapper);
+            _sut = new ExpenseController(_service.Object);
         }
         [Fact]
         public async void GetById()

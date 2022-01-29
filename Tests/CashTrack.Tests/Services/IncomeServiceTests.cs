@@ -10,6 +10,7 @@ using Shouldly;
 using CashTrack.Models.IncomeModels;
 using CashTrack.Models.Common;
 using Bogus;
+using System.Threading.Tasks;
 
 namespace CashTrack.Tests.Services
 {
@@ -28,13 +29,40 @@ namespace CashTrack.Tests.Services
             _sut = new IncomeService(_repo.Object, _mapper);
             _data = GetData();
         }
-        //[Fact]
-        //public async void GetById()
-        //{
-        //    _repo.Setup(r => r.FindById(3)).ReturnsAsync(_data.Last());
-        //    var result = await _sut.GetIncomeByIdAsync(3);
-        //    result.Id.ShouldBe(3);
-        //}
+        [Fact]
+        public async void GetById()
+        {
+            _repo.Setup(r => r.FindById(3)).ReturnsAsync(_data.Last());
+            var result = await _sut.GetIncomeByIdAsync(3);
+            result.Id.ShouldBe(3);
+        }
+        [Fact]
+        public async Task Create()
+        {
+            _repo.Setup(x => x.Create(It.IsAny<Incomes>())).ReturnsAsync(true);
+            var request = new AddEditIncome() { Amount = 1m, IncomeDate = DateTimeOffset.UtcNow, CategoryId = 1, };
+            var result = await _sut.CreateIncomeAsync(request);
+            result.Amount.ShouldBe(1m);
+        }
+        [Fact]
+        public async Task Update()
+        {
+            _repo.Setup(x => x.Update(It.IsAny<Incomes>())).ReturnsAsync(true);
+            var objectToUpdate = new Incomes { id = 1, amount = 1m, income_date = DateTimeOffset.UtcNow };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var request = new AddEditIncome() { Id = 1, Amount = 2m };
+            var result = await _sut.UpdateIncomeAsync(request);
+            result.ShouldBe(true);
+        }
+        [Fact]
+        public async Task Delete()
+        {
+            _repo.Setup(x => x.Delete(It.IsAny<Incomes>())).ReturnsAsync(true);
+            var objectToUpdate = new Incomes() { id = 1, amount = 5m, categoryid = 12, income_date = DateTimeOffset.UtcNow };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var result = await _sut.DeleteIncomeAsync(1);
+            result.ShouldBe(true);
+        }
         [Fact]
         public async void GetAll()
         {
@@ -50,18 +78,6 @@ namespace CashTrack.Tests.Services
             result.TotalPages.ShouldBe(1);
             result.TotalAmount.ShouldBe(45.00m);
         }
-        //[Fact(Skip = "i don't know whats up here this should work.")]
-        //public async void GetByNotes()
-        //{
-        //    var testword = "test";
-        //    _repo.Setup(r => r.FindWithPagination(x => x.notes.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
-        //    var request = new IncomeRequest()
-        //    {
-        //        Query = "test"
-        //    };
-        //    var result = await _sut.GetIncomesByNotesAsync(request);
-        //    result.ListItems.Count().ShouldBe(3);
-        //}
         [Theory]
         [InlineData(DateOptions.All)]
         [InlineData(DateOptions.SpecificDate)]

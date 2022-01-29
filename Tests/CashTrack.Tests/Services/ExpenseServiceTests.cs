@@ -10,6 +10,7 @@ using Shouldly;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.Common;
 using Bogus;
+using System.Threading.Tasks;
 
 namespace CashTrack.Tests.Services
 {
@@ -29,14 +30,41 @@ namespace CashTrack.Tests.Services
             _data = GetData();
         }
         [Fact]
-        public async void GetById()
+        public async Task Create()
+        {
+            _repo.Setup(x => x.Create(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var request = new AddEditExpense() { Amount = 1m, PurchaseDate = DateTimeOffset.UtcNow, SubCategoryId = 12 };
+            var result = await _sut.CreateExpenseAsync(request);
+            result.Amount.ShouldBe(1m);
+        }
+        [Fact]
+        public async Task Update()
+        {
+            _repo.Setup(x => x.Update(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var objectToUpdate = new Expenses { id = 1, amount = 1m, purchase_date = DateTimeOffset.UtcNow, categoryid = 12 };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var request = new AddEditExpense() { Id = 1, Amount = 2m };
+            var result = await _sut.UpdateExpenseAsync(request);
+            result.ShouldBe(true);
+        }
+        [Fact]
+        public async Task Delete()
+        {
+            _repo.Setup(x => x.Delete(It.IsAny<Expenses>())).ReturnsAsync(true);
+            var objectToUpdate = new Expenses() { id = 1, amount = 5m, categoryid = 12, purchase_date = DateTimeOffset.UtcNow };
+            _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
+            var result = await _sut.DeleteExpenseAsync(1);
+            result.ShouldBe(true);
+        }
+        [Fact]
+        public async Task GetById()
         {
             _repo.Setup(r => r.FindById(3)).ReturnsAsync(_data.Last());
             var result = await _sut.GetExpenseByIdAsync(3);
             result.Id.ShouldBe(3);
         }
         [Fact]
-        public async void GetAll()
+        public async Task GetAll()
         {
             _repo.Setup(r => r.FindWithPagination(x => true, 1, 25)).ReturnsAsync(_data);
             _repo.Setup(r => r.GetAmountOfExpenses(x => true)).ReturnsAsync(_data.Sum(x => x.amount));
@@ -51,10 +79,10 @@ namespace CashTrack.Tests.Services
             result.TotalAmount.ShouldBe(45.00m);
         }
         [Fact(Skip = "i don't know whats up here this should work.")]
-        public async void GetByNotes()
+        public async Task GetByNotes()
         {
             var testword = "test";
-            _repo.Setup(r => r.FindWithPagination(x => x.notes.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
+            _repo.Setup(r => r.FindWithPagination(x => x.notes!.ToLower().Contains(testword), 1, 25)).ReturnsAsync(_data);
             var request = new ExpenseRequest()
             {
                 Query = "test"

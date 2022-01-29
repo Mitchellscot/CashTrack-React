@@ -23,7 +23,7 @@ public record AddEditIncome
     public decimal Amount { get; set; }
     public string Notes { get; set; }
     public int CategoryId { get; set; }
-    public int MerchantId { get; set; }
+    public int SourceId { get; set; }
 }
 
 public class IncomeListItem
