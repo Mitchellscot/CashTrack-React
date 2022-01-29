@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CashTrack.Data.Entities;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Repositories.ExpenseRepository;

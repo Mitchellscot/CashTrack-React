@@ -14,6 +14,7 @@ namespace CashTrack.Services.IncomeService;
 public interface IIncomeService
 {
     Task<IncomeResponse> GetIncomeAsync(IncomeRequest request);
+    Task<IncomeListItem> GetIncomeByIdAsync(int id);
 }
 public class IncomeService : IIncomeService
 {
@@ -31,6 +32,15 @@ public class IncomeService : IIncomeService
 
         return new IncomeResponse(request.PageNumber, request.PageSize, count, _mapper.Map<IncomeListItem[]>(expenses), amount);
     }
+
+    public async Task<IncomeListItem> GetIncomeByIdAsync(int id)
+    {
+        //Change this to income detail int the future, once you know what you want it to look like.
+        var singleExpense = await _repo.FindById(id);
+        return _mapper.Map<IncomeListItem>(singleExpense);
+    }
+
+
     /***** HELPERS *****/
     internal Expression<Func<Incomes, bool>> GetPredicate(IncomeRequest request) => request.DateOptions switch
     {

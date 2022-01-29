@@ -1,4 +1,4 @@
-﻿using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Common.Exceptions;
 using CashTrack.Models.SubCategoryModels;
 using CashTrack.Services.SubCategoryService;
 using Microsoft.AspNetCore.Http;

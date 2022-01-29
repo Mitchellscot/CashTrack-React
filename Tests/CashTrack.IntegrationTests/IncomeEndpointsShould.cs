@@ -23,38 +23,38 @@ namespace CashTrack.IntegrationTests
             _output = output;
         }
         #region Single Income
-        //[Theory]
-        //[InlineData("1")]
-        //[InlineData("50")]
-        //[InlineData("150")]
-        //[InlineData("250")]
-        //[InlineData("650")]
-        //public async Task ReturnASingleIncome(string id)
-        //{
-        //    var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
+        [Theory]
+        [InlineData("1")]
+        [InlineData("50")]
+        [InlineData("150")]
+        [InlineData("250")]
+        [InlineData("650")]
+        public async Task ReturnASingleIncome(string id)
+        {
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/detail/" + id);
 
-        //    response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-        //    var responseString = await response.Content.ReadAsStringAsync();
+            var responseString = await response.Content.ReadAsStringAsync();
 
-        //    _output.WriteLine(responseString);
+            _output.WriteLine(responseString);
 
-        //    Assert.Contains($"\"id\":{id}", responseString);
-        //}
-        //[Theory]
-        //[InlineData(0)]
-        //[InlineData(int.MaxValue)]
-        //[InlineData(int.MinValue)]
-        //public async Task ErrorWithInvalidId(int id)
-        //{
-        //    var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
-        //    response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+            Assert.Contains($"\"id\":{id}", responseString);
+        }
+        [Theory]
+        [InlineData(0)]
+        [InlineData(int.MaxValue)]
+        [InlineData(int.MinValue)]
+        public async Task ErrorWithInvalidId(int id)
+        {
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/detail/" + id);
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    _output.WriteLine(responseString);
+            var responseString = await response.Content.ReadAsStringAsync();
+            _output.WriteLine(responseString);
 
-        //    Assert.Contains($"No Income found with an id of {id}", responseString);
-        //}
+            Assert.Contains($"No Income found with an id of {id}", responseString);
+        }
         //[Theory]
         //[InlineData("%")]
         //[InlineData("A")]

@@ -1,6 +1,6 @@
 ﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Common.Exceptions;
 using CashTrack.Models.IncomeCategoryModels;
 using CashTrack.Services.IncomeCategoryService;
 using Microsoft.AspNetCore.Http;

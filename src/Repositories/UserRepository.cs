@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CashTrack.Data.Entities;
 using CashTrack.Data;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using System.Linq.Expressions;
 
 namespace CashTrack.Repositories.UserRepository;

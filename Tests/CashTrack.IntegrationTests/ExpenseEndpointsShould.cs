@@ -27,7 +27,7 @@ namespace CashTrack.IntegrationTests
         [ExpenseIdData]
         public async Task ReturnASingleExpense(string id)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/detail/" + id);
 
             response.EnsureSuccessStatusCode();
 
@@ -43,24 +43,13 @@ namespace CashTrack.IntegrationTests
         [InlineData(int.MinValue)]
         public async Task ErrorWithInvalidId(int id)
         {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + id);
+            var response = await _fixture.Client.GetAsync(ENDPOINT + "/detail/" + id);
             response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 
             var responseString = await response.Content.ReadAsStringAsync();
             _output.WriteLine(responseString);
 
             Assert.Contains($"No expense found with an id of {id}", responseString);
-        }
-        [Theory]
-        [InlineData("%")]
-        [InlineData("A")]
-        [EmptyData]
-        public async Task ErrorWithInvalidInput(object input)
-        {
-            var response = await _fixture.Client.GetAsync(ENDPOINT + "/" + input);
-            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-            PrintRequestAndResponse(input,
-                JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
         }
         #endregion
 
@@ -419,7 +408,7 @@ namespace CashTrack.IntegrationTests
                 var createResponse = await _fixture.SendPostRequestAsync(ENDPOINT, model);
                 createResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var createResponseObject = JsonConvert.DeserializeObject<AddEditExpense>(await createResponse.Content.ReadAsStringAsync());
-                createResponse.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/{createResponseObject.Id.ToString()}");
+                createResponse.Headers.Location!.AbsolutePath.ToLower().ShouldBe($"/expense/detail/{createResponseObject.Id.ToString()}");
                 testId = createResponseObject.Id!.Value;
 
                 //Update

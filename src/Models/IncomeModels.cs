@@ -42,3 +42,13 @@ public class IncomeQuickView
     public decimal Amount { get; set; }
     public string Category { get; set; }
 }
+public record IncomeDetail
+{
+    public int Id { get; set; }
+    public DateTimeOffset IncomeDate { get; set; }
+    public decimal Amount { get; set; }
+    public string Source { get; set; }
+    public string Category { get; set; }
+    public string Notes { get; set; }
+    //add more to this
+}

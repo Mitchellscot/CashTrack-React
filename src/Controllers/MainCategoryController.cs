@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 
 namespace CashTrack.Controllers
 {

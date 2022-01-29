@@ -1,4 +1,4 @@
-﻿using CashTrack.Helpers.Exceptions;
+﻿using CashTrack.Common.Exceptions;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Services.MerchantService;
 using Microsoft.AspNetCore.Http;

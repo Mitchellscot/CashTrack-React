@@ -3,7 +3,7 @@ using CashTrack.Models.UserModels;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Http;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using CashTrack.Services.UserService;
 
 namespace CashTrack.Controllers

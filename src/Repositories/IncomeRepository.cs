@@ -1,4 +1,5 @@
-﻿using CashTrack.Data;
+﻿using CashTrack.Common.Exceptions;
+using CashTrack.Data;
 using CashTrack.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -39,9 +40,22 @@ public class IncomeRepository : IIncomeRepository
         }
     }
 
-    public Task<Incomes> FindById(int id)
+    public async Task<Incomes> FindById(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var income = await _ctx.Incomes
+                .Include(x => x.source)
+                .Include(x => x.category)
+                .SingleOrDefaultAsync(x => x.id == id);
+            if (income == null)
+                throw new IncomeNotFoundException(id.ToString());
+            return income;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public async Task<Incomes[]> FindWithPagination(Expression<Func<Incomes, bool>> predicate, int pageNumber, int pageSize)

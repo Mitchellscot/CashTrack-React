@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CashTrack.Helpers;
+using CashTrack.Common;
 using Microsoft.EntityFrameworkCore;
 using CashTrack.Data;
 using FluentValidation.AspNetCore;

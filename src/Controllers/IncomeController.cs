@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.IncomeModels;
 using System;
-using CashTrack.Helpers.Exceptions;
 using CashTrack.Services.IncomeService;
 using Microsoft.AspNetCore.Routing;
+using CashTrack.Common.Exceptions;
 
 namespace CashTrack.Controllers
 {
@@ -29,6 +29,23 @@ namespace CashTrack.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
+        [HttpGet("detail/{id:int}")]
+        public async Task<ActionResult<IncomeListItem>> GetIncomeDetail(int id)
+        {
+            try
+            {
+                var result = await _service.GetIncomeByIdAsync(id);
+                return Ok(result);
+            }
+            catch (IncomeNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

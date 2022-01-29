@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using CashTrack.Models.ExpenseModels;
 using System;
-using CashTrack.Helpers.Exceptions;
+using CashTrack.Common.Exceptions;
 using CashTrack.Services.ExpenseService;
 using Microsoft.AspNetCore.Routing;
 
@@ -38,8 +38,8 @@ namespace CashTrack.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseListItem>> GetAnExpenseById(int id)
+        [HttpGet("detail/{id:int}")]
+        public async Task<ActionResult<ExpenseListItem>> GetExpenseDetail(int id)
         {
             try
             {
@@ -101,8 +101,7 @@ namespace CashTrack.Controllers
             {
                 var result = await _expenseService.CreateExpenseAsync(request);
                 var expense = _mapper.Map<AddEditExpense>(result);
-                var location = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, $"/expense/{expense.Id.Value}");
-                return Created(location, expense);
+                return CreatedAtAction("detail", new { id = result.id }, expense);
             }
             catch (Exception ex)
             {
