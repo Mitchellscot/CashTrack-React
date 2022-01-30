@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using CashTrack.Data.Entities.Common;
 using System;
 
 namespace CashTrack.Data.CsvFiles
@@ -6,23 +7,9 @@ namespace CashTrack.Data.CsvFiles
     public class CsvModels
     {
         //these models are used when pulling data from the CSV files and inserting it into the database
-        public class CsvExpense
+        public class CsvExpense : Transactions
         {
-            private DateTimeOffset? _purchase_date;
-
-            public int id { get; set; }
-            public DateTimeOffset? purchase_date
-            {
-                get { return _purchase_date; }
-                set
-                {
-                    if (value != null)
-                        _purchase_date = value.Value.ToUniversalTime();
-                }
-            }
-            public decimal? amount { get; set; }
             public int? categoryid { get; set; }
-            public string? notes { get; set; }
             public int? merchantid { get; set; }
             public bool? exclude_from_statistics { get; set; }
         }
@@ -67,7 +54,7 @@ namespace CashTrack.Data.CsvFiles
         {
             private DateTimeOffset? _income_date;
             public int id { get; set; }
-            public DateTimeOffset? income_date
+            public DateTimeOffset? date
             {
                 get { return _income_date; }
                 set

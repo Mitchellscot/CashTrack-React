@@ -38,7 +38,7 @@ namespace CashTrack.Tests.Helpers
         public async Task CanAggregateExpenseStatistics()
         {
             var data = await _repo.GetExpensesAndCategories(x => x.merchantid == 85);
-            var result = data.GroupBy(e => e.purchase_date.Year)
+            var result = data.GroupBy(e => e.date.Year)
                 .Select(g =>
                     {
                         var results = g.Aggregate(new ExpenseStatisticsAggregator(),

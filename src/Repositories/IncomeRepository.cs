@@ -80,7 +80,7 @@ public class IncomeRepository : IIncomeRepository
         {
             var income = await _ctx.Incomes
                     .Where(predicate)
-                    .OrderByDescending(x => x.income_date)
+                    .OrderByDescending(x => x.date)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .Include(x => x.source)

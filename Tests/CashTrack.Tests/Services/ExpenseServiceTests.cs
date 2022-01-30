@@ -11,6 +11,7 @@ using CashTrack.Models.ExpenseModels;
 using CashTrack.Models.Common;
 using Bogus;
 using System.Threading.Tasks;
+using CashTrack.Services.Common;
 
 namespace CashTrack.Tests.Services
 {
@@ -41,7 +42,7 @@ namespace CashTrack.Tests.Services
         public async Task Update()
         {
             _repo.Setup(x => x.Update(It.IsAny<Expenses>())).ReturnsAsync(true);
-            var objectToUpdate = new Expenses { id = 1, amount = 1m, purchase_date = DateTimeOffset.UtcNow, categoryid = 12 };
+            var objectToUpdate = new Expenses { id = 1, amount = 1m, date = DateTimeOffset.UtcNow, categoryid = 12 };
             _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
             var request = new AddEditExpense() { Id = 1, Amount = 2m };
             var result = await _sut.UpdateExpenseAsync(request);
@@ -51,7 +52,7 @@ namespace CashTrack.Tests.Services
         public async Task Delete()
         {
             _repo.Setup(x => x.Delete(It.IsAny<Expenses>())).ReturnsAsync(true);
-            var objectToUpdate = new Expenses() { id = 1, amount = 5m, categoryid = 12, purchase_date = DateTimeOffset.UtcNow };
+            var objectToUpdate = new Expenses() { id = 1, amount = 5m, categoryid = 12, date = DateTimeOffset.UtcNow };
             _repo.Setup(x => x.FindById(1)).ReturnsAsync(objectToUpdate);
             var result = await _sut.DeleteExpenseAsync(1);
             result.ShouldBe(true);
@@ -104,7 +105,7 @@ namespace CashTrack.Tests.Services
         public void GetPredicateWorks(DateOptions option)
         {
             var request = new ExpenseRequest() { DateOptions = option };
-            var result = _sut.GetPredicate(request);
+            var result = DateOption<Expenses, ExpenseRequest>.Parse(request);
             result.NodeType.ShouldBe(System.Linq.Expressions.ExpressionType.Lambda);
             result.ShouldNotBeNull();
         }
@@ -114,7 +115,7 @@ namespace CashTrack.Tests.Services
             {
                 new Expenses() {
                     id = 1,
-                    purchase_date = DateTimeOffset.UtcNow.AddDays(-3),
+                    date = DateTimeOffset.UtcNow.AddDays(-3),
                     amount = 25.00m,
                     category = new SubCategories() {
                         id=1,
@@ -128,7 +129,7 @@ namespace CashTrack.Tests.Services
                 },
                 new Expenses() {
                     id = 2,
-                    purchase_date = DateTimeOffset.UtcNow.AddDays(-2),
+                    date = DateTimeOffset.UtcNow.AddDays(-2),
                     amount = 15.00m,
                     category = new SubCategories() {
                         id=1,
@@ -142,7 +143,7 @@ namespace CashTrack.Tests.Services
                 },
                 new Expenses() {
                     id = 3,
-                    purchase_date = DateTimeOffset.UtcNow.AddDays(-1),
+                    date = DateTimeOffset.UtcNow.AddDays(-1),
                     amount = 5.00m,
                     category = new SubCategories() {
                         id=1,

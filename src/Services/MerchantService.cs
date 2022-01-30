@@ -65,12 +65,12 @@ public class MerchantService : IMerchantService
 
         var merchantExpenses = await _expenseRepo.GetExpensesAndCategories(x => x.merchantid == id);
 
-        var recentExpenses = merchantExpenses.OrderByDescending(e => e.purchase_date)
+        var recentExpenses = merchantExpenses.OrderByDescending(e => e.date)
             .Take(10)
             .Select(x => new ExpenseQuickView()
             {
                 Id = x.id,
-                PurchaseDate = x.purchase_date.Date.ToShortDateString(),
+                PurchaseDate = x.date.Date.ToShortDateString(),
                 Amount = x.amount,
                 SubCategory = x.category == null ? "none" : x.category.sub_category_name
             }).ToList();
@@ -79,7 +79,7 @@ public class MerchantService : IMerchantService
                 (acc, e) => acc.Accumulate(e),
                 acc => acc.Compute());
 
-        var expenseStatistics = merchantExpenses.GroupBy(e => e.purchase_date.Year)
+        var expenseStatistics = merchantExpenses.GroupBy(e => e.date.Year)
                 .Select(g =>
                 {
                     var results = g.Aggregate(new ExpenseStatisticsAggregator(),

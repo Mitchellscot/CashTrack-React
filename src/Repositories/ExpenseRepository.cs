@@ -66,7 +66,7 @@ public class ExpenseRepository : IExpenseRepository
                     .Include(x => x.merchant)
                     .Include(x => x.category)
                     .ThenInclude(x => x.main_category)
-                    .OrderByDescending(x => x.purchase_date)
+                    .OrderByDescending(x => x.date)
                     .ThenByDescending(x => x.id)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
