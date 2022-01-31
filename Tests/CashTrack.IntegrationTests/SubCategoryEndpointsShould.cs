@@ -69,7 +69,7 @@ namespace CashTrack.IntegrationTests
             {
                 //create
                 var uniqueName = Guid.NewGuid().ToString();
-                var request = new AddEditSubCategory() with { Name = uniqueName, InUse = true, MainCategoryId = 12 };
+                var request = new AddEditSubCategory() { Name = uniqueName, InUse = true, MainCategoryId = 12 };
                 var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var responseObject = JsonConvert.DeserializeObject<AddEditSubCategory>(await response.Content.ReadAsStringAsync());
@@ -77,7 +77,7 @@ namespace CashTrack.IntegrationTests
                 response.Headers.Location!.ToString().ShouldContain(responseObject.Id.ToString()!);
                 responseObject.Name.ShouldBe(uniqueName);
                 //update
-                var updatedObject = new AddEditSubCategory() with { Id = testId, Name = Guid.NewGuid().ToString(), MainCategoryId = 12, InUse = false };
+                var updatedObject = new AddEditSubCategory() { Id = testId, Name = Guid.NewGuid().ToString(), MainCategoryId = 12, InUse = false };
                 var updatedResponse = await _fixture.SendPutRequestAsync(ENDPOINT, updatedObject);
                 updatedResponse.EnsureSuccessStatusCode();
             }
@@ -91,21 +91,21 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ErrorWithDuplicateNameOnCreate()
         {
-            var request = new AddEditSubCategory() with { Name = "AAA" };
+            var request = new AddEditSubCategory() { Name = "AAA" };
             var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithDuplicateNameOnUpdate()
         {
-            var request = new AddEditSubCategory() with { Id = 1, Name = "AAA" };
+            var request = new AddEditSubCategory() { Id = 1, Name = "AAA" };
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithWrongIdOnUpdate()
         {
-            var request = new AddEditSubCategory() with { Id = int.MaxValue, Name = "z" };
+            var request = new AddEditSubCategory() { Id = int.MaxValue, Name = "z" };
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }

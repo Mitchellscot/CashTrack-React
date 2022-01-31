@@ -8,7 +8,6 @@ namespace CashTrack.Models.Common
         public int Id { get; set; }
         public DateTimeOffset Date { get; set; }
         public decimal Amount { get; set; }
-
     }
     public abstract class TransactionRequest : PaginationRequest
     {
@@ -16,7 +15,6 @@ namespace CashTrack.Models.Common
         public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
     }
-
     public abstract class TransactionResponse<T> : PaginationResponse<T> where T : Transaction
     {
         public decimal TotalAmount { get; private set; }
@@ -24,7 +22,6 @@ namespace CashTrack.Models.Common
         protected TransactionResponse(int pageNumber, int pageSize, int count, IEnumerable<T> listItems, decimal amount) : base(pageNumber, pageSize, count, listItems)
         {
             TotalAmount = Math.Round(amount, 2);
-
         }
     }
 }

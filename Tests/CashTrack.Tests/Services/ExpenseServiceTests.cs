@@ -34,7 +34,7 @@ namespace CashTrack.Tests.Services
         public async Task Create()
         {
             _repo.Setup(x => x.Create(It.IsAny<Expenses>())).ReturnsAsync(true);
-            var request = new AddEditExpense() { Amount = 1m, PurchaseDate = DateTimeOffset.UtcNow, SubCategoryId = 12 };
+            var request = new AddEditExpense() { Amount = 1m, Date = DateTimeOffset.UtcNow, SubCategoryId = 12 };
             var result = await _sut.CreateExpenseAsync(request);
             result.Amount.ShouldBe(1m);
         }

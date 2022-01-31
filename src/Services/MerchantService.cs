@@ -70,7 +70,7 @@ public class MerchantService : IMerchantService
             .Select(x => new ExpenseQuickView()
             {
                 Id = x.id,
-                PurchaseDate = x.date.Date.ToShortDateString(),
+                Date = x.date.Date.ToShortDateString(),
                 Amount = x.amount,
                 SubCategory = x.category == null ? "none" : x.category.sub_category_name
             }).ToList();

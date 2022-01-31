@@ -36,7 +36,7 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void Update()
         {
-            var request = new AddEditIncomeCategory() with { Id = int.MaxValue };
+            var request = new AddEditIncomeCategory() { Id = int.MaxValue };
             var result = await _sut.UpdateIncomeCategory(request);
             _service.Verify(s => s.UpdateIncomeCategoryAsync(It.IsAny<AddEditIncomeCategory>()), Times.AtLeastOnce());
         }

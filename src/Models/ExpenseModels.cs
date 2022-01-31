@@ -20,11 +20,8 @@ public class AmountSearchRequest : PaginationRequest
     private decimal _query;
     new public decimal Query
     {
-        get { return _query; }
-        set
-        {
-            _query = Decimal.Round(value, 2);
-        }
+        get => _query;
+        set => _query = Decimal.Round(value, 2);
     }
 }
 
@@ -48,6 +45,7 @@ public class ExpenseListItem : Transaction
 }
 public class ExpenseQuickView : Transaction
 {
+    new public string Date { get; set; }
     public string SubCategory { get; set; }
 }
 

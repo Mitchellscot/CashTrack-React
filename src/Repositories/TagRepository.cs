@@ -1,5 +1,6 @@
 ﻿using CashTrack.Data;
 using CashTrack.Data.Entities;
+using CashTrack.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

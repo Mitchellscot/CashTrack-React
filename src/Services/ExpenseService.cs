@@ -113,7 +113,7 @@ public class ExpenseMapperProfile : Profile
 
         CreateMap<AddEditExpense, Expenses>()
             .ForMember(e => e.id, o => o.MapFrom(src => src.Id))
-            .ForMember(e => e.date, o => o.MapFrom(src => src.PurchaseDate.ToUniversalTime()))
+            .ForMember(e => e.date, o => o.MapFrom(src => src.Date.ToUniversalTime()))
             .ForMember(e => e.amount, o => o.MapFrom(src => src.Amount))
             .ForMember(e => e.notes, o => o.MapFrom(src => src.Notes))
             .ForMember(e => e.merchantid, o => o.MapFrom(src => src.MerchantId))

@@ -51,7 +51,8 @@ namespace CashTrack.IntegrationTests
             {
                 //create
                 var uniqueName = Guid.NewGuid().ToString();
-                var request = new AddEditIncomeCategory() with { Name = uniqueName };
+                var request = new AddEditIncomeCategory();
+                request.Name = uniqueName;
                 var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var responseObject = JsonConvert.DeserializeObject<AddEditIncomeCategory>(await response.Content.ReadAsStringAsync());
@@ -60,7 +61,7 @@ namespace CashTrack.IntegrationTests
                 responseObject.Name.ShouldBe(uniqueName);
                 responseObject.Id.ShouldNotBeNull();
                 //update
-                var updateObject = new AddEditIncomeCategory() with
+                var updateObject = new AddEditIncomeCategory()
                 {
                     Id = testId,
                     Name = Guid.NewGuid().ToString()
@@ -78,21 +79,21 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ErrorWithDuplicateNameOnCreate()
         {
-            var request = new AddEditIncomeCategory() with { Name = "Paycheck" };
+            var request = new AddEditIncomeCategory() { Name = "Paycheck" };
             var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithDuplicateNameOnUpdate()
         {
-            var request = new AddEditIncomeCategory() with { Id = 1, Name = "Paycheck" };
+            var request = new AddEditIncomeCategory() { Id = 1, Name = "Paycheck" };
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithWrongIdOnUpdate()
         {
-            var request = new AddEditIncomeCategory() with { Id = int.MaxValue, Name = "Paycheck" };
+            var request = new AddEditIncomeCategory() { Id = int.MaxValue, Name = "Paycheck" };
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }

@@ -7,6 +7,7 @@ using System.Data;
 using CashTrack.Common.Exceptions;
 using CashTrack.Data.Entities;
 using System.Linq.Expressions;
+using CashTrack.Repositories.Common;
 
 namespace CashTrack.Repositories.ExpenseRepository;
 

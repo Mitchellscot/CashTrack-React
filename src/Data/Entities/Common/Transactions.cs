@@ -11,8 +11,8 @@ namespace CashTrack.Data.Entities.Common
         [Required]
         public DateTimeOffset date
         {
-            get { return _date; }
-            set { _date = value.ToUniversalTime(); }
+            get => _date;
+            set => _date = value.ToUniversalTime();
         }
         [Required]
         public decimal amount { get; set; }
