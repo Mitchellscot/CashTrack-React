@@ -17,8 +17,8 @@ namespace CashTrack.Data
         public DbSet<Tags> Tags { get; set; }
         public DbSet<IncomeSources> IncomeSources { get; set; }
         public DbSet<IncomeCategories> IncomeCategories { get; set; }
-        public DbSet<ExpenseToReview> ExpensesToReview { get; set; }
-        public DbSet<IncomeToReview> IncomeToReview { get; set; }
+        public DbSet<ExpenseReview> ExpensesToReview { get; set; }
+        public DbSet<IncomeReview> IncomeToReview { get; set; }
 
         private IConfiguration _config;
 
