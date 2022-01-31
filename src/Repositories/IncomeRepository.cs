@@ -1,6 +1,7 @@
 ﻿using CashTrack.Common.Exceptions;
 using CashTrack.Data;
 using CashTrack.Data.Entities;
+using CashTrack.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -80,7 +81,7 @@ public class IncomeRepository : IIncomeRepository
         {
             var income = await _ctx.Incomes
                     .Where(predicate)
-                    .OrderByDescending(x => x.income_date)
+                    .OrderByDescending(x => x.date)
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .Include(x => x.source)

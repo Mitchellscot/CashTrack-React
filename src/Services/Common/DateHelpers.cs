@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CashTrack.Data.Entities.Common;
+using CashTrack.Models.Common;
+using System;
+using System.Linq.Expressions;
 
 namespace CashTrack.Services.Common
 {
@@ -40,5 +43,50 @@ namespace CashTrack.Services.Common
         {
             return (startDate: new DateTimeOffset(date.Year, 1, 1, 0, 0, 0, new TimeSpan(0, 0, 0)), endDate: new DateTimeOffset(date.Year, 12, 31, 0, 0, 0, new TimeSpan(0, 0, 0)));
         }
+    }
+    public static class DateOption<T, TRequest> where T : Transactions where TRequest : TransactionRequest
+    {
+        public static Expression<Func<T, bool>> Parse(TRequest request) => request.DateOptions switch
+        {
+            //1
+            DateOptions.All => (T x) => true,
+            //2
+            DateOptions.SpecificDate => (T x) =>
+                x.date == request.BeginDate.ToUniversalTime(),
+            //3
+            DateOptions.SpecificMonthAndYear => (T x) =>
+               x.date >= DateHelpers.GetMonthDatesFromDate(request.BeginDate).startDate &&
+               x.date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
+            //4
+            DateOptions.SpecificQuarter => (T x) =>
+                x.date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
+                x.date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
+            //5
+            DateOptions.SpecificYear => (T x) =>
+                x.date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
+                x.date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
+            //6
+            DateOptions.DateRange => (T x) =>
+                x.date >= request.BeginDate.ToUniversalTime() &&
+                x.date <= request.EndDate.ToUniversalTime(),
+            //7
+            DateOptions.Last30Days => (T x) =>
+                x.date >= DateTimeOffset.UtcNow.AddDays(-30),
+            //8
+            DateOptions.CurrentMonth => (T x) =>
+                x.date >= DateHelpers.GetCurrentMonth() &&
+                x.date <= DateTimeOffset.UtcNow,
+            //9
+            DateOptions.CurrentQuarter => (T x) =>
+                x.date >= DateHelpers.GetCurrentQuarter() &&
+                x.date <= DateTimeOffset.UtcNow,
+            //10
+            DateOptions.CurrentYear => (T x) =>
+                x.date >= DateHelpers.GetCurrentYear() &&
+                x.date <= DateTimeOffset.UtcNow,
+
+            _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
+
+        };
     }
 }

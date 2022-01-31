@@ -3,7 +3,7 @@ using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CashTrack.Repositories
+namespace CashTrack.Repositories.Common
 {
     public interface IRepository<T> where T : class, IEntity
     {

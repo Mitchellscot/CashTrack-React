@@ -36,7 +36,7 @@ namespace CashTrack.Tests.Controllers
         [Fact]
         public async void Update()
         {
-            var request = new AddEditMainCategory() with { Id = int.MaxValue };
+            var request = new AddEditMainCategory() { Id = int.MaxValue };
             var result = await _sut.UpdateMainCategory(request);
             _service.Verify(x => x.UpdateMainCategoryAsync(It.IsAny<AddEditMainCategory>()), Times.AtLeastOnce());
         }

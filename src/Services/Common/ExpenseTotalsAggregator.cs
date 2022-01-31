@@ -16,11 +16,11 @@ namespace CashTrack.Services.Common
         }
         public ExpenseTotalsAggregator Accumulate(Expenses e)
         {
-            if (e.purchase_date.Month == DateTimeOffset.UtcNow.Month && e.purchase_date.Year == DateTimeOffset.UtcNow.Year)
+            if (e.date.Month == DateTimeOffset.UtcNow.Month && e.date.Year == DateTimeOffset.UtcNow.Year)
             {
                 TotalSpentThisMonth += e.amount;
             }
-            if (e.purchase_date.Year == DateTimeOffset.UtcNow.Year)
+            if (e.date.Year == DateTimeOffset.UtcNow.Year)
             {
                 TotalSpentThisYear += e.amount;
             }

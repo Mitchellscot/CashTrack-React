@@ -22,7 +22,7 @@ namespace CashTrack.Models.Common
         //I tried having a PaginatioRequest object as the parameter but it didn't work when deserializing json (which makes sense).
         //Also the parameter names have to match what would be on the json, otherqise the compiler won't be able to figure it out.
         //This makes it so you have to break up pagenumber and pagesize when calling the constructor, but whatever.
-        public PaginationResponse(int pageNumber, int pageSize, int count, IEnumerable<T> listItems)
+        protected PaginationResponse(int pageNumber, int pageSize, int count, IEnumerable<T> listItems)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
@@ -30,10 +30,5 @@ namespace CashTrack.Models.Common
             ListItems = listItems;
         }
     }
-    public abstract class TransactionRequest : PaginationRequest
-    {
-        public DateOptions DateOptions { get; set; }
-        public DateTimeOffset BeginDate { get; set; } = DateTimeOffset.UtcNow;
-        public DateTimeOffset EndDate { get; set; } = DateTimeOffset.UtcNow;
-    }
+
 }

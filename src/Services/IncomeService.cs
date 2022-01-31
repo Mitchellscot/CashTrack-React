@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using CashTrack.Data.Entities;
-using CashTrack.Models.Common;
 using CashTrack.Models.IncomeModels;
 using CashTrack.Repositories.IncomeRepository;
 using CashTrack.Services.Common;
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.IncomeService;
@@ -51,7 +49,7 @@ public class IncomeService : IIncomeService
 
     public async Task<IncomeResponse> GetIncomeAsync(IncomeRequest request)
     {
-        var predicate = GetPredicate(request);
+        var predicate = DateOption<Incomes, IncomeRequest>.Parse(request);
         var expenses = await _repo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
         var count = await _repo.GetCount(predicate);
         var amount = await _repo.GetAmountOfIncome(predicate);
@@ -74,50 +72,6 @@ public class IncomeService : IIncomeService
         var income = _mapper.Map<Incomes>(request);
         return await _repo.Update(income);
     }
-
-    /***** HELPERS *****/
-    internal Expression<Func<Incomes, bool>> GetPredicate(IncomeRequest request) => request.DateOptions switch
-    {
-        //1
-        DateOptions.All => (Incomes x) => true,
-        //2
-        DateOptions.SpecificDate => (Incomes x) =>
-            x.income_date == request.BeginDate.ToUniversalTime(),
-        //3
-        DateOptions.SpecificMonthAndYear => (Incomes x) =>
-           x.income_date >= DateHelpers.GetMonthDatesFromDate(request.BeginDate).startDate &&
-           x.income_date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
-        //4
-        DateOptions.SpecificQuarter => (Incomes x) =>
-            x.income_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
-            x.income_date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
-        //5
-        DateOptions.SpecificYear => (Incomes x) =>
-            x.income_date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
-            x.income_date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
-        //6
-        DateOptions.DateRange => (Incomes x) =>
-            x.income_date >= request.BeginDate.ToUniversalTime() &&
-            x.income_date <= request.EndDate.ToUniversalTime(),
-        //7
-        DateOptions.Last30Days => (Incomes x) =>
-            x.income_date >= DateTimeOffset.UtcNow.AddDays(-30),
-        //8
-        DateOptions.CurrentMonth => (Incomes x) =>
-            x.income_date >= DateHelpers.GetCurrentMonth() &&
-            x.income_date <= DateTimeOffset.UtcNow,
-        //9
-        DateOptions.CurrentQuarter => (Incomes x) =>
-            x.income_date >= DateHelpers.GetCurrentQuarter() &&
-            x.income_date <= DateTimeOffset.UtcNow,
-        //10
-        DateOptions.CurrentYear => (Incomes x) =>
-            x.income_date >= DateHelpers.GetCurrentYear() &&
-            x.income_date <= DateTimeOffset.UtcNow,
-
-        _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
-
-    };
 }
 
 public class IncomeMapperProfile : Profile
@@ -126,14 +80,14 @@ public class IncomeMapperProfile : Profile
     {
         CreateMap<Incomes, IncomeListItem>()
             .ForMember(x => x.Id, o => o.MapFrom(x => x.id))
-            .ForMember(x => x.IncomeDate, o => o.MapFrom(x => x.income_date))
+            .ForMember(x => x.Date, o => o.MapFrom(x => x.date))
             .ForMember(x => x.Amount, o => o.MapFrom(x => x.amount))
             .ForMember(x => x.Category, o => o.MapFrom(x => x.category.category))
             .ForMember(x => x.Source, o => o.MapFrom(x => x.source.source))
             .ReverseMap();
 
         CreateMap<AddEditIncome, Incomes>()
-            .ForMember(x => x.income_date, o => o.MapFrom(src => src.IncomeDate.ToUniversalTime()))
+            .ForMember(x => x.date, o => o.MapFrom(src => src.Date.ToUniversalTime()))
             .ForMember(x => x.id, o => o.MapFrom(src => src.Id))
             .ForMember(x => x.amount, o => o.MapFrom(src => src.Amount))
             .ForMember(x => x.categoryid, o => o.MapFrom(src => src.CategoryId))

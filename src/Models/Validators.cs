@@ -31,8 +31,8 @@ public class AddEditExpenseValidators : AbstractValidator<AddEditExpense>
     public AddEditExpenseValidators(ISubCategoryRepository _categoryRepo, IMerchantRepository _merchantRepo)
     {
         RuleFor(x => x.Amount).NotEmpty().GreaterThan(0);
-        RuleFor(x => x.PurchaseDate).NotEmpty();
-        RuleFor(x => x.PurchaseDate).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Purchase Date cannot be in the future.");
+        RuleFor(x => x.Date).NotEmpty();
+        RuleFor(x => x.Date).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Purchase Date cannot be in the future.");
         RuleFor(x => x.SubCategoryId).NotEmpty().GreaterThan(0).WithMessage("Must provide a category ID");
         RuleFor(x => x.SubCategoryId).MustAsync(async (model, value, _) =>
         {
@@ -53,7 +53,7 @@ public class ExpenseRequestValidators : AbstractValidator<ExpenseRequest>
 {
     public ExpenseRequestValidators(IExpenseRepository expenseRepository)
     {
-        var earliestExpense = expenseRepository.Find(x => true).Result.OrderBy(x => x.purchase_date).Select(x => x.purchase_date).FirstOrDefault();
+        var earliestExpense = expenseRepository.Find(x => true).Result.OrderBy(x => x.date).Select(x => x.date).FirstOrDefault();
         When(x => x.DateOptions != 0, () =>
         {
             RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
@@ -139,7 +139,7 @@ public class IncomeRequestValidators : AbstractValidator<IncomeRequest>
 {
     public IncomeRequestValidators(IIncomeRepository incomeRepository)
     {
-        var earliestIncome = incomeRepository.Find(x => true).Result.OrderBy(x => x.income_date).Select(x => x.income_date).FirstOrDefault();
+        var earliestIncome = incomeRepository.Find(x => true).Result.OrderBy(x => x.date).Select(x => x.date).FirstOrDefault();
         When(x => x.DateOptions != 0, () =>
         {
             RuleFor(x => x.DateOptions).IsInEnum().NotEmpty().WithMessage("Date Options must be specificied in query string. Valid options are 1 through 12.");
@@ -157,8 +157,8 @@ public class AddEditIncomeValidators : AbstractValidator<AddEditIncome>
     public AddEditIncomeValidators(ISubCategoryRepository _categoryRepo, IMerchantRepository _merchantRepo)
     {
         RuleFor(x => x.Amount).NotEmpty().GreaterThan(0);
-        RuleFor(x => x.IncomeDate).NotEmpty();
-        RuleFor(x => x.IncomeDate).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Income Date cannot be in the future.");
+        RuleFor(x => x.Date).NotEmpty();
+        RuleFor(x => x.Date).Must(x => x < DateTime.Today.AddDays(1)).WithMessage("The Income Date cannot be in the future.");
         RuleFor(x => x.CategoryId).NotEmpty().GreaterThan(0).WithMessage("Must provide a category ID");
         RuleFor(x => x.CategoryId).MustAsync(async (model, value, _) =>
         {

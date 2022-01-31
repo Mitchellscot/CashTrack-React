@@ -40,7 +40,7 @@ public class ExpenseService : IExpenseService
     }
     public async Task<ExpenseResponse> GetExpensesAsync(ExpenseRequest request)
     {
-        var predicate = GetPredicate(request);
+        var predicate = DateOption<Expenses, ExpenseRequest>.Parse(request);
         var expenses = await _expenseRepo.FindWithPagination(predicate, request.PageNumber, request.PageSize);
         var count = await _expenseRepo.GetCount(predicate);
         var amount = await _expenseRepo.GetAmountOfExpenses(predicate);
@@ -94,49 +94,6 @@ public class ExpenseService : IExpenseService
 
         return await _expenseRepo.Delete(expense);
     }
-    /***** HELPERS *****/
-    internal Expression<Func<Expenses, bool>> GetPredicate(ExpenseRequest request) => request.DateOptions switch
-    {
-        //1
-        DateOptions.All => (Expenses x) => true,
-        //2
-        DateOptions.SpecificDate => (Expenses x) =>
-            x.purchase_date == request.BeginDate.ToUniversalTime(),
-        //3
-        DateOptions.SpecificMonthAndYear => (Expenses x) =>
-           x.purchase_date >= DateHelpers.GetMonthDatesFromDate(request.BeginDate).startDate &&
-           x.purchase_date <= DateHelpers.GetMonthDatesFromDate(request.BeginDate).endDate,
-        //4
-        DateOptions.SpecificQuarter => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).startDate &&
-            x.purchase_date <= DateHelpers.GetQuarterDatesFromDate(request.BeginDate).endDate,
-        //5
-        DateOptions.SpecificYear => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetYearDatesFromDate(request.BeginDate).startDate &&
-            x.purchase_date <= DateHelpers.GetYearDatesFromDate(request.BeginDate).endDate,
-        //6
-        DateOptions.DateRange => (Expenses x) =>
-            x.purchase_date >= request.BeginDate.ToUniversalTime() &&
-            x.purchase_date <= request.EndDate.ToUniversalTime(),
-        //7
-        DateOptions.Last30Days => (Expenses x) =>
-            x.purchase_date >= DateTimeOffset.UtcNow.AddDays(-30),
-        //8
-        DateOptions.CurrentMonth => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetCurrentMonth() &&
-            x.purchase_date <= DateTimeOffset.UtcNow,
-        //9
-        DateOptions.CurrentQuarter => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetCurrentQuarter() &&
-            x.purchase_date <= DateTimeOffset.UtcNow,
-        //10
-        DateOptions.CurrentYear => (Expenses x) =>
-            x.purchase_date >= DateHelpers.GetCurrentYear() &&
-            x.purchase_date <= DateTimeOffset.UtcNow,
-
-        _ => throw new ArgumentException($"DateOption type not supported {request.DateOptions}", nameof(request.DateOptions))
-
-    };
 }
 public class ExpenseMapperProfile : Profile
 {
@@ -145,7 +102,7 @@ public class ExpenseMapperProfile : Profile
 
         CreateMap<Expenses, ExpenseListItem>()
             .ForMember(e => e.Id, o => o.MapFrom(src => src.id))
-            .ForMember(e => e.PurchaseDate, o => o.MapFrom(src => src.purchase_date))
+            .ForMember(e => e.Date, o => o.MapFrom(src => src.date))
             .ForMember(e => e.Amount, o => o.MapFrom(src => src.amount))
             .ForMember(e => e.Notes, o => o.MapFrom(src => src.notes))
             .ForMember(e => e.Merchant, o => o.MapFrom(src => src.merchant.name))
@@ -156,7 +113,7 @@ public class ExpenseMapperProfile : Profile
 
         CreateMap<AddEditExpense, Expenses>()
             .ForMember(e => e.id, o => o.MapFrom(src => src.Id))
-            .ForMember(e => e.purchase_date, o => o.MapFrom(src => src.PurchaseDate.ToUniversalTime()))
+            .ForMember(e => e.date, o => o.MapFrom(src => src.Date.ToUniversalTime()))
             .ForMember(e => e.amount, o => o.MapFrom(src => src.Amount))
             .ForMember(e => e.notes, o => o.MapFrom(src => src.Notes))
             .ForMember(e => e.merchantid, o => o.MapFrom(src => src.MerchantId))

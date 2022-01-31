@@ -54,7 +54,7 @@ namespace CashTrack.IntegrationTests
             {
                 //create
                 var uniqueName = Guid.NewGuid().ToString();
-                var request = new AddEditMainCategory() with { Name = uniqueName };
+                var request = new AddEditMainCategory() { Name = uniqueName };
                 var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
                 response.StatusCode.ShouldBe(HttpStatusCode.Created);
                 var responseObject = JsonConvert.DeserializeObject<AddEditMainCategory>(await response.Content.ReadAsStringAsync());
@@ -63,7 +63,7 @@ namespace CashTrack.IntegrationTests
                 responseObject.Name.ShouldBe(uniqueName);
                 responseObject.Id.ShouldNotBeNull();
                 //update
-                var updateObject = new AddEditMainCategory() with
+                var updateObject = new AddEditMainCategory()
                 {
                     Id = testId,
                     Name = Guid.NewGuid().ToString()
@@ -81,21 +81,24 @@ namespace CashTrack.IntegrationTests
         [Fact]
         public async Task ErrorWithDuplicateNameOnCreate()
         {
-            var request = new AddEditMainCategory() with { Name = "Food" };
+            var request = new AddEditMainCategory();
+            request.Name = "Food";
             var response = await _fixture.SendPostRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithDuplicateNameOnUpdate()
         {
-            var request = new AddEditMainCategory() with { Id = 1, Name = "Food" };
+            var request = new AddEditMainCategory();
+            request.Id = 1;
+            request.Name = "Food";
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         [Fact]
         public async Task ErrorWithWrongIdOnUpdate()
         {
-            var request = new AddEditMainCategory() with { Id = int.MaxValue, Name = "Food" };
+            var request = new AddEditMainCategory() { Id = int.MaxValue, Name = "Food" };
             var response = await _fixture.SendPutRequestAsync(ENDPOINT, request);
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }

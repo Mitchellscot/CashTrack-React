@@ -9,22 +9,17 @@ public class IncomeCategoryResponse : PaginationResponse<IncomeCategoryListItem>
 {
     public IncomeCategoryResponse(int pageNumber, int pageSize, int totalCount, IncomeCategoryListItem[] listItems) : base(pageNumber, pageSize, totalCount, listItems) { }
 }
-public record AddEditIncomeCategory
+public class AddEditIncomeCategory : Category
 {
-    public int? Id { get; set; }
-    public string Name { get; set; }
+    new public int? Id { get; set; }
     public string Description { get; set; }
     public bool InUse { get; set; } = true;
 }
-public record IncomeCategoryListItem
+public class IncomeCategoryListItem : Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
 }
-public record IncomeCategoryDetail
+public class IncomeCategoryDetail : Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
     public string Description { get; set; }
     public bool InUse { get; set; } = true;
     //maybe some other cool properties... how many incomes related to this, total amount... maybe a yearly graph?
