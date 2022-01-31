@@ -41,7 +41,7 @@ namespace CashTrack.Tests.Services
         public async Task Create()
         {
             _repo.Setup(x => x.Create(It.IsAny<Incomes>())).ReturnsAsync(true);
-            var request = new AddEditIncome() { Amount = 1m, IncomeDate = DateTimeOffset.UtcNow, CategoryId = 1, };
+            var request = new AddEditIncome() { Amount = 1m, Date = DateTimeOffset.UtcNow, CategoryId = 1, };
             var result = await _sut.CreateIncomeAsync(request);
             result.Amount.ShouldBe(1m);
         }

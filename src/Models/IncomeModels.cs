@@ -1,52 +1,39 @@
 ﻿using CashTrack.Models.Common;
 using System;
+using System.Collections.Generic;
 
 namespace CashTrack.Models.IncomeModels;
 
 public class IncomeRequest : TransactionRequest
 {
 }
-public class IncomeResponse : PaginationResponse<IncomeListItem>
+public class IncomeResponse : TransactionResponse<IncomeListItem>
 {
-    public decimal TotalAmount { get; private set; }
-
-    public IncomeResponse(int pageNumber, int pageSize, int totalCount, IncomeListItem[] listItems, decimal amount) : base(pageNumber, pageSize, totalCount, listItems)
+    public IncomeResponse(int pageNumber, int pageSize, int count, IEnumerable<IncomeListItem> listItems, decimal amount) : base(pageNumber, pageSize, count, listItems, amount)
     {
-        TotalAmount = Math.Round(amount, 2);
     }
 }
 
-public record AddEditIncome
+public class AddEditIncome : Transaction
 {
-    public int? Id { get; set; }
-    public DateTimeOffset IncomeDate { get; set; }
-    public decimal Amount { get; set; }
+    new public int? Id { get; set; }
     public string Notes { get; set; }
     public int CategoryId { get; set; }
     public int? SourceId { get; set; }
 }
 
-public class IncomeListItem
+public class IncomeListItem : Transaction
 {
-    public int Id { get; set; }
-    public DateTimeOffset IncomeDate { get; set; }
-    public decimal Amount { get; set; }
     public string Source { get; set; }
     public string Category { get; set; }
 }
 
-public class IncomeQuickView
+public class IncomeQuickView : Transaction
 {
-    public int Id { get; set; }
-    public string PurchaseDate { get; set; }
-    public decimal Amount { get; set; }
     public string Category { get; set; }
 }
-public record IncomeDetail
+public class IncomeDetail : Transaction
 {
-    public int Id { get; set; }
-    public DateTimeOffset IncomeDate { get; set; }
-    public decimal Amount { get; set; }
     public string Source { get; set; }
     public string Category { get; set; }
     public string Notes { get; set; }

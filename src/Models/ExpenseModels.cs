@@ -3,20 +3,16 @@ using CashTrack.Models.TagModels;
 using System;
 using System.Collections.Generic;
 
-
 namespace CashTrack.Models.ExpenseModels;
-
 
 public class ExpenseRequest : TransactionRequest
 {
 
 }
-public class ExpenseResponse : PaginationResponse<ExpenseListItem>
+public class ExpenseResponse : TransactionResponse<ExpenseListItem>
 {
-    public decimal TotalAmount { get; private set; }
-    public ExpenseResponse(int pageNumber, int pageSize, int totalCount, ExpenseListItem[] listItems, decimal amount) : base(pageNumber, pageSize, totalCount, listItems)
+    public ExpenseResponse(int pageNumber, int pageSize, int count, IEnumerable<ExpenseListItem> listItems, decimal amount) : base(pageNumber, pageSize, count, listItems, amount)
     {
-        TotalAmount = Math.Round(amount, 2);
     }
 }
 public class AmountSearchRequest : PaginationRequest
@@ -32,22 +28,17 @@ public class AmountSearchRequest : PaginationRequest
     }
 }
 
-public record AddEditExpense
+public class AddEditExpense : Transaction
 {
-    public int? Id { get; set; }
-    public DateTimeOffset PurchaseDate { get; set; }
-    public decimal Amount { get; set; }
+    new public int? Id { get; set; }
     public string Notes { get; set; }
     public int? MerchantId { get; set; }
     //figure this out after you get Tags CRUD set up
     //public ICollection<Tag> Tags { get; set; }
     public int SubCategoryId { get; set; }
 }
-public record ExpenseListItem
+public class ExpenseListItem : Transaction
 {
-    public int Id { get; set; }
-    public DateTimeOffset PurchaseDate { get; set; }
-    public decimal Amount { get; set; }
     //I will probably remove Notes and add that to a detail view to be viewed in a modal
     public string Notes { get; set; }
     public string Merchant { get; set; }
@@ -55,11 +46,8 @@ public record ExpenseListItem
     public string SubCategory { get; set; }
     public string MainCategory { get; set; }
 }
-public record ExpenseQuickView
+public class ExpenseQuickView : Transaction
 {
-    public int Id { get; set; }
-    public string PurchaseDate { get; set; }
-    public decimal Amount { get; set; }
     public string SubCategory { get; set; }
 }
 

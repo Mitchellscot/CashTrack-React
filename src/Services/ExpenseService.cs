@@ -102,7 +102,7 @@ public class ExpenseMapperProfile : Profile
 
         CreateMap<Expenses, ExpenseListItem>()
             .ForMember(e => e.Id, o => o.MapFrom(src => src.id))
-            .ForMember(e => e.PurchaseDate, o => o.MapFrom(src => src.date))
+            .ForMember(e => e.Date, o => o.MapFrom(src => src.date))
             .ForMember(e => e.Amount, o => o.MapFrom(src => src.amount))
             .ForMember(e => e.Notes, o => o.MapFrom(src => src.notes))
             .ForMember(e => e.Merchant, o => o.MapFrom(src => src.merchant.name))

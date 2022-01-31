@@ -96,7 +96,7 @@ namespace CashTrack.IntegrationTests
             var testMonth = DateTime.Parse(date).Month;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Month.ShouldBe(testMonth);
+                exp.Date.Month.ShouldBe(testMonth);
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -116,7 +116,7 @@ namespace CashTrack.IntegrationTests
             var testYear = DateTime.Parse(date).Year;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Year.ShouldBe(testYear);
+                exp.Date.Year.ShouldBe(testYear);
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -136,7 +136,7 @@ namespace CashTrack.IntegrationTests
             var testYear = DateTime.Parse(date).Year;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Year.ShouldBe(testYear);
+                exp.Date.Year.ShouldBe(testYear);
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -155,7 +155,7 @@ namespace CashTrack.IntegrationTests
             var expenseList = responseObject.ListItems.ToList();
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.ShouldBeInRange(DateTimeOffset.Parse(beginDate), DateTimeOffset.Parse(endDate));
+                exp.Date.ShouldBeInRange(DateTimeOffset.Parse(beginDate), DateTimeOffset.Parse(endDate));
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -171,7 +171,7 @@ namespace CashTrack.IntegrationTests
             var expenseList = responseObject.ListItems.ToList();
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.ShouldBeGreaterThan(DateTimeOffset.Now.AddDays(-31));
+                exp.Date.ShouldBeGreaterThan(DateTimeOffset.Now.AddDays(-31));
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -188,7 +188,7 @@ namespace CashTrack.IntegrationTests
             var thisMonth = DateTimeOffset.Now.Month;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Month.ShouldBeEquivalentTo(thisMonth);
+                exp.Date.Month.ShouldBeEquivalentTo(thisMonth);
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -205,7 +205,7 @@ namespace CashTrack.IntegrationTests
             var thisYear = DateTimeOffset.Now.Year;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Year.ShouldBeEquivalentTo(thisYear);
+                exp.Date.Year.ShouldBeEquivalentTo(thisYear);
             }
             _output.WriteLine(responseObject.ToString());
         }
@@ -222,7 +222,7 @@ namespace CashTrack.IntegrationTests
             var thisYear = DateTimeOffset.Now.Year;
             foreach (var exp in expenseList)
             {
-                exp.PurchaseDate.Year.ShouldBeEquivalentTo(thisYear);
+                exp.Date.Year.ShouldBeEquivalentTo(thisYear);
             }
             _output.WriteLine(responseObject.ToString());
         }

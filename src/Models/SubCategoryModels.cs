@@ -11,26 +11,21 @@ public class SubCategoryResponse : PaginationResponse<SubCategoryListItem>
     public SubCategoryResponse(int pageNumber, int pageSize, int totalCount, SubCategoryListItem[] listItems) : base(pageNumber, pageSize, totalCount, listItems) { }
 }
 
-public record AddEditSubCategory
+public class AddEditSubCategory : Category
 {
-    public int? Id { get; set; }
-    public string Name { get; set; }
+    new public int? Id { get; set; }
     public int MainCategoryId { get; set; }
     public string Notes { get; set; }
     public bool InUse { get; set; }
 }
 
-public record SubCategoryListItem
+public class SubCategoryListItem : Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
     public string MainCategoryName { get; set; }
     public int NumberOfExpenses { get; set; }
 }
-public record SubCategoryDetail
+public class SubCategoryDetail : Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
     public string MainCategoryName { get; set; }
     public string Notes { get; set; }
     public bool InUse { get; set; }

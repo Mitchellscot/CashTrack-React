@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using CashTrack.Data.Entities;
-using CashTrack.Models.Common;
 using CashTrack.Models.IncomeModels;
 using CashTrack.Repositories.IncomeRepository;
 using CashTrack.Services.Common;
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CashTrack.Services.IncomeService;
@@ -82,14 +80,14 @@ public class IncomeMapperProfile : Profile
     {
         CreateMap<Incomes, IncomeListItem>()
             .ForMember(x => x.Id, o => o.MapFrom(x => x.id))
-            .ForMember(x => x.IncomeDate, o => o.MapFrom(x => x.date))
+            .ForMember(x => x.Date, o => o.MapFrom(x => x.date))
             .ForMember(x => x.Amount, o => o.MapFrom(x => x.amount))
             .ForMember(x => x.Category, o => o.MapFrom(x => x.category.category))
             .ForMember(x => x.Source, o => o.MapFrom(x => x.source.source))
             .ReverseMap();
 
         CreateMap<AddEditIncome, Incomes>()
-            .ForMember(x => x.date, o => o.MapFrom(src => src.IncomeDate.ToUniversalTime()))
+            .ForMember(x => x.date, o => o.MapFrom(src => src.Date.ToUniversalTime()))
             .ForMember(x => x.id, o => o.MapFrom(src => src.Id))
             .ForMember(x => x.amount, o => o.MapFrom(src => src.Amount))
             .ForMember(x => x.categoryid, o => o.MapFrom(src => src.CategoryId))
