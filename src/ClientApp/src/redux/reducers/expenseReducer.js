@@ -7,7 +7,6 @@ const expenseReducer = (state = initialState, action) => {
         case expenseConst.SET_EXPENSES:
             console.log(action.payload);
             return {
-                ...state,
                 isLoading: false,
                 totalAmount: action.payload.totalAmount,
                 pageNumber: action.payload.pageNumber,

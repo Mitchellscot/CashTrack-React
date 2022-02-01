@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import Login from '../../components/Login/Login';
-//import {useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 function ProtectedRoute(props) {
-  //const loggedIn = useSelector((store) => store.login.loggedIn);
+  const cookieSet = useSelector((store) => store.login.loggedIn);
   const loggedIn = localStorage.getItem('user');
   const {
     authRedirect,
@@ -14,15 +14,15 @@ function ProtectedRoute(props) {
 
   let ComponentToShow;
 
-  if (loggedIn) {
+  if (loggedIn && cookieSet) {
     ComponentToShow = ComponentToProtect;
   } else {
     ComponentToShow = Login;
   }
 
-  if (loggedIn && authRedirect != null) {
+  if (loggedIn && cookieSet && authRedirect != null) {
     return <Redirect exact from={otherProps.path} to={authRedirect} />;
-  } else if (!loggedIn && authRedirect != null) {
+  } else if (!loggedIn && !cookieSet && authRedirect != null) {
     ComponentToShow = ComponentToProtect;
   }
 

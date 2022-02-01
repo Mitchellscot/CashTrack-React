@@ -14,46 +14,46 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 
-
-function ExpenseTable(){
+function ExpenseTable() {
     const dispatch = useDispatch();
     const expenseStore = useSelector(store => store.expenses.expenseReducer);
-    const expenses = expenseStore.listItem;
+
     useEffect(() => {
         dispatch({ type: expenseConst.FETCH_ALL });
     }, [dispatch]);
 
     return (
-        
         <Col className="align-items-center justify-content-center">
-        <Table bordered hover className="expenseTable">
-            <thead>
-                <tr>
-                    Purchase Date
-                </tr>
-                <tr>
-                    Amount
-                </tr>
-                <tr>
-                    Merchant
-                </tr>
-                <tr>
-                    Sub Category
-                </tr>
-                <tr>
-                    Main Category
-                </tr>
-            </thead>
-            {expenseStore.isLoading === false ? expenseStore.listItem.Map(expense => {
-                return (
-                    <tbody key={expense.Id}>
-                        <ExpenseRow
-                        expense={expense}
-                        />
-                    </tbody>
-                );
-            }) : <div>Loading...</div>}
-        </Table>
+            <Table bordered hover className="expenseTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Purchase Date
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                        <th>
+                            Merchant
+                        </th>
+                        <th>
+                            Sub Category
+                        </th>
+                        <th>
+                            Main Category
+                        </th>
+                    </tr>
+                </thead>
+                    {expenseStore.isLoading === true ? <div>Loading...</div> : expenseStore.listItems.map(expense => {
+                        return (
+                            <tbody key={expense.Id}>
+                                <ExpenseRow
+                                    expense={expense}
+                                />
+                            </tbody>
+                        );
+                    })}
+            </Table>
         </Col>
     );
 }

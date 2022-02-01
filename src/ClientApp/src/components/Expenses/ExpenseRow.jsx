@@ -28,7 +28,6 @@ function ExpenseRow({ expense }) {
             {expense.mainCategory}
             </td>
         </tr>
-
     );
 }
 
