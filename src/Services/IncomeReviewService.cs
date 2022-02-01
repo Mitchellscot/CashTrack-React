@@ -58,7 +58,9 @@ public class IncomeReviewMapper : Profile
             .ForMember(x => x.Date, o => o.MapFrom(src => src.date))
             .ForMember(x => x.Amount, o => o.MapFrom(src => src.amount))
             .ForMember(x => x.Notes, o => o.MapFrom(src => src.notes))
+            .ForMember(x => x.SuggestedCategoryId, o => o.MapFrom(src => src.suggested_category.id))
             .ForMember(x => x.SuggestedCategory, o => o.MapFrom(src => src.suggested_category.category))
+            .ForMember(x => x.SuggestedSourceId, o => o.MapFrom(src => src.suggested_source.id))
             .ForMember(x => x.SuggestedSource, o => o.MapFrom(src => src.suggested_source.source))
             .ReverseMap();
     }

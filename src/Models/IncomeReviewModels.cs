@@ -16,6 +16,8 @@ public class IncomeReviewResponse : PaginationResponse<IncomeReviewListItem>
 public class IncomeReviewListItem : Transaction
 {
     public string Notes { get; set; }
+    public int SuggestedCategoryId { get; set; }
     public string SuggestedCategory { get; set; }
+    public int SuggestedSourceId { get; set; }
     public string SuggestedSource { get; set; }
 }

@@ -16,6 +16,8 @@ public class ExpenseReviewResponse : PaginationResponse<ExpenseReviewListItem>
 public class ExpenseReviewListItem : Transaction
 {
     public string Notes { get; set; }
+    public int? SuggestedCategoryId { get; set; }
     public string SuggestedCategory { get; set; }
+    public int? SuggestedMerchantId { get; set; }
     public string SuggestedMerchant { get; set; }
 }

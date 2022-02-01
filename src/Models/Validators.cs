@@ -1,7 +1,9 @@
 ﻿using CashTrack.Models.AuthenticationModels;
 using CashTrack.Models.ExpenseModels;
+using CashTrack.Models.ExpenseReviewModels;
 using CashTrack.Models.IncomeCategoryModels;
 using CashTrack.Models.IncomeModels;
+using CashTrack.Models.IncomeReviewModels;
 using CashTrack.Models.MainCategoryModels;
 using CashTrack.Models.MerchantModels;
 using CashTrack.Models.SubCategoryModels;
@@ -173,5 +175,22 @@ public class AddEditIncomeValidators : AbstractValidator<AddEditIncome>
                     return ((int)await _merchantRepo.GetCount(x => true)) > value;
                 }).WithMessage("Invalid Income Source Id");
             });
+    }
+}
+/* Transactions To Review */
+public class ExpenseReviewValidator : AbstractValidator<ExpenseReviewRequest>
+{
+    public ExpenseReviewValidator()
+    {
+        RuleFor(x => x.PageNumber).GreaterThan(0);
+        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
+    }
+}
+public class IncomeReviewValidator : AbstractValidator<IncomeReviewRequest>
+{
+    public IncomeReviewValidator()
+    {
+        RuleFor(x => x.PageNumber).GreaterThan(0);
+        RuleFor(x => x.PageSize).InclusiveBetween(5, 100);
     }
 }
