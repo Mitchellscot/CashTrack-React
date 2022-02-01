@@ -1,6 +1,21 @@
-﻿namespace CashTrack.Models.IncomeReviewModels;
+﻿using CashTrack.Models.Common;
+using System.Collections.Generic;
 
-public class IncomeReviewModels
+namespace CashTrack.Models.IncomeReviewModels;
+
+public class IncomeReviewRequest : PaginationRequest
 {
 }
+public class IncomeReviewResponse : PaginationResponse<IncomeReviewListItem>
+{
+    public IncomeReviewResponse(int pageNumber, int pageSize, int count, IEnumerable<IncomeReviewListItem> listItems) : base(pageNumber, pageSize, count, listItems)
+    {
+    }
+}
 
+public class IncomeReviewListItem : Transaction
+{
+    public string Notes { get; set; }
+    public string SuggestedCategory { get; set; }
+    public string SuggestedSource { get; set; }
+}
