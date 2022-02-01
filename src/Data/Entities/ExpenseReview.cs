@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CashTrack.Data.Entities
 {
-    [Table("expenses_to_review")]
-    public class ExpenseToReview : Transactions
+    [Table("expense_review")]
+    public class ExpenseReview : Transactions
     {
         public SubCategories suggested_category { get; set; }
         public Merchants suggested_merchant { get; set; }

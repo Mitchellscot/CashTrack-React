@@ -31,7 +31,7 @@ namespace CashTrack.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message.ToString() });
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 

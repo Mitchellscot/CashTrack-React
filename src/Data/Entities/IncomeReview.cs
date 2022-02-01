@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace CashTrack.Data.Entities
 {
 
-    [Table("incomes_to_review")]
-    public class IncomeToReview : Transactions
+    [Table("income_review")]
+    public class IncomeReview : Transactions
     {
         public IncomeCategories suggested_category { get; set; }
         public IncomeSources suggested_source { get; set; }
