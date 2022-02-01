@@ -1,5 +1,5 @@
 import { errorConst } from '../../_constants';
-const initialState = {type: 'none', message: 'does this work'}
+const initialState = {type: 'none', message: ''}
 
 const loginMessage = (state = initialState, action) => {
     switch (action.type) {

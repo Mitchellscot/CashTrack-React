@@ -11,7 +11,9 @@ export default function Login() {
      useEffect(() => {
         dispatch({ type: errorConst.CLEAR });
         dispatch({ type: loginConst.LOGOUT });
+        document.body.style='background-color: #2B3C4C;';
     }, [dispatch]);
+
 
     return (
         <Container>

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace CashTrack.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase

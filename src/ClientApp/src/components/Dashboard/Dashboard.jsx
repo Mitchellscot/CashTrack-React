@@ -4,9 +4,14 @@ import Col from 'react-bootstrap/Col';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import Row from 'react-bootstrap/Row';
+import React, { useEffect } from 'react';
 //import { Switch, Route } from "react-router-dom";
 
 function Dashboard() {
+    useEffect(() => {
+        document.body.style='background-color: none;';
+    }, []);
+    
     return (
         <>
             <DashboardHeader />
