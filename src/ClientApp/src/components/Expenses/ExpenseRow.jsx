@@ -34,6 +34,7 @@ function ExpenseRow({ expense }) {
             <td className="align-middle text-center">
             {expense.mainCategory}
             </td>
+            <td>actions go here</td>
         </tr>
     );
 }

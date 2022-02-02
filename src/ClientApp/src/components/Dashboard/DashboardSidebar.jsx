@@ -7,7 +7,7 @@ function DashboardSidebar() {
 
     let match = useRouteMatch();
     return (
-        <Nav className="sidebar col-md-2 col-lg-2 d-md-block bg-light collapse position-sticky pt-3" >
+        <Nav className="sidebar col-md-2 col-lg-2 d-md-block bg-light collapse position-sticky pt-3 mh-100" >
              <Nav defaultActiveKey="Orders" as="ul" className="nav flex-column align-items-center">
                 <Nav.Item as="li">
                     <Link className="nav-link" role="button" to={`/budget`}>
