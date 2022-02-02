@@ -19,7 +19,7 @@ function Dashboard() {
             <Container fluid>
                 <Row>
                     <DashboardSidebar />
-                    <Col md={10} lg={10} className="ml-sm-auto px-md-5 py-3">
+                    <Col md={10} lg={10} className="ml-sm-auto px-md-2 py-2">
                         <main className="d-flex flex-wrap flex-md-nowrap pt-4 border border-bottom-0 rounded-top">
                          <Switch>
                         <Route path="/dashboard/expenses">

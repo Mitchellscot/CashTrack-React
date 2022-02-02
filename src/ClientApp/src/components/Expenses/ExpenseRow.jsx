@@ -10,10 +10,17 @@ function ExpenseRow({ expense }) {
         setModal(!modal);
     }
 
+    const formatDate = (orderDate) => {
+        const date = new Date(orderDate);
+        const options = { month: "numeric", day: "numeric", year: "numeric" }
+        const fd = new Intl.DateTimeFormat('en-us', options).format(date);
+        return fd.toString();
+    }
+
     return (
-        <tr>
+        <tr scope="row">
             <td className="align-middle text-center">
-                {expense.date}
+            {expense.date !== undefined ? formatDate(expense.date) : <span>loading...</span>}
             </td>
             <td className="align-middle text-center">
             {expense.amount}
